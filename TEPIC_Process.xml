@@ -1,0 +1,166 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/css" href="http://deep.mpi-inf.mpg.de/DAC/files/style/deep_process_style.css"?>
+<process>
+    <name>TEPIC</name>
+	<version>1</version>
+	<author>
+		<name>Florian Schmidt</name>
+		<email>fschmidt@mmci.uni-saarland.de</email>
+	</author>
+    <description>
+	The TEPIC (Transcription Factor Annotation using an Epigenetic Prior) process can be used to obtain scores describing the affinity of Transcription Factors to certain regions of the genome and to a 		predfined area around the TSS of a set of genes.
+	We utilise TRAP (Transcription Factor Affinity Prediction, cf. http://bioinformatics.oxfordjournals.org/content/23/2/134.long) to obtain the aformentioned scores. By default, peak scores
+	are combined to gene scores in a 50kb window using exponential decay (Ouyang et al, 2009). In addition, TEPIC offers reweighting TF scores within peaks using the signal of the open chromatin assay 		within a peak. TEPIC generates two versions of gene score files, with and without scaling. 
+	The process takes a region file as input (e.g. Dnase peaks),
+	a reference genome, a gene annotation file, a set of position weight matrices (PWMS, e.g. from the Jaspar database). Note that regions, which are shorter than each PWM, are removed in the resulting 		files. In addition, the user has to specify the SampleID and the number of cores that should be used for running TRAP. 	Note that the chr prefix should not be contained in any files used within the 		pipeline. To run the process use the script TEPIC.sh. 
+	The command line is: <command_line><![CDATA[./TEPIC.sh  -g {genome_reference} -b {region_file} -o {prefix} -p {pwms} -c {cores} -d {signal_file} -a {genome_annotation} -w{window} (-n) (-e) ]]></command_line>
+	</description>
+	<inputs>
+		<filetype>
+			<identifier>region_file</identifier>
+			<format>bed</format>
+			<quantity>single</quantity>
+			<comment>TF prediction will be carried out in all valid regions specified in this file.</comment>
+		</filetype>
+		<filetype>
+			<identifier>signal_file</identifier>
+			<format>wig</format>
+			<quantity>single</quantity>
+			<comment>Signal of the open chromatin assay. The calculated TF affinities are scaled according to this signal. This should not be used if NOMe data is utilised. In that
+case, provide the -n parameter. That will cause TEPIC to extract the average signal within a peak out of the region_file.</comment>
+		</filetype>
+	</inputs>
+	<references>
+		<filetype>
+			<identifier>genome_reference</identifier>
+			<format>fa</format>
+			<quantity>single</quantity>
+			<comment>The reference genome of the analysed organism.</comment>
+		</filetype>
+		<filetype>
+			<identifier>genome_annotation</identifier>
+			<format>gtf</format>
+			<quantity>single</quantity>
+			<comment>A genome annotation file used to extract the position of the TSSs.</comment>
+		</filetype>
+		<filetype>
+			<identifier>pwms</identifier>
+			<format>txt</format>
+			<quantity>single</quantity>
+			<comment>A file containing PWMs in Jaspar format</comment>
+		</filetype>
+	</references>
+	<outputs>
+		<filetype>
+			<identifier>regions_filtered</identifier>
+			<format>txt</format>
+			<quantity>single</quantity>
+			<comment>This file contains, in sorted order, all valid regions extracted from the region_file.</comment>
+		</filetype>
+		<filetype>
+			<identifier>affinity_file_peak_view</identifier>
+			<format>txt</format>
+			<quantity>single</quantity>
+			<comment>This file contains the so called affinity scores computed by TRAP for all regions in the region_file such that at least one PWM is sufficiently large to cover the region.</comment>
+		</filetype>
+		<filetype>
+			<identifier>affinity_file_gene_view_filtered</identifier>
+			<format>txt</format>
+			<quantity>single</quantity>
+			<comment>Using the genome_annotation, we compute an additive affinity score, using exponential decay, for all genes by overlapping all regions of the affinity_file_peak_view  with a window of size 50000bp centered at the TSS of each gene. Genes located outside the window are removed in this file. The -e option allows to deactivate the exponential decay.</comment>
+		</filetype>
+		<filetype>
+			<identifier>signal_scaling_factors</identifier>
+			<format>txt</format>
+			<quantity>single</quantity>
+			<comment>File containing the average per base signal of the open chromatin assay for all peaks contained in the file affinity_file_peak_view.</comment>
+		</filetype>
+		<filetype>
+			<identifier>scaled_affinity_peak_view</identifier>
+			<format>txt</format>
+			<quantity>single</quantity>
+			<comment>Contains the scaled affinities per peak and TF.</comment>
+		</filetype>
+		<filetype>
+			<identifier>scaled_affinity_gene_view_filtered</identifier>
+			<format>txt</format>
+			<quantity>single</quantity>
+			<comment>Scaled version of the file affinity_file_gene_view_filtered.</comment>
+		</filetype>
+	</outputs>
+	<software>
+		<tool>
+			<name>removeInvalidRegions.py</name>
+			<version>1.0</version>
+			<command_line><![CDATA[python removeInvalidRegions.py {region_file}]]></command_line>
+			<loop></loop>
+			<comment>Takes a bed file (region_file) and removes all regions that are not considered according to the DEEP standards. The final file contains chromosomes 1 to 22 and X. This script produces the file regions_fitered which is used in the next step.</comment>
+		</tool>
+
+		<tool>
+			<name>bedtools getfasta</name>
+			<version>2.25.0</version>
+			<command_line><![CDATA[bedtools getfasta -fi {genome_reference} -bed regions_fitered -fo temp_file]]></command_line>
+			<loop></loop>
+			<comment>Creates a fasta file containing the sequences for all regions listed in the file regions_fitered.</comment>
+		</tool>
+		<tool>
+			<name>convertRYtoN.py</name>
+			<version>1.0</version>
+			<command_line><![CDATA[python convertInvalidCharacterstoN.py temp_file temp_file2]]></command_line>
+			<loop></loop>
+			<comment>As TRAP accepts only A, C, G , T, and N we replace all characters unequal to those by N.</comment>
+		</tool>
+
+		<tool>
+			<name>TRAP.R3script, R3</name>
+			<version>1.0, 3.1.2</version>
+			<command_line><![CDATA[R3script TRAP.R3script temp_file2 {affinity_file_peak_view}_temp {Number_of_cores} {pwms}]]></command_line>
+			<loop></loop>
+			<comment>This script uses the package TRAP to compute transcription factor binding affinity. It requires the libraries tRap, parallel and Biostrings. FORK is used in the parallelisation. A manual on how to install tRap can be found here: http://trap.molgen.mpg.de/download/TRAP_R_package/tRap-tutorial.html.</comment>
+		</tool>
+
+		<tool>
+			<name>computeDNaseCoverage.py</name>
+			<version>1.0</version>
+			<command_line><![CDATA[python computeDNaseCoverage.py {signal_file}_sorted > {signal_scaling_factors}]]></command_line>
+			<loop></loop>
+			<comment>Computes the per base coverage in the NFRs, using a sorted version of the user specified bedgrah file.</comment>
+		</tool>
+
+		<tool>
+			<name>scaleAffinity.py</name>
+			<version>1.0</version>
+			<command_line><![CDATA[python scaleAffinity.py {signal_scaling_factors} {affinity_file_peak_view} > {scaled_Affinity_peak_view}]]></command_line>
+			<loop></loop>
+			<comment>Multiplies the peak centric affinites with their corresponding scaling factors.</comment>
+		</tool>
+
+		<tool>
+			<name>filterInvalidRegions.py</name>
+			<version>1.0</version>
+			<command_line><![CDATA[python filterInvalidRegions {affinity_file_peak_view}_temp {affinity_file_peak_view}]]></command_line>
+			<loop></loop>
+			<comment>This script removes regions in case that we could not make any TF binding predictions. This happens if the regions in the region file are shorter than any PWM. This is also carried out for the file scaled_affinity_file_peak_view_temp</comment>
+		</tool>
+
+		<tool>
+			<name>annotateTSS.py</name>
+			<version>2.0</version>
+			<command_line><![CDATA[python annotateTSS.py {genome_annotation} {affinity_file_peak_view} --geneViewAffinity {affinity_file_gene_view} --windows {window} --decay {decay} --signalScale {scaled_affinity_file_peak_view}]]></command_line>
+			<loop></loop>
+			<comment>This python script computes gene specific TF scores using the files affinity_file_peak_view and if available scaled_affinity_file_peak_view generated in the TRAP.R3script. Gene_view files provide affinity scores for all TF and all genes in the genome_annotation. The window size determines the size of the window around each TSS. Decay indicates if the aggregation uses exponential decay. If the affinity values should be scaled with the signal strength of the open chromatin assay, the scaled_affinity_file_peak_view file has to be provided.</comment>
+		</tool>
+
+		<tool>
+			<name>filterGeneView.py</name>
+			<version>1.0</version>
+			<command_line><![CDATA[python filterGeneView.py {*_gene_view}]]></command_line>
+          	<loop></loop>
+			<comment>This python script removes all genes from the *_gene_view file that are not located in the window used during the annotation.</comment>
+		</tool>
+
+
+
+	</software>
+</process> 

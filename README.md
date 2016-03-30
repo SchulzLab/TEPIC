@@ -26,6 +26,7 @@ The optional parameters are:
 * -d Signal of the open chromatin assay in bg format. Used to compute the average per peak coverage within the regions specified in -b
 * -e Deactivates the exponential decay
 * -n Indicates that the file in -b contains the average signal in the peaks in the specified column (default 6). In this case the -d option is not required to obtain scaled TF affinities.
+* -c Number of cores used within TRAP.
 
 Depending on the used arguments, TEPIC produces the files containing:
 

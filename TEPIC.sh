@@ -5,7 +5,7 @@ Optional parameters:\n
 [-c number of cores to use (default 1)]\n
 [-d bedgraph file containing open chromatin signal, e.g. DNase1-seq]\n
 [-a gene annotation file, required to generate the gene view]\n
-[-n flag to be set if NOMe data is used, the average methylation within the peak will be extracted automatically from the file specified in the -b option (default FALSE)]\n
+[-n column in the -b file containg the average per base signal within a peak. If this option is used, the -d option must not be used.]\n
 [-w size of the window to be considered to generate gene view (default 50000bp)]\n
 [-e flag to be set if exponential decay should not be used]"
 
@@ -16,13 +16,13 @@ prefixP=""
 cores=1
 pwms=""
 dnase=""
-nome_scaling="FALSE"
+column=""
 annotation=""
 window=50000
 decay="TRUE"
 
 #Parsing command line
-while getopts "g:b:o:c:p:d:na:w:eh" o;
+while getopts "g:b:o:c:p:d:n:a:w:eh" o;
 do
                     case $o in
                     g)                  genome=$OPTARG;;
@@ -31,7 +31,7 @@ do
                     c)                  cores=$OPTARG;;
                     p)                  pwms=$OPTARG;;
                     d)                  dnase=$OPTARG;;
-                    n)                  nome_scaling="TRUE";;
+                    n)                  column=$OPTARG;;
                     a)                  annotation=$OPTARG;;
                     w)                  window=$OPTARG;;
                     e)                  decay="FALSE";;
@@ -72,6 +72,12 @@ then
 	exit 1;
 fi
 
+if [ -n "$dnase" ] && [ -n "$column" ]
+then
+	echo The options -d and -n are mutually exclusive
+	exit 1;
+fi
+
 d=$(date +%D)
 d=`echo $d | sed 's/\//\_/g'`
 t=$(date +%T | sed 's/:/_/g')
@@ -104,7 +110,6 @@ if [ -n "$dnase" ];
 then 
 	echo "signale_file	"$dnase >> $metadatafile
 fi
-echo "nome_scaling	"$nome_scaling >> $metadatafile
 echo "" >> $metadatafile
 echo "[Outputs]" >> $metadatafile
 echo "regions_filtered	"$filteredRegions >> $metadatafile
@@ -117,7 +122,7 @@ then
 	echo "scaled affinity_peak_view	"$prefix"_scaled_Affinity.txt" >> $metadatafile
 	echo "scaled_affinity_gene_view_filtered	"$prefix"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
 fi
-if [ "$nome_scaling" == "TRUE" ];
+if [ -n "$column" ];
 then 
 	echo "signal_scaling_factors	"$prefix"_NOME_average.txt" >> $metadatafile
 	echo "scaled affinity_peak_view	"$prefix"_scaled_Affinity.txt" >> $metadatafile
@@ -128,6 +133,10 @@ echo "" >> $metadatafile
 echo "[Parameters]" >> $metadatafile
 echo "SampleID:	"$prefixP >> $metadatafile
 echo "cores	"$cores >> $metadatafile
+if [ -n "$column" ];
+then
+	echo "column	"$column >> $metadatafile
+fi
 if [ -n "$annotation" ];
 then
 echo "window	"$window >> $metadatafile
@@ -169,24 +178,25 @@ then
 	python scaleAffinity.py ${prefix}_Peak_Coverage.txt ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
 fi
 
-if [ "${nome_scaling}" == "TRUE" ] ;
+if [ -n "${column}" ] ;
 then
-	cut -f 6 ${filteredRegions}_sorted.bed > ${prefix}_NOMe_average.txt
+	cut -f ${column} ${filteredRegions}_sorted.bed > ${prefix}_NOMe_average.txt
 	python scaleAffinity.py ${prefix}_NOMe_average.txt ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
 fi	
 
 echo "Filter regions that could not be annotated."
 python filterInvalidRegions.py ${affinity}_temp $affinity
-if [ -n "$dnase" ] ||  [ "$nome_scaling" == "TRUE" ];
+if [ -n "$dnase" ] ||  [ -n "$column" ];
 then
 	python filterInvalidRegions.py ${prefix}_Scaled_Affinity_temp.txt ${prefix}_Scaled_Affinity.txt
+	rm ${prefix}_Scaled_Affinity_temp.txt
 fi
 
 #If an annotation file is provied, the gene view is generated
 if [ -n "$annotation" ]; 
 then
 	echo "Generating gene scores"
-	if [ -n "$dnase" ] ||  [ "$nome_scaling" == "TRUE" ];
+	if [ -n "$dnase" ] ||  [ -n "$column" ];
 	then
 		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt
 	else
@@ -197,10 +207,9 @@ then
 	echo "Filter genes for which no information is available."
 	if [ "$decay" == "TRUE" ];
 	then
-		if [ -n "$dnase" ] ||  [ "$nome_scaling" == "TRUE" ];
+		if [ -n "$dnase" ] || [ -n "$column" ];
 		then
 			python filterGeneView.py ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
-			rm ${prefix}_Scaled_Affinity_temp.txt
 			rm ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
 			python filterGeneView.py ${prefix}_Decay_Affinity_Gene_View.txt
 			rm ${prefix}_Decay_Affinity_Gene_View.txt
@@ -210,10 +219,9 @@ then
 		fi
 		
 	else
-		if [ -n "$dnase" ] ||  [ "$nome_scaling" == "TRUE" ];
+		if [ -n "$dnase" ] ||  [ -n "$column" ];
 		then
 			python filterGeneView.py ${prefix}_Scaled_Affinity_Gene_View.txt
-			rm ${prefix}_Scaled_Affinity_temp.txt
 			rm ${prefix}_Scaled_Affinity_Gene_View.txt
 		fi
 		python filterGeneView.py ${prefix}_Affinity_Gene_View.txt

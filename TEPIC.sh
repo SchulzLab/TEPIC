@@ -3,9 +3,8 @@
 help="Usage: ./TEPIC.sh [-g innput fasta file] [-b bed file containing open chromatin regions] [-o prefix of outputfiles] [-p pwms] \n
 Optional parameters:\n
 [-c number of cores to use (default 1)]\n
-[-d Bedgraph file containing open chromatin signal, e.g. DNase1-seq]\n
+[-d bedgraph file containing open chromatin signal, e.g. DNase1-seq]\n
 [-a gene annotation file, required to generate the gene view]\n
-[-d bedgraph file containing the signal of an open chromatin assay used for scaling]\n
 [-n flag to be set if NOMe data is used, the average methylation within the peak will be extracted automatically from the file specified in the -b option (default FALSE)]\n
 [-w size of the window to be considered to generate gene view (default 50000bp)]\n
 [-e flag to be set if exponential decay should not be used]"

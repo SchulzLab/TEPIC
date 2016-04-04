@@ -42,5 +42,7 @@ Each run of TEPIC generates an *analysis meta datafile* containing all parameter
 Together with the provided process xml file, the executed command lines  can be reconstructed (3).
 
 > (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, Bioinformatics, 2007.
+
 > (2) ChIP-Seq of transcription factors predicts absolute and differential gene expression in embryonic stem cells, Ouyang Z, PNAS, 2009.
+
 > (3) A general concept for consistent documentation of computational analyses, Ebert P, Database, 2015.

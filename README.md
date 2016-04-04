@@ -3,9 +3,9 @@
 Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data.
 
 ##Introduction
-*TEPIC* segments the genome into user specified regions and annotates those with TF binding using TRAP (Roider et al., 2007). 
+*TEPIC* segments the genome into user specified regions and annotates those with TF binding using TRAP (1). 
 These predictions are aggregated to gene scores. 
-Within this aggregation TEPIC offers exponential decay (Ouyang et al., 2009) and scaling of TF region scores using the signal of an open chromatin assay.
+Within this aggregation TEPIC offers exponential decay (2) and scaling of TF region scores using the signal of an open chromatin assay.
 
 ##Using TEPIC
 To start TEPIC, run the script *TEPIC.sh*
@@ -39,4 +39,8 @@ Depending on the used arguments, TEPIC produces the files containing:
 
 
 Each run of TEPIC generates an *analysis meta datafile* containing all parameters, files, and outputs associated with the last run of TEPIC.
-Together with the provided process xml file, the executed command lines  can be reconstructed (Ebert et al., 2015).
+Together with the provided process xml file, the executed command lines  can be reconstructed (3).
+
+> (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, Bioinformatics, 2007.
+> (2) ChIP-Seq of transcription factors predicts absolute and differential gene expression in embryonic stem cells, Ouyang Z, PNAS, 2009.
+> (3) A general concept for consistent documentation of computational analyses, Ebert P, Database, 2015.

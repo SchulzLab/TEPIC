@@ -1,0 +1,32 @@
+[Description]
+process	TEPICv1
+run_by_user	fschmidt
+date	04_05_16
+time	08_34_14
+analysis_id	K562_TEPIC_04_05_16_08_34_14
+
+[Inputs]
+region_file	../../../Preprocessing/K562/DNase/JAMM/peaks/filtered.peaks.narrowPeak
+
+[References]
+genome_reference	../../TFA/hs37d5.fa
+pwms	pwm_vertebrates_jaspar_uniprobe_converted.txt
+signale_file	../../../Data/K562/DNase/K562.bedgraph.filtered.bg
+
+[Outputs]
+regions_filtered	../../../Preprocessing/K562/DNase/JAMM/peaks/filtered.peaks.narrowPeak
+affinity_file_peak_view	K562_TEPIC_04_05_16_08_34_14_Affinity.txt
+affinity_file_gene_view_filtered	K562_TEPIC_04_05_16_08_34_14_Affinity_Gene_View_Filtered.txt
+signal_scaling_factors	K562_TEPIC_04_05_16_08_34_14_Peak_Coverage.txt
+scaled affinity_peak_view	K562_TEPIC_04_05_16_08_34_14_Scaled_Affinity.txt
+scaled_affinity_gene_view_filtered	K562_TEPIC_04_05_16_08_34_14_Scaled_Affinity_Gene_View_Filtered.txt
+
+[Parameters]
+SampleID:	K562
+cores	16
+window	50000
+decay	TRUE
+
+[Metrics]
+Number of analysed regions	1524428
+Number of considered pwms	439

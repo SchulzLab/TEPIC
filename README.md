@@ -45,7 +45,7 @@ Together with the provided process xml file, the executed command lines  can be 
 ##Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Example* folder. You can run it with the command
 
-	./TEPIC -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p pwm_vertebrates_jaspar_uniprobe_converted.txt -a ../Example/example_annotation.gtf -w 3000 -e
+	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p pwm_vertebrates_jaspar_uniprobe_converted.txt -a ../Example/example_annotation.gtf -w 3000 -e
 
 This will generate a gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.txt* and without 
 exponential decay.

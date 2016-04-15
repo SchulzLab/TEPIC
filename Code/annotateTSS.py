@@ -77,42 +77,6 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 	return geneAffinities
 
 
-def aggregatePAffinity(old,new,factor):
-	for i in xrange(0,len(old)-1):
-		old[i]=float(old[i])+factor*float(new[i])
-	return old
-
-
-def extractTF_PAffinity(openGenes,genesInOpenChromatin,filename,genePositions,openChromatin,expDecay):
-	tfpa=open(filename,"r")
-	geneAffinities={}
-	tfpa.readline()
-	for l in tfpa:
-		s=l.split()
-		middles=s[0].split(":")[1].split("-")
-		middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
-		if (genesInOpenChromatin.has_key(s[0])):
-			for geneID in genesInOpenChromatin[s[0]]:
-				tss=genePositions[geneID][1]
-				factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
-				if(s[0] in openGenes):
-					if (expDecay):
-						if (geneAffinities.has_key(geneID)):
-							geneAffinities[geneID]=aggregatePAffinity(geneAffinities[geneID],s[1:],factor)
-						else:
-							numbers=s[1:]
-							for i in xrange(0,len(numbers)-1):
-								numbers[i]=float(factor)*float(numbers[i])
-							geneAffinities[geneID]=numbers	
-					else:
-						if (geneAffinities.has_key(geneID)):
-							geneAffinities[geneID]=aggregatePAffinity(geneAffinities[geneID],s[1:],1.0)
-						else:
-							geneAffinities[geneID]=s[1:]
-
-	tfpa.close()
-	return geneAffinities
-
 def tfIndex(filename):
 	tfpa=open(filename,"r")
 	l=tfpa.readline()
@@ -144,32 +108,12 @@ def makeTupels(values,names):
 		l+=[(names[i],values[i])]
 	return l
 
-def rankGenes(affinities,tfNames,filename,maxrank,order):
-	output=open(filename,"w")
-	header="geneID"
-	for i in xrange(1,maxrank+1):
-		header+='\t'+"TF-Rank"+str(i)
-	output.write(header+'\n')
-	for gene in affinities.keys():
-		tl=makeTupels(affinities[gene],tfNames)
-		stl=sorted(tl,key=lambda x: float(x[1]),reverse=order)
-		line=str(gene.replace("\"","").replace(";",""))
-		for tupel in stl[0:maxrank]:
-			line+='\t'+tupel[0]
-		output.write(line+"\n")
-	output.close()
-
 def main():
 	parser=argparse.ArgumentParser(prog="annotateTSSV2.py")
 	parser.add_argument("gtf",nargs=1,help="Genome annotation file")
 	parser.add_argument("affinity",nargs=1,help="TRAP generated TF Affinity file")
-	parser.add_argument("--paffinity",nargs="?",help="TRAP generated TF Paffinity file, if available",default="")
 	parser.add_argument("--geneViewAffinity",nargs="?",help="Name of the gene view affinity files. If this is not specified, the prefix of the input files will be used.",default="")
-	parser.add_argument("--rankViewAffinity",nargs="?",help="Name of the rank view affinity files. If this is not specified, the prefix of the input files will be used.",default="")
-	parser.add_argument("--geneViewPAffinity",nargs="?",help="Name of the gene view rank files. If this is not specified, the prefix of the input files will be used.",default="")
-	parser.add_argument("--rankViewPAffinity",nargs="?",help="Name of the rank view rank files. If this is not specified, the prefix of the input files will be used.",default="")	
 	parser.add_argument("--windows",nargs="?",help="Size of the considered window around the TSS. Default is 3000.",default=3000,type=int)
-	parser.add_argument("--rank",nargs="?",help="Rank until which a rank file is generated. Default is 0.",default=0,type=int)
 	parser.add_argument("--decay",nargs="?",help="True if exponential decay should be used, False otherwise. Default is True",default="True")
 	parser.add_argument("--signalScale",nargs="?",help="If the name of the scaled affinity file is provied, a Gene view file is computed for those Affinity values.",default="")
 	args=parser.parse_args() 
@@ -178,8 +122,6 @@ def main():
 	prefix=prefixs[0]
 	if (args.geneViewAffinity==""):
 		args.geneViewAffinity=prefix+"_Affinity_Gene_View.txt"
-	if (args.geneViewPAffinity=="") and (args.paffinity !=""):
-		args.geneViewPAffinity=prefix+"_PAffinity_Gene_View.txt"
 
 	if (args.decay.upper()=="FALSE") or (args.decay=="0"):
 		decay=False
@@ -236,15 +178,10 @@ def main():
 
 	#Extract bound transcription factors
 	affinities=extractTF_Affinity(usedRegions,genesInOpenChromatin,args.affinity[0],tss,oC,decay)
-	if (args.paffinity !=""):
-		paffinities=extractTF_PAffinity(usedRegions,genesInOpenChromatin,args.paffinity[0],tss,oC,decay)
-
 	if (decay):
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss)	
 	else:
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity,tss)
-	if (args.paffinity !=""):
-		createAffinityFile(paffinities,tfNames,args.geneViewPAffinity,tss)	
 
 	scaledAffinities={}
 	if (args.signalScale != ""):
@@ -253,18 +190,5 @@ def main():
 			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss)
 		else:
 			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Scaled_Affinity_Gene_View.txt"),tss)	
-
-	if (args.rank != 0):
-		if (args.rankViewAffinity==""):
-			args.rankViewAffinity=prefix+"_Rank_View_Affinity.txt"
-		if (args.rankViewPAffinity=="") and (args.paffinity !=""):
-			args.rankViewPAffinity=prefix+"_Rank_View_PAffinity.txt"
-	
-		rankGenes(affinities,tfNames,args.rankViewAffinity,args.rank,True)
-		if (args.paffinity !=""):
-			rankGenes(paffinities,tfNames,args.rankViewPAffinity,args.rank,True)
-
-		if (args.signalScale != ""):
-			rankGenes(scaledAffinities,tfNames,args.rankViewAffinity.replace("_Rank_View_Affinity.txt","_Rank_View_Scaled_Affinity.txt"),args.rank,True)
 
 main()

@@ -115,17 +115,16 @@ echo "[Outputs]" >> $metadatafile
 echo "regions_filtered	"$filteredRegions >> $metadatafile
 echo "affinity_file_peak_view	"$prefix"_Affinity.txt" >> $metadatafile
 echo "affinity_file_gene_view_filtered	"$prefix"_Affinity_Gene_View_Filtered.txt" >> $metadatafile
-echo "affinity_file_rank	"$prefix"_Affinity_Rank.txt" >> $metadatafile
 if [ -n "$dnase" ];
 then 
 	echo "signal_scaling_factors	"$prefix"_Peak_Coverage.txt" >> $metadatafile
-	echo "scaled affinity_peak_view	"$prefix"_scaled_Affinity.txt" >> $metadatafile
+	echo "scaled affinity_peak_view	"$prefix"_Scaled_Affinity.txt" >> $metadatafile
 	echo "scaled_affinity_gene_view_filtered	"$prefix"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
 fi
 if [ -n "$column" ];
 then 
 	echo "signal_scaling_factors	"$prefix"_NOME_average.txt" >> $metadatafile
-	echo "scaled affinity_peak_view	"$prefix"_scaled_Affinity.txt" >> $metadatafile
+	echo "scaled affinity_peak_view	"$prefix"_Scaled_Affinity.txt" >> $metadatafile
 	echo "scaled_affinity_gene_view_filtered	"$prefix"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
 fi
 

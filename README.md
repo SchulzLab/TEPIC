@@ -38,11 +38,22 @@ Depending on the used arguments, TEPIC produces the files containing:
 * A file containing the factors used to scale the original TF affinities.
 
 
-Each run of TEPIC generates an *analysis meta datafile* containing all parameters, files, and outputs associated with the last run of TEPIC.
-Together with the provided process xml file, the executed command lines  can be reconstructed (3).
+Each run of TEPIC generates an *analysis meta datafile (amd)* containing all parameters, files, and outputs associated with the last run of TEPIC.
+Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
+*MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
 
-> (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, Bioinformatics, 2007.
+##Example
+To run a test trial of *TEPIC*, you can use the data provided in the *Example* folder. You can run it with the command
 
-> (2) ChIP-Seq of transcription factors predicts absolute and differential gene expression in embryonic stem cells, Ouyang Z, PNAS, 2009.
+	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p pwm_vertebrates_jaspar_uniprobe_converted.txt -a ../Example/example_annotation.gtf -w 3000 -e
 
-> (3) A general concept for consistent documentation of computational analyses, Ebert P, Database, 2015.
+This will generate a gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.txt* and without 
+exponential decay.
+
+
+
+> (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.
+
+> (2) ChIP-Seq of transcription factors predicts absolute and differential gene expression in embryonic stem cells, Ouyang Z, et al.,  PNAS, 2009.
+
+> (3) A general concept for consistent documentation of computational analyses, Ebert P, et al.,  Database, 2015.

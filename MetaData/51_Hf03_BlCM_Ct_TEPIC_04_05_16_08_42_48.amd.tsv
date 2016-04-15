@@ -1,0 +1,32 @@
+[Description]
+process	TEPICv1
+run_by_user	fschmidt
+date	04_05_16
+time	08_42_48
+analysis_id	51_Hf03_BlCM_Ct_TEPIC_04_05_16_08_42_48
+
+[Inputs]
+region_file	../../../Data/51/NOMe/BlCM/GRCh37/51_Hf03_BlCM_Ct_NOMe_S_1.NCSv2.20150513.GRCh37.cpg.filtered.GCH.peaks.fdr001.bed
+
+[References]
+genome_reference	../../TFA/hs37d5.fa
+pwms	pwm_vertebrates_jaspar_uniprobe_converted.txt
+
+[Outputs]
+regions_filtered	../../../Data/51/NOMe/BlCM/GRCh37/51_Hf03_BlCM_Ct_NOMe_S_1.NCSv2.20150513.GRCh37.cpg.filtered.GCH.peaks.fdr001
+affinity_file_peak_view	51_Hf03_BlCM_Ct_TEPIC_04_05_16_08_42_48_Affinity.txt
+affinity_file_gene_view_filtered	51_Hf03_BlCM_Ct_TEPIC_04_05_16_08_42_48_Affinity_Gene_View_Filtered.txt
+signal_scaling_factors	51_Hf03_BlCM_Ct_TEPIC_04_05_16_08_42_48_NOME_average.txt
+scaled affinity_peak_view	51_Hf03_BlCM_Ct_TEPIC_04_05_16_08_42_48_Scaled_Affinity.txt
+scaled_affinity_gene_view_filtered	51_Hf03_BlCM_Ct_TEPIC_04_05_16_08_42_48_Scaled_Affinity_Gene_View_Filtered.txt
+
+[Parameters]
+SampleID:	51_Hf03_BlCM_Ct
+cores	16
+column	6
+window	50000
+decay	TRUE
+
+[Metrics]
+Number of analysed regions	48322
+Number of considered pwms	439

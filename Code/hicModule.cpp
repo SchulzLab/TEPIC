@@ -1,6 +1,9 @@
 #include <iostream>
-#include "readMatrix.hpp"
 #include <Eigen/Dense>
+
+#include "annotateTSS.hpp"
+#include "readMatrix.hpp"
+
 
 using namespace std;
 using Eigen::MatrixXd;
@@ -37,4 +40,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-

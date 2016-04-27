@@ -5,5 +5,5 @@ include_directories(../include/)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-set(SOURCE_FILES hicModule.cpp readMatrix.cpp readMatrix.hpp)
+set(SOURCE_FILES hicModule.cpp readMatrix.cpp readMatrix.hpp annotateTSS.cpp annotateTSS.hpp)
 add_executable(TEPIC_HIC ${SOURCE_FILES})

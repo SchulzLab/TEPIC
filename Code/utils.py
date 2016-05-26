@@ -25,14 +25,12 @@ def readIntraLoops(loopsFile):
 	
 	for i in range(1, 23):
 		loops[str(i)] = []
-	loops['X'] = []
-	loops['Y'] = []
 	
 	loopID = 0
 	for l in lf:
 		s=l.split()
 		if (len(s) >=8):
-			if(s[0] == s[3]): # check if loop is intra-chromosomal
+			if(s[0] == s[3] and s[0]!='X' and s[0]!='Y'): # check if loop is intra-chromosomal
 				loopID += 1
 				loops[s[0]].append((loopID, int(s[1]), int(s[2]), int(s[4]), int(s[5]), int(s[7])))
 	lf.close()

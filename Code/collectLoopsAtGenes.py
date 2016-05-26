@@ -99,6 +99,11 @@ def postProcessing(results, tss, intraLoops, radius):
 			outstring += str(0.0)
 		outstring += '\n'
 	
+	tset = set(tss.keys())
+	mset = set(matchedLoops.keys())
+	geneIntersection = tset.intersection(mset)
+	
+	
 	outstring += 'ALL	'
 	outstring += str(sum(output.values())) + '	'
 	outstring += str(sum(len(v) for v in intraLoops.itervalues()) - len(loopSet)) + '	'
@@ -109,9 +114,11 @@ def postProcessing(results, tss, intraLoops, radius):
 	print '\n###############'
 	print 'Parsed ' + str(totalGeneCount) + ' genes in total.' 
 	print 'Parsed ' + str(totalLoopCount) + ' intrachromosomal loops in total.'
+	print str(len(geneIntersection)) + ' genes have a loop within the radius, that are '+ str('%.1f' % round(float(len(geneIntersection))/float(totalGeneCount) * 100, 1)) + ' % of all genes.'
 	print 'Found ' + str(len(loopSet)) + ' loops within a distance of ' + str(radius) + ' bases around the annotated TSS.'
 	print 'That are ' +  str('%.1f' % round(float(len(loopSet))/float(totalLoopCount) * 100, 1)) + '% of all loops.'
 	print 'Observed a maximum of ' + str(maxl) + ' loops nearby a single gene.' 
+	print 'On average, there are ' + str('%.1f' % round(float(hitCounter)/float(totalGeneCount), 1)) + ' loops nearby a gene.' 
 	print '###############\n'
 	
 	now = datetime.datetime.now()

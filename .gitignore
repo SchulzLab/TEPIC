@@ -29,3 +29,13 @@
 
 # MacOSX specific
 .DS_Store
+
+# R specific files
+*.Rhistory
+
+# Python bytecode files
+*.pyc
+
+# Project specific output files
+Code/*ResolutionPerWindowToSize.txt
+Code/*kb.txt

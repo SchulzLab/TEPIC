@@ -45,7 +45,7 @@ def main():
 		if ("#" in ld):
 			continue
 		s=ld.split()
-		dchr=str(s[0].replace("chr","")
+		dchr=str(s[0].replace("chr",""))
 		ds=int(s[1])
 		de=int(s[2])
 		cC=overlap[cI][0]

@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-help="Usage: ./TEPIC.sh [-g innput fasta file] [-b bed file containing open chromatin regions] [-o prefix of outputfiles] [-p pwms] \n
+help="Usage: ./TEPIC.sh [-g input fasta file] [-b bed file containing open chromatin regions] [-o prefix of outputfiles] [-p pwms] \n
 Optional parameters:\n
 [-c number of cores to use (default 1)]\n
 [-d bedgraph file containing open chromatin signal, e.g. DNase1-seq]\n
@@ -44,8 +44,8 @@ done
 
 if [ $OPTIND -eq 1 ] ;
 then
-                    echo -e $help
-                    exit 1;
+    echo -e $help
+    exit 1;
 fi
 
 if [ -z "$genome" ] ;
@@ -210,12 +210,9 @@ then
 		then
 			python filterGeneView.py ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
 			rm ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
-			python filterGeneView.py ${prefix}_Decay_Affinity_Gene_View.txt
-			rm ${prefix}_Decay_Affinity_Gene_View.txt
-		else
-			python filterGeneView.py ${prefix}_Decay_Affinity_Gene_View.txt
-			rm ${prefix}_Decay_Affinity_Gene_View.txt
 		fi
+			python filterGeneView.py ${prefix}_Decay_Affinity_Gene_View.txt
+			rm ${prefix}_Decay_Affinity_Gene_View.txt
 		
 	else
 		if [ -n "$dnase" ] ||  [ -n "$column" ];

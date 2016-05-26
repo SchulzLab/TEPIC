@@ -28,7 +28,7 @@ The optional parameters are:
 * -n Indicates that the file in -b contains the average signal in the peaks in the specified column. In this case the -d option is not required to obtain scaled TF affinities.
 * -c Number of cores used within TRAP.
 
-Depending on the used arguments, TEPIC produces the files containing:
+Depending on the used arguments, TEPIC produces files containing:
 
 * TF affinities for all user specified regions.
 * Scaled TF affinities for all user specified regions.
@@ -47,7 +47,7 @@ To run a test trial of *TEPIC*, you can use the data provided in the *Example* f
 
 	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p pwm_vertebrates_jaspar_uniprobe_converted.txt -a ../Example/example_annotation.gtf -w 3000 -e
 
-This will generate a gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.txt* and without 
+This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.txt*, and without 
 exponential decay.
 
 

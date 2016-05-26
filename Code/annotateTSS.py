@@ -80,8 +80,8 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 def tfIndex(filename):
 	tfpa=open(filename,"r")
 	l=tfpa.readline()
-	return l.split()
 	tfpa.close()
+	return l.split()
 
 def createAffinityFile(affinities,tfNames,filename,tss):
 	output=open(filename,"w")

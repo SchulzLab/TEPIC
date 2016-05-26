@@ -127,7 +127,7 @@ case, provide the -n parameter. That will cause TEPIC to extract the average sig
 			<version>1.0</version>
 			<command_line><![CDATA[python computeDNaseCoverage.py {signal_file}_sorted > {signal_scaling_factors}]]></command_line>
 			<loop></loop>
-			<comment>Computes the per base coverage in the NFRs, using a sorted version of the user specified bedgrah file.</comment>
+			<comment>Computes the per base coverage in the NFRs, using a sorted version of the user specified bedgraph file.</comment>
 		</tool>
 
 		<tool>

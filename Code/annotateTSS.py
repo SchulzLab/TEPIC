@@ -46,7 +46,7 @@ def aggregateAffinity(old,new,factor):
 	return old
 
 
-def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,expDecay):
+def extractTF_Affinity(genesInOpenChromatin,filename,genePositions,expDecay):
 	geneAffinities={}
 	tfpa=open(filename,"r")
 	tfpa.readline()
@@ -58,20 +58,19 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,e
 			for geneID in genesInOpenChromatin[s[0]]:
 				tss=genePositions[geneID][1]
 				factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
-				if(s[0] in openRegions):
-					if (expDecay):
-						if (geneAffinities.has_key(geneID)):
-							geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],factor)
-						else:
-							numbers=s[1:]
-							for i in xrange(0,len(numbers)-1):
-								numbers[i]=float(factor)*float(numbers[i])
-							geneAffinities[geneID]=numbers				
+				if (expDecay):
+					if (geneAffinities.has_key(geneID)):
+						geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],factor)
 					else:
-						if (geneAffinities.has_key(geneID)):
-							geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],1.0)
-						else:
-							geneAffinities[geneID]=s[1:]
+						numbers=s[1:]
+						for i in xrange(0,len(numbers)-1):
+							numbers[i]=float(factor)*float(numbers[i])
+						geneAffinities[geneID]=numbers				
+				else:
+					if (geneAffinities.has_key(geneID)):
+						geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],1.0)
+					else:
+						geneAffinities[geneID]=s[1:]
 
 	tfpa.close()
 	return geneAffinities
@@ -143,41 +142,42 @@ def main():
 	for gene in tss.keys():
 		if (oC.has_key(tss[gene][0])):
 			for tupel in oC[tss[gene][0]]:
+				loci = tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])
 				#Right border of window <= Right border of open chromatin
 				if (tss[gene][1]+shift <= tupel[1]) and (tss[gene][1]-shift >= tupel[0]):
 					#Left border of window >= Left border of open chromatin ==> Window inside open chromatin
-					if (genesInOpenChromatin.has_key(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))):		
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]+=[gene]
+					if (genesInOpenChromatin.has_key(loci)):		
+						genesInOpenChromatin[loci]+=[gene]
 					else:
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]=[gene]
-					usedRegions.add(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))					
+						genesInOpenChromatin[loci]=[gene]
+					usedRegions.add(loci)					
 				#Right border of window >= Left border of open chromatin ==> Window enters open chromatin in the 3' end and stops in the tss window
 				elif (tss[gene][1]+shift <= tupel[1]) and (tss[gene][1]-shift < tupel[0]) and (tss[gene][1]+shift > tupel[0]):
 					
-					if (genesInOpenChromatin.has_key(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))):		
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]+=[gene]
+					if (genesInOpenChromatin.has_key(loci)):		
+						genesInOpenChromatin[loci]+=[gene]
 					else:
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]=[gene]
-					usedRegions.add(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))
+						genesInOpenChromatin[loci]=[gene]
+					usedRegions.add(loci)
 				#Right border of window > Right border of open chromatin
 				elif (tss[gene][1]+shift > tupel[1]) and (tss[gene][1]-shift < tupel[0]):
 					#Left border of window <= Left border of open chromatin ==> Window is larger than open chromatin
-					if (genesInOpenChromatin.has_key(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))):		
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]+=[gene]
+					if (genesInOpenChromatin.has_key(loci)):		
+						genesInOpenChromatin[loci]+=[gene]
 					else:
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]=[gene]
-					usedRegions.add(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))
+						genesInOpenChromatin[loci]=[gene]
+					usedRegions.add(loci)
 				#Left border of window <= Right border of open chromain ==> Window enters open chromatin in the 5' end stops in the tss window
 				elif (tss[gene][1]+shift > tupel[1]) and (tss[gene][1]-shift >= tupel[0]) and (tss[gene][1]-shift < tupel[1]):
-					if (genesInOpenChromatin.has_key(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))):		
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]+=[gene]
+					if (genesInOpenChromatin.has_key(loci)):		
+						genesInOpenChromatin[loci]+=[gene]
 					else:
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]=[gene]
-					usedRegions.add(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))
+						genesInOpenChromatin[loci]=[gene]
+					usedRegions.add(loci)
 	
 
 	#Extract bound transcription factors
-	affinities=extractTF_Affinity(usedRegions,genesInOpenChromatin,args.affinity[0],tss,decay)
+	affinities=extractTF_Affinity(genesInOpenChromatin,args.affinity[0],tss,decay)
 	if (decay):
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss)	
 	else:
@@ -185,7 +185,7 @@ def main():
 
 	scaledAffinities={}
 	if (args.signalScale != ""):
-		scaledAffinities=extractTF_Affinity(usedRegions,genesInOpenChromatin,args.signalScale,tss,decay)
+		scaledAffinities=extractTF_Affinity(genesInOpenChromatin,args.signalScale,tss,decay)
 		if (decay):
 			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss)
 		else:

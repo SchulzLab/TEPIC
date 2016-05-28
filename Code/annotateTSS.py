@@ -9,7 +9,7 @@ from decimal import Decimal
 
 #Reads a gtf file and generates a dictionary (key:gene, item:(#chromosom,TSS))
 def readGTF(filename):
-	gtf=open(sys.argv[1],"r")
+	gtf=open(filename,"r")
 	tss={}
 	for l in gtf:
 		s=l.split()
@@ -46,7 +46,7 @@ def aggregateAffinity(old,new,factor):
 	return old
 
 
-def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,openChromatin,expDecay):
+def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,expDecay):
 	geneAffinities={}
 	tfpa=open(filename,"r")
 	tfpa.readline()
@@ -177,7 +177,7 @@ def main():
 	
 
 	#Extract bound transcription factors
-	affinities=extractTF_Affinity(usedRegions,genesInOpenChromatin,args.affinity[0],tss,oC,decay)
+	affinities=extractTF_Affinity(usedRegions,genesInOpenChromatin,args.affinity[0],tss,decay)
 	if (decay):
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss)	
 	else:
@@ -185,7 +185,7 @@ def main():
 
 	scaledAffinities={}
 	if (args.signalScale != ""):
-		scaledAffinities=extractTF_Affinity(usedRegions,genesInOpenChromatin,args.signalScale,tss,oC,decay)
+		scaledAffinities=extractTF_Affinity(usedRegions,genesInOpenChromatin,args.signalScale,tss,decay)
 		if (decay):
 			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss)
 		else:

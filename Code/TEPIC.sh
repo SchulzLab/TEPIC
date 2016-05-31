@@ -7,7 +7,8 @@ Optional parameters:\n
 [-a gene annotation file, required to generate the gene view]\n
 [-n column in the -b file containg the average per base signal within a peak. If this option is used, the -d option must not be used.]\n
 [-w size of the window to be considered to generate gene view (default 50000bp)]\n
-[-e flag to be set if exponential decay should not be used]"
+[-e flag to be set if exponential decay should not be used]\n
+[-s sparse matrix representation]"
 
 #Initialising parameters
 genome=""
@@ -20,9 +21,10 @@ column=""
 annotation=""
 window=50000
 decay="TRUE"
+sparsity=0
 
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:eh" o;
+while getopts "g:b:o:c:p:d:n:a:w:s:eh" o;
 do
                     case $o in
                     g)                  genome=$OPTARG;;
@@ -35,6 +37,7 @@ do
                     a)                  annotation=$OPTARG;;
                     w)                  window=$OPTARG;;
                     e)                  decay="FALSE";;
+	s)	sparsity=$OPTARG;;
 	h)	echo -e $help
 		exit1;;
                     [?])                echo -e $help
@@ -140,6 +143,7 @@ if [ -n "$annotation" ];
 then
 echo "window	"$window >> $metadatafile
 echo "decay	"$decay >> $metadatafile
+echo "sparsity	"$sparsity >> $metadatafile
 fi
 echo "" >> $metadatafile
 echo "[Metrics]" >> $metadatafile
@@ -197,9 +201,9 @@ then
 	echo "Generating gene scores"
 	if [ -n "$dnase" ] ||  [ -n "$column" ];
 	then
-		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt
+		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity
 	else
-		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay
+		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--sparseRep" $sparsity
 	fi
 
 	#Creating files containing only genes for which TF predictions are available
@@ -223,7 +227,6 @@ then
 		python filterGeneView.py ${prefix}_Affinity_Gene_View.txt
 		rm ${prefix}_Affinity_Gene_View.txt
 	fi
-
 fi
 
 

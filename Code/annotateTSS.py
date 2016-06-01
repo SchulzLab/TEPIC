@@ -202,6 +202,64 @@ def filterLoops(loops, resolution):
 			if((loop[2]-loop[1]) != resolution):
 				chrLoops.remove(loop)
 	
+				
+def findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle):
+	geneLoops = {}
+	for geneID in tss:
+		startpos = tss[geneID][1]
+		chrLoops = loops[tss[geneID][0]]
+		if(not geneLoops.has_key(geneID)):
+			geneLoops[geneID] = []
+		for loop in chrLoops:
+			foundleftone = False
+			foundrightone = False
+			if(usemiddle):
+				
+				leftmiddle = int(((float(loop[2])-float(loop[1]))/2)+float(loop[1]))
+				if(abs(middle - startpos) <= loopwindows):
+					foundleftone = True
+					
+				rightmiddle = int(((float(loop[3])-float(loop[4]))/2)+float(loop[3]))
+				if (abs(middle - startpos) <= loopwindows):
+					foundrightone = True
+				
+				if(foundleftone and foundrightone):
+					if(leftmiddle <= rightmiddle):
+						geneLoops[geneID].append((loop[0], True))
+					
+				elif(foundleftone):
+					geneLoops[geneID].append((loop[0], True))
+				
+				elif(foundrightone):
+					geneLoops[geneID].append((loop[0], False))
+					
+			else:
+				leftpos = 0
+				if((abs(loop[1] - startpos) <= loopwindows) or (abs(loop[2] - startpos) <= loopwindows)):
+					foundleftone = True
+					if(abs(loop[1] - startpos) <= abs(loop[2] - startpos)):
+						leftpos = abs(loop[1] - startpos)
+					else:
+						leftpos = abs(loop[2] - startpos)
+				
+				rightpos = 0
+				if((abs(loop[3] - startpos) <= loopwindows) or (abs(loop[4] - startpos) <= loopwindows)):
+					foundrightone = True
+					if(abs(loop[3] - startpos) <= abs(loop[4] - startpos)):
+						rightpos = abs(loop[3] - startpos)
+					else:
+						rightpos = abs(loop[4] - startpos)
+					
+				if(foundleftone and foundrightone):
+					if (leftpos <= rightpos):
+						geneLoops[geneID].append((loop[0], True))
+				elif(foundleftone):
+					geneLoops[geneID].append((loop[0], True))
+				elif(foundrightone):
+					geneLoops[geneID].append((loop[0], False))
+				
+	return geneLoops
+					
 
 def main():
 	parser=argparse.ArgumentParser(prog="annotateTSSV2.py")
@@ -214,6 +272,7 @@ def main():
 	parser.add_argument("--loopfile",nargs="?",help="If the name of the loop file is provied, all open chromatin regions will be intersected with loop regions around the TSS of each gene.",default="")
 	parser.add_argument("--loopwindows",nargs="?",help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.",default=50000,type=int)
 	parser.add_argument("--resolution",nargs="?",help="Defines the Hi-C resolution of the loops which should be considered. Uses the smallest one found if the a resolution is not available in the loopfile.",default=5000,type=int)
+	parser.add_argument("--usemiddle",nargs="?",help="Defines whether to use the middle of a loop to decide if a loop lies withing a window or the edges.",default="False")
 	args=parser.parse_args() 
 
 	prefixs=args.affinity[0].split(".")

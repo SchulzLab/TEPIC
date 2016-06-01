@@ -3,6 +3,7 @@ import string
 import operator
 import math
 import argparse
+import utils
 from decimal import Decimal
 
 #Computing per gene TF affinities
@@ -38,6 +39,17 @@ def readOC_Region(filename):
 				oC[ds[0].replace("chr","")]+=[(int(se[0]),int(se[1]))]
 	tfpa.close()
 	return oC
+
+
+def readTFPA(filename):
+	f = open(filename,"r")
+	f.readline()
+	tfpa = {}
+	for l in f:
+		s=l.split()
+		tfpa[s[0]] = s
+	f.close()
+	return tfpa
 
 
 def aggregateAffinity(old,new,factor):
@@ -106,6 +118,79 @@ def makeTupels(values,names):
 	for i in xrange(0,len(values)-1):
 		l+=[(names[i],values[i])]
 	return l
+	
+	
+def intersectRegions(oc, loops):
+	intersectedOC = {}
+	looptable = {}
+	for chrKey in oc:
+		if(not intersectedOC.hasKey(chrKey)):
+			intersectedOC[chrKey] = []
+		for octupel in oc[chrKey]:
+			if(loops.hasKey(chrKey)):
+				chrLoops = loops[chrKey]
+				for loop in chrLoops:
+					# open chromatin region in...
+					#	[  ----  ]
+					if(octupel[0] >= loop[1] and octupel[1] <= loop[2])):
+						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
+						if(not looptable.hasKey(loop[0])):
+							looptable[loop[0]] = ([], [])
+						looptable[loop[0]][0].append(octupel)
+					# --[------  ]
+					elif(octupel[0] <= loop[1] and octupel[1] <= loop[2] && octupel[1] >= loop[1])):
+						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
+						if(not looptable.hasKey(loop[0])):
+							looptable[loop[0]] = ([], [])
+						looptable[loop[0]][0].append(octupel)
+					# 	[  ------]--	
+					elif(octupel[0] >= loop[1] and octupel[0] <= loop[2] && octupel[1] >= loop[2])):
+						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
+						if(not looptable.hasKey(loop[0])):
+							looptable[loop[0]] = ([], [])
+						looptable[loop[0]][0].append(octupel)
+					# --[--------]--	
+					elif(octupel[0] < loop[1] and octupel[1] > loop[2])):
+						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
+						if(not looptable.hasKey(loop[0])):
+							looptable[loop[0]] = ([], [])
+						looptable[loop[0]][0].append(octupel)
+					# same procedure for second, counterpart loop-site
+					#	[  ----  ]
+					elif(octupel[0] >= loop[3] and octupel[1] <= loop[4])):
+						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
+						if(not looptable.hasKey(loop[0])):
+							looptable[loop[0]] = ([], [])
+						looptable[loop[0]][1].append(octupel)
+					# --[------  ]
+					elif(octupel[0] <= loop[3] and octupel[1] <= loop[4] && octupel[1] >= loop[1])):
+						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
+						if(not looptable.hasKey(loop[0])):
+							looptable[loop[0]] = ([], [])
+						looptable[loop[0]][1].append(octupel)
+					# 	[  ------]--	
+					elif(octupel[0] >= loop[3] and octupel[0] <= loop[4] && octupel[1] >= loop[2])):
+						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
+						if(not looptable.hasKey(loop[0])):
+							looptable[loop[0]] = ([], [])
+						looptable[loop[0]][1].append(octupel)
+					# --[--------]--	
+					elif(octupel[0] < loop[3] and octupel[1] > loop[4])):
+						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
+						if(not looptable.hasKey(loop[0])):
+							looptable[loop[0]] = ([], [])
+						looptable[loop[0]][1].append(octupel)
+						
+	return (intersectedOC, looptable)
+
+
+def filterLoops(loops, resolution):
+	for chrKey in loops:
+		chrLoops = loops[chrKey]
+		for loop in chrLoops:
+			if((loop[2]-loop[1]) != resolution):
+				chrLoops.remove(loop)
+	
 
 def main():
 	parser=argparse.ArgumentParser(prog="annotateTSSV2.py")
@@ -115,6 +200,9 @@ def main():
 	parser.add_argument("--windows",nargs="?",help="Size of the considered window around the TSS. Default is 3000.",default=3000,type=int)
 	parser.add_argument("--decay",nargs="?",help="True if exponential decay should be used, False otherwise. Default is True",default="True")
 	parser.add_argument("--signalScale",nargs="?",help="If the name of the scaled affinity file is provied, a Gene view file is computed for those Affinity values.",default="")
+	parser.add_argument("--loopfile",nargs="?",help="If the name of the loop file is provied, all open chromatin regions will be intersected with loop regions around the TSS of each gene.",default="")
+	parser.add_argument("--loopwindows",nargs="?",help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.",default=50000,type=int)
+	parser.add_argument("--resolution",nargs="?",help="Defines the Hi-C resolution of the loops which should be considered. Uses the smallest one found if the a resolution is not available in the loopfile.",default=5000,type=int)
 	args=parser.parse_args() 
 
 	prefixs=args.affinity[0].split(".")

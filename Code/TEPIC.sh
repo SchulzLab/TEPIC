@@ -7,7 +7,8 @@ Optional parameters:\n
 [-a gene annotation file, required to generate the gene view]\n
 [-n column in the -b file containg the average per base signal within a peak. If this option is used, the -d option must not be used.]\n
 [-w size of the window to be considered to generate gene view (default 50000bp)]\n
-[-e flag to be set if exponential decay should not be used]"
+[-e flag to be set if exponential decay should not be used]\n
+[-l input Hi-C loopfile]"
 
 #Initialising parameters
 genome=""
@@ -20,9 +21,10 @@ column=""
 annotation=""
 window=50000
 decay="TRUE"
+hicloops=""	# will be a normal fasta later on, TODO: integrate HiCCUPS pipeline
 
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:eh" o;
+while getopts "g:b:o:c:p:d:n:a:w:e:lh" o;
 do
                     case $o in
                     g)                  genome=$OPTARG;;
@@ -35,8 +37,9 @@ do
                     a)                  annotation=$OPTARG;;
                     w)                  window=$OPTARG;;
                     e)                  decay="FALSE";;
-	h)	echo -e $help
-		exit1;;
+                    l)                  hicloops=$OPTARG;;
+					h)					echo -e $help
+										exit1;;
                     [?])                echo -e $help
                                         exit 1;;
                     esac
@@ -197,9 +200,9 @@ then
 	echo "Generating gene scores"
 	if [ -n "$dnase" ] ||  [ -n "$column" ];
 	then
-		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt
+		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--loopfile" $hicloops "--loopwindows" 50000 "--resolution" 5000
 	else
-		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay
+		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--loopfile" $hicloops "--loopwindows" 50000 "--resolution" 5000
 	fi
 
 	#Creating files containing only genes for which TF predictions are available

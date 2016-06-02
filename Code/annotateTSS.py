@@ -75,13 +75,13 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 					
 					if (expDecay):
 						factor=math.exp(-(float(float(abs(startpos-middle))/5000.0)))
-							if (geneAffinities.has_key(geneID)):
-								geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],factor)
-							else:
-								numbers=s[1:]
-								for i in xrange(0,len(numbers)-1):
-									numbers[i]=float(factor)*float(numbers[i])
-								geneAffinities[geneID]=numbers				
+						if (geneAffinities.has_key(geneID)):
+							geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],factor)
+						else:
+							numbers=s[1:]
+							for i in xrange(0,len(numbers)-1):
+								numbers[i]=float(factor)*float(numbers[i])
+							geneAffinities[geneID]=numbers				
 					else:
 						if (geneAffinities.has_key(geneID)):
 							geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],1.0)
@@ -91,7 +91,7 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 			if(geneloops.has_key(geneID)):
 				loops = geneloops[geneID]
 				for tupel in loops:
-					if(loopOCregions.hasKey(tupel[0])):
+					if(loopOCregions.has_key(tupel[0])):
 						regions = loopOCregions[tupel[0]]
 						aff = []
 						
@@ -109,22 +109,21 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 							loci = tss[geneID][0]+":"+str(region[0])+"-"+str(region[1])
 							s = tfpa[loci]
 							middles=s[0].split(":")[1].split("-")
-							if(!tupel[1]):
+							if(not tupel[1]):
 								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
 							else:
 								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))-resolution
-							aff.append((middle, s)
-						
+							aff.append((middle, s))
 						for afftupel in aff:
 							if (expDecay):
 								factor=math.exp(-(float(float(abs(startpos-afftupel[0]))/5000.0)))
-									if (geneAffinities.has_key(geneID)):
-										geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],afftupel[1][1:],factor)
-									else:
-										numbers=afftupel[1][1:]
-										for i in xrange(0,len(numbers)-1):
-											numbers[i]=float(factor)*float(numbers[i])
-										geneAffinities[geneID]=numbers				
+								if (geneAffinities.has_key(geneID)):
+									geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],afftupel[1][1:],factor)
+								else:
+									numbers=afftupel[1][1:]
+									for i in xrange(0,len(numbers)-1):
+										numbers[i]=float(factor)*float(numbers[i])
+									geneAffinities[geneID]=numbers				
 							else:
 								if (geneAffinities.has_key(geneID)):
 									geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],afftupel[1][1:],1.0)
@@ -170,60 +169,60 @@ def intersectRegions(oc, loops):
 	intersectedOC = {}
 	looptable = {}
 	for chrKey in oc:
-		if(not intersectedOC.hasKey(chrKey)):
+		if(not intersectedOC.has_key(chrKey)):
 			intersectedOC[chrKey] = []
 		for octupel in oc[chrKey]:
-			if(loops.hasKey(chrKey)):
+			if(loops.has_key(chrKey)):
 				chrLoops = loops[chrKey]
 				for loop in chrLoops:
 					# open chromatin region in...
 					#	[  ----  ]
-					if(octupel[0] >= loop[1] and octupel[1] <= loop[2])):
+					if(octupel[0] >= loop[1] and octupel[1] <= loop[2]):
 						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
-						if(not looptable.hasKey(loop[0])):
+						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][0].append(octupel)
 					# --[------  ]
-					elif(octupel[0] <= loop[1] and octupel[1] <= loop[2] && octupel[1] >= loop[1])):
+					elif(octupel[0] <= loop[1] and octupel[1] <= loop[2] and octupel[1] >= loop[1]):
 						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
-						if(not looptable.hasKey(loop[0])):
+						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][0].append(octupel)
 					# 	[  ------]--	
-					elif(octupel[0] >= loop[1] and octupel[0] <= loop[2] && octupel[1] >= loop[2])):
+					elif(octupel[0] >= loop[1] and octupel[0] <= loop[2] and octupel[1] >= loop[2]):
 						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
-						if(not looptable.hasKey(loop[0])):
+						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][0].append(octupel)
 					# --[--------]--	
-					elif(octupel[0] < loop[1] and octupel[1] > loop[2])):
+					elif(octupel[0] < loop[1] and octupel[1] > loop[2]):
 						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
-						if(not looptable.hasKey(loop[0])):
+						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][0].append(octupel)
 					# same procedure for second, counterpart loop-site
 					#	[  ----  ]
-					elif(octupel[0] >= loop[3] and octupel[1] <= loop[4])):
+					elif(octupel[0] >= loop[3] and octupel[1] <= loop[4]):
 						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
-						if(not looptable.hasKey(loop[0])):
+						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][1].append(octupel)
 					# --[------  ]
-					elif(octupel[0] <= loop[3] and octupel[1] <= loop[4] && octupel[1] >= loop[1])):
+					elif(octupel[0] <= loop[3] and octupel[1] <= loop[4] and octupel[1] >= loop[1]):
 						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
-						if(not looptable.hasKey(loop[0])):
+						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][1].append(octupel)
 					# 	[  ------]--	
-					elif(octupel[0] >= loop[3] and octupel[0] <= loop[4] && octupel[1] >= loop[2])):
+					elif(octupel[0] >= loop[3] and octupel[0] <= loop[4] and octupel[1] >= loop[2]):
 						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
-						if(not looptable.hasKey(loop[0])):
+						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][1].append(octupel)
 					# --[--------]--	
-					elif(octupel[0] < loop[3] and octupel[1] > loop[4])):
+					elif(octupel[0] < loop[3] and octupel[1] > loop[4]):
 						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
-						if(not looptable.hasKey(loop[0])):
+						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][1].append(octupel)
 						
@@ -372,7 +371,7 @@ def main():
 								if(geneloop[1] and regions[0].count(tupel) > 0):
 									found = True
 									break
-								elif(!geneloop[1] and regions[1].count(tupel) > 0):
+								elif((not geneloop[1]) and regions[1].count(tupel) > 0):
 									found = True
 									break
 					if(found):

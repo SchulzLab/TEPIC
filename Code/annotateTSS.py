@@ -3,9 +3,9 @@ import math
 import utils
 
 
-#Computing per gene TF affinities
+# Computing per gene TF affinities
 
-#Reads a gtf file and generates a dictionary (key:gene, item:(#chromosom,TSS))
+# Reads a gtf file and generates a dictionary (key:gene, item:(#chromosom,TSS))
 def readGTF(filename):
 	gtf=open(filename,"r")
 	tss={}
@@ -20,8 +20,8 @@ def readGTF(filename):
 	gtf.close()
 	return tss
 
-#Reads the txt file containing TF-scores. Extracts the regions of open chromatin.
-#They are returned as a dictionary(key: #chromosom, item:[(start,end)])
+# Reads the txt file containing TF-scores. Extracts the regions of open chromatin.
+# They are returned as a dictionary(key: #chromosom, item:[(start,end)])
 def readOC_Region(filename):
 	tfpa=open(filename,"r")
 	oC={}
@@ -84,7 +84,7 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 							geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],1.0)
 						else:
 							geneAffinities[geneID]=s[1:]
-		elif(loopsactivated):	#insert loop part here
+		elif(loopsactivated):	# insert loop part here
 			if(geneloops.has_key(geneID)):
 				loops = geneloops[geneID]
 				for tupel in loops:
@@ -92,7 +92,7 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 						regions = loopOCregions[tupel[0]]
 						aff = []
 						
-						for region in regions[0]:	#walk through left side of loop
+						for region in regions[0]:	# walk through left side of loop
 							loci = tss[geneID][0]+":"+str(region[0])+"-"+str(region[1])
 							s = tfpa[loci]
 							middles=s[0].split(":")[1].split("-")
@@ -140,6 +140,7 @@ def tfIndex(filename):
 	tfpa.close()
 	return l.split()
 
+
 def createAffinityFile(affinities,tfNames,filename,tss):
 	output=open(filename,"w")
 	header="geneID"
@@ -158,6 +159,7 @@ def createAffinityFile(affinities,tfNames,filename,tss):
 				line+='\t'+str(0.0)
 		output.write(line+'\n')
 	output.close()
+
 
 def makeTupels(values,names):
 	l=[]
@@ -320,13 +322,13 @@ def main():
 	else:
 		decay=True
 
-	#Check arguments
+	# Check arguments
 	
-	#Extract TSS of GTF files
+	# Extract TSS of GTF files
 	tss=readGTF(args.gtf[0])
-	#Load open chromatin positions from TF-Affinity file
+	# Load open chromatin positions from TF-Affinity file
 	oC=readOC_Region(args.affinity[0])
-	#Create a TF name index
+	# Create a TF name index
 	tfNames=tfIndex(args.affinity[0])
 	shift=int(args.windows/2)
 	
@@ -337,7 +339,7 @@ def main():
 	geneloops = {}
 	looplookuptable = {}
 	
-	#Extract loops of Hi-C loopfile
+	# Extract loops of Hi-C loopfile
 	if(args.loopfile != ""):
 		if(args.usemiddle.upper() == "TRUE"):
 			usemiddle = True
@@ -346,18 +348,18 @@ def main():
 		loopsactivated = True
 		
 		loops = utils.readIntraLoops(args.loopfile)
-		#filter loops and keep user-defined resolution only
+		# filter loops and keep user-defined resolution only
 		filterLoops(loops, resolution)
 		geneloops = findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle)
 		looplookuptable = utils.readIntraLoopsLookupTable(args.loopfile) # maybe use this later on
 		
-		#intersect openchromatin regions with all loopregions in TSS windows
+		# intersect openchromatin regions with all loopregions in TSS windows
 		intersectResults = intersectRegions(oC, loops)
 		#oC = intersectResults[0]
 		loopOCregions = intersectResults[1]
 		
 	
-	#Determine gene windows in open chromatin regions
+	# Determine gene windows in open chromatin regions
 	openChromatinInGenes={}
 	usedRegions=set()
 	for gene in tss.keys():
@@ -380,30 +382,30 @@ def main():
 						continue
 				
 				loci = tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])
-				#Right border of window <= Right border of open chromatin
+				# Right border of window <= Right border of open chromatin
 				if (tss[gene][1]+shift <= tupel[1]) and (tss[gene][1]-shift >= tupel[0]):
-					#Left border of window >= Left border of open chromatin ==> Window inside open chromatin
+					# Left border of window >= Left border of open chromatin ==> Window inside open chromatin
 					if (openChromatinInGenes.has_key(gene)):		
 						openChromatinInGenes[gene]+=[loci]
 					else:
 						openChromatinInGenes[gene]=[loci]
 					usedRegions.add(loci)					
-				#Right border of window >= Left border of open chromatin ==> Window enters open chromatin in the 3' end and stops in the tss window
+				# Right border of window >= Left border of open chromatin ==> Window enters open chromatin in the 3' end and stops in the tss window
 				elif (tss[gene][1]+shift <= tupel[1]) and (tss[gene][1]-shift < tupel[0]) and (tss[gene][1]+shift > tupel[0]):
 					if (openChromatinInGenes.has_key(gene)):		
 						openChromatinInGenes[gene]+=[loci]
 					else:
 						openChromatinInGenes[gene]=[loci]
 					usedRegions.add(loci)					
-				#Right border of window > Right border of open chromatin
+				# Right border of window > Right border of open chromatin
 				elif (tss[gene][1]+shift > tupel[1]) and (tss[gene][1]-shift < tupel[0]):
-					#Left border of window <= Left border of open chromatin ==> Window is larger than open chromatin
+					# Left border of window <= Left border of open chromatin ==> Window is larger than open chromatin
 					if (openChromatinInGenes.has_key(gene)):		
 						openChromatinInGenes[gene]+=[loci]
 					else:
 						openChromatinInGenes[gene]=[loci]
 					usedRegions.add(loci)
-				#Left border of window <= Right border of open chromain ==> Window enters open chromatin in the 5' end stops in the tss window
+				# Left border of window <= Right border of open chromain ==> Window enters open chromatin in the 5' end stops in the tss window
 				elif (tss[gene][1]+shift > tupel[1]) and (tss[gene][1]-shift >= tupel[0]) and (tss[gene][1]-shift < tupel[1]):
 					if (openChromatinInGenes.has_key(gene)):		
 						openChromatinInGenes[gene]+=[loci]
@@ -412,7 +414,7 @@ def main():
 					usedRegions.add(loci)
 	
 
-	#Extract bound transcription factors
+	# Extract bound transcription factors
 	affinities=extractTF_Affinity(openChromatinInGenes,args.affinity[0],tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable)
 	if (decay):
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss)	

@@ -1,10 +1,7 @@
-import sys
-import string
-import operator
-import math
 import argparse
+import math
 import utils
-from decimal import Decimal
+
 
 #Computing per gene TF affinities
 
@@ -58,7 +55,7 @@ def aggregateAffinity(old,new,factor):
 	return old
 
 
-def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated,loopOCregions,geneloops,resolution):
+def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated,loopOCregions,geneloops,looplookuptable):
 	geneAffinities={}
 	tfpa=readTFPA(filename)
 	#geneswithloops = set()
@@ -102,7 +99,9 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 							if(tupel[1]):
 								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
 							else:
-								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))+resolution
+								loopprops = looplookuptable[tupel[0]]
+								distance = loopprops[3] - loopprops[2]
+								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))+distance
 							aff.append((middle, s))
 							
 						for region in regions[1]:	#walk through right side of loop
@@ -112,7 +111,9 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 							if(not tupel[1]):
 								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
 							else:
-								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))-resolution
+								loopprops = looplookuptable[tupel[0]]
+								distance = loopprops[3] - loopprops[2]
+								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))-distance
 							aff.append((middle, s))
 						for afftupel in aff:
 							if (expDecay):
@@ -250,11 +251,11 @@ def findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle):
 			if(usemiddle):
 				
 				leftmiddle = int(((float(loop[2])-float(loop[1]))/2)+float(loop[1]))
-				if(abs(middle - startpos) <= loopwindows):
+				if(abs(leftmiddle - startpos) <= loopwindows):
 					foundleftone = True
 					
 				rightmiddle = int(((float(loop[3])-float(loop[4]))/2)+float(loop[3]))
-				if (abs(middle - startpos) <= loopwindows):
+				if (abs(rightmiddle - startpos) <= loopwindows):
 					foundrightone = True
 				
 				if(foundleftone and foundrightone):
@@ -334,6 +335,7 @@ def main():
 	loopsactivated = False
 	loopOCregions = {}
 	geneloops = {}
+	looplookuptable = {}
 	
 	#Extract loops of Hi-C loopfile
 	if(args.loopfile != ""):
@@ -347,7 +349,7 @@ def main():
 		#filter loops and keep user-defined resolution only
 		filterLoops(loops, resolution)
 		geneloops = findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle)
-		#looptable = utils.readIntraLoopsLookupTable(args.loopfile) # maybe use this later on
+		looplookuptable = utils.readIntraLoopsLookupTable(args.loopfile) # maybe use this later on
 		
 		#intersect openchromatin regions with all loopregions in TSS windows
 		intersectResults = intersectRegions(oC, loops)
@@ -411,7 +413,7 @@ def main():
 	
 
 	#Extract bound transcription factors
-	affinities=extractTF_Affinity(openChromatinInGenes,args.affinity[0],tss,decay,loopsactivated,loopOCregions,geneloops,resolution)
+	affinities=extractTF_Affinity(openChromatinInGenes,args.affinity[0],tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable)
 	if (decay):
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss)	
 	else:
@@ -419,7 +421,7 @@ def main():
 
 	scaledAffinities={}
 	if (args.signalScale != ""):
-		scaledAffinities=extractTF_Affinity(openChromatinInGenes,args.signalScale,tss,decay,loopsactivated,loopOCregions,geneloops,resolution)
+		scaledAffinities=extractTF_Affinity(openChromatinInGenes,args.signalScale,tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable)
 		if (decay):
 			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss)
 		else:

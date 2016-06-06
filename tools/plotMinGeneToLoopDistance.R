@@ -1,6 +1,7 @@
 #Import libs and set global options
 library(ggplot2)
 library(plyr)
+library(data.table)
 library(scales)
 options(scipen=999)
 xlabels <- c(-1, "1kb", "5kb", "10kb", "15kb", "20kb", "25kb", "30kb", "35kb", "40kb", "45kb", "50kb", "75kb", "100kb", "200kb")
@@ -11,29 +12,38 @@ data10kb <- read.table('~/Documents/TEPIC/Code/2016-06-06-13-51_MinDistances_Res
 data25kb <- read.table('~/Documents/TEPIC/Code/2016-06-06-13-52_MinDistances_Res25000.txt', header=TRUE, stringsAsFactors=FALSE)
 
 # Transform data, prepare it for plotting
-data <- rbind(data5kb, data10kb, data25kb)
-data[,2] <- apply(subset(data, select=c("distance")), 2, cut, c(-Inf,-1, 1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000, 75000, 100000, 200000,Inf), labels=xlabels<-c(xlabels, Inf))
+dat <- rbind(data5kb, data10kb, data25kb)
+dat[,2] <- apply(subset(dat, select=c("distance")), 2, cut, c(-Inf,-1, 1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000, 75000, 100000, 200000,Inf), labels=xlabels<-c(xlabels, Inf))
 #data[data=="Inf"] <- "100kb+" # activate this to include value greater than the last interval cut, and disable the next line!
-data <- data[data$distance != Inf , ]
-data <- data[data$distance != -1, ]
-uni <- subset(data, !duplicated(geneID))
-data <- data[,c("distance", "resolution")]
+dat <- dat[dat$distance != Inf , ]
+dat <- dat[dat$distance != -1, ]
+uni <- subset(dat, !duplicated(geneID))
+dat <- dat[,c("distance", "resolution")]
 uni <- uni[,c("distance", "resolution")]
 
-# Set labels properly
+# Set labels properly and apply ordering
 xlabelsreduced <- head(xlabels, -1)
 xlabelsreduced <- tail(xlabelsreduced, -1)
-data$distance <- factor(data$distance, levels=xlabelsreduced)
+dat$distance <- factor(dat$distance, levels=xlabelsreduced)
 uni$distance <- factor(uni$distance, levels=xlabelsreduced)
 
-# Apply sums and merge data in one dataframe
-countdata <- ddply(data, .(distance,resolution), nrow)
-countunidata <- ddply(uni, .(distance,resolution), nrow)
-temp <- ddply(countunidata, .(distance), summarize, V1 = sum(V1))
-temp$resolution <- "All"
-cdata <- rbind(countdata, temp)
-cdata <- cdata[order(cdata$distance,cdata$resolution),]
+# Count rows and apply cumsums for distinct resolutions
+countdata <- ddply(dat, .(distance,resolution), nrow)
+dt <- data.table(countdata)
+dt <- dt[,list(distance, V1, cumsum = cumsum(V1)),by=list(resolution)]
+dt <- as.data.frame.matrix(dt)
 
+# Count rows and apply cumsums for all resolutions combined
+countunidata <- ddply(uni, .(distance,resolution), nrow)
+countunidata <- ddply(countunidata, .(distance), summarize, V1 = sum(V1))
+temp <- data.table(countunidata)
+temp <- temp[,list(distance, V1, cumsum = cumsum(V1))]
+temp <- as.data.frame.matrix(temp)
+temp$resolution <- "All"
+
+# Merge dataframes and apply ordering
+cdata <- rbind(dt, temp)
+cdata$distance <- factor(cdata$distance, levels=xlabelsreduced)
 
 # only barplot
 ggplot(cdata, aes(distance), ordered=TRUE) +
@@ -45,7 +55,7 @@ ggplot(cdata, aes(distance), ordered=TRUE) +
   theme_bw()
 
 #only line and point plot
-ggplot(cdata, aes(distance, cumsum(cdata$V1)), ordered=TRUE) +
+ggplot(cdata, aes(distance, y=cdata$cumsum), ordered=TRUE) +
   geom_line(aes(group=factor(resolution), colour=factor(resolution))) + 
   geom_point(colour="darkgrey") +
   scale_colour_discrete(name = "Hi-C Resolutions") +
@@ -55,7 +65,7 @@ ggplot(cdata, aes(distance, cumsum(cdata$V1)), ordered=TRUE) +
   theme_bw()
 
 # combined plot
-ggplot(cdata, aes(distance, y=cumsum(cdata$V1)), ordered=TRUE) +
+ggplot(cdata, aes(distance, y=cdata$cumsum), ordered=TRUE) +
   geom_bar(aes(y=cdata$V1, fill=factor(resolution)), colour="black", position = "dodge", stat="identity") +
   geom_line(aes(group=factor(resolution), colour=factor(resolution))) + 
   geom_point(colour="darkgrey") +

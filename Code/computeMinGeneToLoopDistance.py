@@ -57,10 +57,11 @@ def run(tss, intraLoops, usemiddle, resolution):
 	
 
 def postProcessing(geneToLoopDistances, tss, intraLoops, usemiddle, resolution):
-	header = 'distance	resolution'
+	header = 'geneID	distance	resolution'
 	
 	output = ''
 	for geneKey in geneToLoopDistances:
+		output += str(geneKey) + '	'
 		output += str(geneToLoopDistances[geneKey][0]) + '	'
 		output += str(geneToLoopDistances[geneKey][1])
 		output += '\n'
@@ -79,15 +80,15 @@ def postProcessing(geneToLoopDistances, tss, intraLoops, usemiddle, resolution):
 # Main entry point for algorithm, requires:
 #	an annotation-file
 # 	a loop-file
-def computeMinGeneToLoopDistance(annotationFile, loopsFile, resolution):
+def computeMinGeneToLoopDistance(annotationFile, loopsFile, resolution, usemiddle):
 	print 'Indexing TSS'
 	tss = utils.readGTF(annotationFile)
 	print 'Indexing Loops'
 	intraLoops = utils.readIntraLoops(loopsFile)
 	
-	usemiddle = True
 	
 	print 'Running core algorithm'
+	print 'Using middle: ' + str(usemiddle)
 	results = run(tss, intraLoops, usemiddle, resolution)
 	
 	postProcessing(results, tss, intraLoops, usemiddle, resolution)
@@ -106,10 +107,15 @@ parser = argparse.ArgumentParser(description='Computes for each gene the distanc
 parser.add_argument('annotation', help='Path to an annotation file')
 parser.add_argument('loops', help='Path to a loop file')
 parser.add_argument('resolution', help='Only consider loops of the given resolution')
+parser.add_argument('middle', help='Defines whether to use the middle or an edge of a loop for distance calculation.')
 
 args = parser.parse_args()
+usemiddle = False
+
+if(args.middle.upper() == "TRUE"):
+	usemiddle = True
 
 
 print 'Starting to collect data...'
-computeMinGeneToLoopDistance(args.annotation, args.loops, int(args.resolution))
+computeMinGeneToLoopDistance(args.annotation, args.loops, int(args.resolution), usemiddle)
 print '\n-> Completed all!'

@@ -299,7 +299,7 @@ def findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle):
 					
 
 def main():
-	parser=argparse.ArgumentParser(prog="annotateTSSV2.py")
+	parser=argparse.ArgumentParser(prog="annotateTSS.py")
 	parser.add_argument("gtf",nargs=1,help="Genome annotation file")
 	parser.add_argument("affinity",nargs=1,help="TRAP generated TF Affinity file")
 	parser.add_argument("--geneViewAffinity",nargs="?",help="Name of the gene view affinity files. If this is not specified, the prefix of the input files will be used.",default="")

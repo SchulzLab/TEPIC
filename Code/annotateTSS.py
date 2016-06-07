@@ -251,62 +251,63 @@ def findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle):
 	loopwindows = int(loopwindows/2)
 	for geneID in tss:
 		startpos = tss[geneID][1]
-		chrLoops = loops[tss[geneID][0]]
-		if(not geneLoops.has_key(geneID)):
-			geneLoops[geneID] = []
-		for loop in chrLoops:
-			foundleftone = False
-			foundrightone = False
-			if(usemiddle):
-				
-				leftmiddle = int(((float(loop[2])-float(loop[1]))/2)+float(loop[1]))
-				if(abs(leftmiddle - startpos) <= loopwindows):
-					foundleftone = True
+		if(loops.has_key(tss[geneID][0])):
+			chrLoops = loops[tss[geneID][0]]
+			if(not geneLoops.has_key(geneID)):
+				geneLoops[geneID] = []
+			for loop in chrLoops:
+				foundleftone = False
+				foundrightone = False
+				if(usemiddle):
 					
-				rightmiddle = int(((float(loop[3])-float(loop[4]))/2)+float(loop[3]))
-				if (abs(rightmiddle - startpos) <= loopwindows):
-					foundrightone = True
-				
-				if(foundleftone and foundrightone):
-					if(leftmiddle <= rightmiddle):
+					leftmiddle = int(((float(loop[2])-float(loop[1]))/2)+float(loop[1]))
+					if(abs(leftmiddle - startpos) <= loopwindows):
+						foundleftone = True
+						
+					rightmiddle = int(((float(loop[3])-float(loop[4]))/2)+float(loop[3]))
+					if (abs(rightmiddle - startpos) <= loopwindows):
+						foundrightone = True
+					
+					if(foundleftone and foundrightone):
+						if(leftmiddle <= rightmiddle):
+							geneLoops[geneID].append((loop[0], True))
+						else:
+							geneLoops[geneID].append((loop[0], False))
+						
+					elif(foundleftone):
 						geneLoops[geneID].append((loop[0], True))
-					else:
+					
+					elif(foundrightone):
 						geneLoops[geneID].append((loop[0], False))
+						
+				else:
+					leftpos = 0
+					if((abs(loop[1] - startpos) <= loopwindows) or (abs(loop[2] - startpos) <= loopwindows)):
+						foundleftone = True
+						if(abs(loop[1] - startpos) <= abs(loop[2] - startpos)):
+							leftpos = abs(loop[1] - startpos)
+						else:
+							leftpos = abs(loop[2] - startpos)
 					
-				elif(foundleftone):
-					geneLoops[geneID].append((loop[0], True))
-				
-				elif(foundrightone):
-					geneLoops[geneID].append((loop[0], False))
+					rightpos = 0
+					if((abs(loop[3] - startpos) <= loopwindows) or (abs(loop[4] - startpos) <= loopwindows)):
+						foundrightone = True
+						if(abs(loop[3] - startpos) <= abs(loop[4] - startpos)):
+							rightpos = abs(loop[3] - startpos)
+						else:
+							rightpos = abs(loop[4] - startpos)
+						
+					if(foundleftone and foundrightone):
+						if (leftpos <= rightpos):
+							geneLoops[geneID].append((loop[0], True))
+						else:
+							geneLoops[geneID].append((loop[0], False))
 					
-			else:
-				leftpos = 0
-				if((abs(loop[1] - startpos) <= loopwindows) or (abs(loop[2] - startpos) <= loopwindows)):
-					foundleftone = True
-					if(abs(loop[1] - startpos) <= abs(loop[2] - startpos)):
-						leftpos = abs(loop[1] - startpos)
-					else:
-						leftpos = abs(loop[2] - startpos)
-				
-				rightpos = 0
-				if((abs(loop[3] - startpos) <= loopwindows) or (abs(loop[4] - startpos) <= loopwindows)):
-					foundrightone = True
-					if(abs(loop[3] - startpos) <= abs(loop[4] - startpos)):
-						rightpos = abs(loop[3] - startpos)
-					else:
-						rightpos = abs(loop[4] - startpos)
-					
-				if(foundleftone and foundrightone):
-					if (leftpos <= rightpos):
+					elif(foundleftone):
 						geneLoops[geneID].append((loop[0], True))
-					else:
+					
+					elif(foundrightone):
 						geneLoops[geneID].append((loop[0], False))
-				
-				elif(foundleftone):
-					geneLoops[geneID].append((loop[0], True))
-				
-				elif(foundrightone):
-					geneLoops[geneID].append((loop[0], False))
 				
 	return geneLoops
 					

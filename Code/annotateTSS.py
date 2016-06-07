@@ -217,13 +217,13 @@ def intersectRegions(oc, loops):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][1].append(octupel)
 					# --[------  ]
-					elif(octupel[0] <= loop[3] and octupel[1] <= loop[4] and octupel[1] >= loop[1]):
+					elif(octupel[0] <= loop[3] and octupel[1] <= loop[4] and octupel[1] >= loop[3]):
 						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
 						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][1].append(octupel)
 					# 	[  ------]--	
-					elif(octupel[0] >= loop[3] and octupel[0] <= loop[4] and octupel[1] >= loop[2]):
+					elif(octupel[0] >= loop[3] and octupel[0] <= loop[4] and octupel[1] >= loop[4]):
 						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
 						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
@@ -248,6 +248,7 @@ def filterLoops(loops, resolution):
 				
 def findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle):
 	geneLoops = {}
+	loopwindows = int(loopwindows/2)
 	for geneID in tss:
 		startpos = tss[geneID][1]
 		chrLoops = loops[tss[geneID][0]]
@@ -269,6 +270,8 @@ def findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle):
 				if(foundleftone and foundrightone):
 					if(leftmiddle <= rightmiddle):
 						geneLoops[geneID].append((loop[0], True))
+					else:
+						geneLoops[geneID].append((loop[0], False))
 					
 				elif(foundleftone):
 					geneLoops[geneID].append((loop[0], True))
@@ -296,8 +299,12 @@ def findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle):
 				if(foundleftone and foundrightone):
 					if (leftpos <= rightpos):
 						geneLoops[geneID].append((loop[0], True))
+					else:
+						geneLoops[geneID].append((loop[0], False))
+				
 				elif(foundleftone):
 					geneLoops[geneID].append((loop[0], True))
+				
 				elif(foundrightone):
 					geneLoops[geneID].append((loop[0], False))
 				
@@ -313,7 +320,7 @@ def main():
 	parser.add_argument("--decay",nargs="?",help="True if exponential decay should be used, False otherwise. Default is True",default="True")
 	parser.add_argument("--signalScale",nargs="?",help="If the name of the scaled affinity file is provied, a Gene view file is computed for those Affinity values.",default="")
 	parser.add_argument("--loopfile",nargs="?",help="If the name of the loop file is provied, all open chromatin regions will be intersected with loop regions around the TSS of each gene.",default="")
-	parser.add_argument("--loopwindows",nargs="?",help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.",default=50000,type=int)
+	parser.add_argument("--loopwindows",nargs="?",help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.",default=10000,type=int)
 	parser.add_argument("--resolution",nargs="?",help="Defines the Hi-C resolution of the loops which should be considered. Uses the smallest one found if the a resolution is not available in the loopfile.",default=5000,type=int)
 	parser.add_argument("--usemiddle",nargs="?",help="Defines whether to use the middle of a loop to decide if a loop lies withing a window or the edges.",default="False")
 	args=parser.parse_args() 

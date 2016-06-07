@@ -83,7 +83,7 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 							geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],1.0)
 						else:
 							geneAffinities[geneID]=s[1:]
-		elif(loopsactivated):	# insert loop part here
+		if(loopsactivated):
 			if(geneloops.has_key(geneID)):
 				loops = geneloops[geneID]
 				for tupel in loops:
@@ -95,25 +95,24 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 							loci = tss[geneID][0]+":"+str(region[0])+"-"+str(region[1])
 							s = tfpa[loci]
 							middles=s[0].split(":")[1].split("-")
-							if(tupel[1]):
-								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
-							else:
+							middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
+							if(not tupel[1]):
 								loopprops = looplookuptable[tupel[0]]
 								distance = loopprops[3] - loopprops[2]
-								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))+distance
+								middle += distance
 							aff.append((middle, s))
 							
 						for region in regions[1]:	#walk through right side of loop
 							loci = tss[geneID][0]+":"+str(region[0])+"-"+str(region[1])
 							s = tfpa[loci]
 							middles=s[0].split(":")[1].split("-")
-							if(not tupel[1]):
-								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
-							else:
+							middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
+							if(tupel[1]):
 								loopprops = looplookuptable[tupel[0]]
 								distance = loopprops[3] - loopprops[2]
-								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))-distance
+								middle -= distance
 							aff.append((middle, s))
+						
 						for afftupel in aff:
 							if (loopdecay):
 								factor=math.exp(-(float(float(abs(startpos-afftupel[0]))/5000.0)))

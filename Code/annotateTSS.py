@@ -58,8 +58,6 @@ def aggregateAffinity(old,new,factor):
 def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated,loopOCregions,geneloops,looplookuptable):
 	geneAffinities={}
 	tfpa=readTFPA(filename)
-	#geneswithloops = set()
-	
 	for geneID in tss:
 		startpos=tss[geneID][1]
 		if(openChromatinInGenes.has_key(geneID)):
@@ -167,6 +165,14 @@ def makeTupels(values,names):
 		l+=[(names[i],values[i])]
 	return l
 	
+def createGenesWithLoopsFile(geneLoops, filename):
+	header ="geneID"
+	body = ''
+	for geneID in geneLoops:
+		if(len(geneLoops[geneID]) > 0):
+			body += geneID
+			body += '\n'
+	utils.writeToFile(filename, header, body)
 	
 def intersectRegions(oc, loops):
 	intersectedOC = {}
@@ -427,6 +433,9 @@ def main():
 		if (decay):
 			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss)
 		else:
-			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Scaled_Affinity_Gene_View.txt"),tss)	
+			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Scaled_Affinity_Gene_View.txt"),tss)
+	
+	if(loopsactivated):
+		createGenesWithLoopsFile(geneloops, '_GenesWithLoops.txt')
 
 main()

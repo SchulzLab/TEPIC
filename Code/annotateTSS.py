@@ -340,6 +340,9 @@ def main():
 		loopdecay=False
 	else:
 		loopdecay=True
+		
+	now = datetime.datetime.now()
+	print 'Start time: ' + now.strftime("%Y-%m-%d-%H-%M-%S")
 	
 	# Check arguments
 	
@@ -450,5 +453,8 @@ def main():
 	
 	if(loopsactivated):
 		createGenesWithLoopsFile(geneloops, args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_GenesWithLoops.txt"))
+	
+	now = datetime.datetime.now()
+	print 'End time: ' + now.strftime("%Y-%m-%d-%H-%M-%S")
 
 main()

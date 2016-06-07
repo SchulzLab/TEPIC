@@ -176,11 +176,8 @@ def createGenesWithLoopsFile(geneLoops, filename):
 	utils.writeToFile(filename, header, body)
 	
 def intersectRegions(oc, loops):
-	intersectedOC = {}
 	looptable = {}
 	for chrKey in oc:
-		if(not intersectedOC.has_key(chrKey)):
-			intersectedOC[chrKey] = []
 		for octupel in oc[chrKey]:
 			if(loops.has_key(chrKey)):
 				chrLoops = loops[chrKey]
@@ -188,55 +185,47 @@ def intersectRegions(oc, loops):
 					# open chromatin region in...
 					#	[  ----  ]
 					if(octupel[0] >= loop[1] and octupel[1] <= loop[2]):
-						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
 						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][0].append(octupel)
 					# --[------  ]
 					elif(octupel[0] <= loop[1] and octupel[1] <= loop[2] and octupel[1] >= loop[1]):
-						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
 						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][0].append(octupel)
 					# 	[  ------]--	
 					elif(octupel[0] >= loop[1] and octupel[0] <= loop[2] and octupel[1] >= loop[2]):
-						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
 						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][0].append(octupel)
 					# --[--------]--	
 					elif(octupel[0] < loop[1] and octupel[1] > loop[2]):
-						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], True) # also append the loop-id
 						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][0].append(octupel)
 					# same procedure for second, counterpart loop-site
 					#	[  ----  ]
 					elif(octupel[0] >= loop[3] and octupel[1] <= loop[4]):
-						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
 						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][1].append(octupel)
 					# --[------  ]
 					elif(octupel[0] <= loop[3] and octupel[1] <= loop[4] and octupel[1] >= loop[3]):
-						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
 						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][1].append(octupel)
 					# 	[  ------]--	
 					elif(octupel[0] >= loop[3] and octupel[0] <= loop[4] and octupel[1] >= loop[4]):
-						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
 						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][1].append(octupel)
 					# --[--------]--	
 					elif(octupel[0] < loop[3] and octupel[1] > loop[4]):
-						intersectedOC[chrKey] += (octupel[0], octupel[1], loop[0], False) # also append the loop-id
 						if(not looptable.has_key(loop[0])):
 							looptable[loop[0]] = ([], [])
 						looptable[loop[0]][1].append(octupel)
 						
-	return (intersectedOC, looptable)
+	return looptable
 
 
 def filterLoops(loops, resolution):
@@ -380,12 +369,11 @@ def main():
 		# intersect openchromatin regions with all loopregions in TSS windows
 		intersectResults = intersectRegions(oC, loops)
 		#oC = intersectResults[0]
-		loopOCregions = intersectResults[1]
+		loopOCregions = intersectResults
 		
 	
 	# Determine gene windows in open chromatin regions
 	openChromatinInGenes={}
-	usedRegions=set()
 	for gene in tss.keys():
 		if (oC.has_key(tss[gene][0])):
 			for tupel in oC[tss[gene][0]]:
@@ -412,15 +400,13 @@ def main():
 					if (openChromatinInGenes.has_key(gene)):		
 						openChromatinInGenes[gene]+=[loci]
 					else:
-						openChromatinInGenes[gene]=[loci]
-					usedRegions.add(loci)					
+						openChromatinInGenes[gene]=[loci]					
 				# Right border of window >= Left border of open chromatin ==> Window enters open chromatin in the 3' end and stops in the tss window
 				elif (tss[gene][1]+shift <= tupel[1]) and (tss[gene][1]-shift < tupel[0]) and (tss[gene][1]+shift > tupel[0]):
 					if (openChromatinInGenes.has_key(gene)):		
 						openChromatinInGenes[gene]+=[loci]
 					else:
-						openChromatinInGenes[gene]=[loci]
-					usedRegions.add(loci)					
+						openChromatinInGenes[gene]=[loci]					
 				# Right border of window > Right border of open chromatin
 				elif (tss[gene][1]+shift > tupel[1]) and (tss[gene][1]-shift < tupel[0]):
 					# Left border of window <= Left border of open chromatin ==> Window is larger than open chromatin
@@ -428,14 +414,12 @@ def main():
 						openChromatinInGenes[gene]+=[loci]
 					else:
 						openChromatinInGenes[gene]=[loci]
-					usedRegions.add(loci)
 				# Left border of window <= Right border of open chromain ==> Window enters open chromatin in the 5' end stops in the tss window
 				elif (tss[gene][1]+shift > tupel[1]) and (tss[gene][1]-shift >= tupel[0]) and (tss[gene][1]-shift < tupel[1]):
 					if (openChromatinInGenes.has_key(gene)):		
 						openChromatinInGenes[gene]+=[loci]
 					else:
 						openChromatinInGenes[gene]=[loci]
-					usedRegions.add(loci)
 	
 	# Extract bound transcription factors
 	affinities=extractTF_Affinity(openChromatinInGenes,args.affinity[0],tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay)

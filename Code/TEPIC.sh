@@ -154,7 +154,7 @@ echo "Number of considered pwms	"$numMat >> $metadatafile
 
 
 echo "Preprocessing region file"
-python removeInvalidRegions.py $regions
+python removeInvalidGenomicPositions.py $regions
 sort -s -V -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions.bed > ${filteredRegions}_sorted.bed
 rm ${filteredRegions}_Filtered_Regions.bed
 echo "Runnig bedtools"

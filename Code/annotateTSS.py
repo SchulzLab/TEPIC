@@ -270,7 +270,7 @@ def findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle):
 						foundrightone = True
 					
 					if(foundleftone and foundrightone):
-						if(leftmiddle <= rightmiddle):
+						if(abs(leftmiddle - startpos) <= abs(rightmiddle - startpos)):
 							geneLoops[geneID].append((loop[0], True))
 						else:
 							geneLoops[geneID].append((loop[0], False))

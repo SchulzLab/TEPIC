@@ -16,12 +16,15 @@ tsswindows="1000 2000 3000"
 loopwindows="5000 10000 25000 50000"
 loopdecay="True False"
 									#TODO: also consider usemiddle and signaleScale options
+configfile="_appliedconfigs.txt"
 
 ############################ END CONFIG PART
 
 runningprocesses=()
 currentlyrunning=0
 id=0
+
+echo "ID	Expdecay	Hi-CRes	tsswindow	Loopwindow	LoopExpDecay">$configfile
 
 for dec in $decay:
 do
@@ -34,9 +37,10 @@ do
 				for ldec in $loopdecay
 				do	
 					# build new combination and run it
-					echo 'Spawned new annotateTSS instance'
+					echo "$id	$dec	$res	$twindow	$lwindow	$ldec">>$configfile
 					python ../Code/annotateTSS.py ${annotationfile} ${affinityfile}  "--geneViewAffinity" ${geneViewAffinity}_${id}_Affinity_Gene_View.txt "--windows" $twindow "--decay" $dec "--loopfile" $loopfile "--loopwindows" $lwindow "--resolution" $res "--loopdecay" $ldec &
 					runningprocesses[currentlyRunning]=$!
+					echo 'Spawned new annotateTSS instance'
 					echo $!
 					((id++))
 					((currentlyrunning++))

@@ -68,14 +68,14 @@ def detectLoopInclusions(loopsFile):
 ##	Required arguments: 1) loop file in Hi-C loop format
 ##
 ######
+def main():
+	# preparation-routine
+	parser = argparse.ArgumentParser(description='Checks whether there are (Intrachromosomal) loops of different resolutions in a loop file, so that a loop of a lower resolution contains a loop with a higher resolution.')
+	parser.add_argument('loops', help='Path to a loop file')
 
-# preparation-routine
-parser = argparse.ArgumentParser(description='Checks whether there are (Intrachromosomal) loops of different resolutions in a loop file, so that a loop of a lower resolution contains a loop with a higher resolution.')
-parser.add_argument('loops', help='Path to a loop file')
-
-args = parser.parse_args()
+	args = parser.parse_args()
 
 
-print 'Starting to collect data...'
-detectLoopInclusions(args.loops)
-print '\n-> Completed all!'
+	print 'Starting to collect data...'
+	detectLoopInclusions(args.loops)
+	print '\n-> Completed all!'

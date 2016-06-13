@@ -1,5 +1,6 @@
 import argparse
 import datetime
+import detectLoopInclusions
 import math
 import utils
 
@@ -311,7 +312,7 @@ def main():
 	parser.add_argument("--signalScale",nargs="?",help="If the name of the scaled affinity file is provied, a Gene view file is computed for those Affinity values.",default="")
 	parser.add_argument("--loopfile",nargs="?",help="If the name of the loop file is provied, all open chromatin regions will be intersected with loop regions around the TSS of each gene.",default="")
 	parser.add_argument("--loopwindows",nargs="?",help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.",default=10000,type=int)
-	parser.add_argument("--resolution",nargs="?",help="Defines the Hi-C resolution of the loops which should be considered. Uses the smallest one found if the a resolution is not available in the loopfile.",default=5000,type=int)
+	parser.add_argument("--resolution",nargs="?",help="Defines the Hi-C resolution of the loops which should be considered. Uses the smallest one found if the a resolution is not available in the loopfile.",default=5000)
 	parser.add_argument("--usemiddle",nargs="?",help="Defines whether to use the middle of a loop to decide if a loop lies withing a window or the edges.",default="False")
 	parser.add_argument("--loopdecay",nargs="?",help="True if exponential decay should be used for oc regions in loops, False otherwise. Default is False",default="False")
 	args=parser.parse_args() 
@@ -360,8 +361,17 @@ def main():
 		loopsactivated = True
 		
 		loops = utils.readIntraLoops(args.loopfile)
-		# filter loops and keep user-defined resolution only
-		filterLoops(loops, resolution)
+
+		if (str(resolution).upper() == "ALL"):
+			# detect inclusions of loops between different resolutions and remove them
+			# keep all other loops of any resolution
+			inclusions = detectLoopInclusions.run(loops)
+			detectLoopInclusions.filterInclusions(loops, inclusions)
+		else:
+			# filter loops and keep user-defined resolution only
+			resolution = int(args.resolution)
+			filterLoops(loops, resolution)
+
 		geneloops = findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle)
 		looplookuptable = utils.readIntraLoopsLookupTable(args.loopfile) # maybe use this later on
 		

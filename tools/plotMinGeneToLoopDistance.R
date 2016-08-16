@@ -4,7 +4,7 @@ library(plyr)
 library(data.table)
 library(scales)
 options(scipen=999)
-xlabels <- c(-1, "1kb", "5kb", "10kb", "15kb", "20kb", "25kb", "30kb", "35kb", "40kb", "45kb", "50kb", "75kb", "100kb", "200kb")
+xlabels <- c(-1, "1kb", "5kb", "10kb", "15kb", "20kb", "25kb", "30kb", "35kb", "40kb", "45kb", "50kb")
 
 # Read raw data
 data5kb <- read.table('~/Documents/TEPIC/Code/2016-06-06-13-51_MinDistances_Res5000.txt', header=TRUE, stringsAsFactors=FALSE)
@@ -13,8 +13,8 @@ data25kb <- read.table('~/Documents/TEPIC/Code/2016-06-06-13-52_MinDistances_Res
 
 # Transform data, prepare it for plotting
 dat <- rbind(data5kb, data10kb, data25kb)
-dat[,2] <- apply(subset(dat, select=c("distance")), 2, cut, c(-Inf,-1, 1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000, 75000, 100000, 200000,Inf), labels=xlabels<-c(xlabels, Inf))
-#data[data=="Inf"] <- "100kb+" # activate this to include value greater than the last interval cut, and disable the next line!
+dat[,2] <- apply(subset(dat, select=c("distance")), 2, cut, c(-Inf,-1, 1000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000, 50000,Inf), labels=xlabels<-c(xlabels, Inf))
+#data[data=="Inf"] <- "50kb+" # activate this to include value greater than the last interval cut, and disable the next line!
 dat <- dat[dat$distance != Inf , ]
 dat <- dat[dat$distance != -1, ]
 uni <- subset(dat, !duplicated(geneID))
@@ -48,20 +48,20 @@ cdata$distance <- factor(cdata$distance, levels=xlabelsreduced)
 # only barplot
 ggplot(cdata, aes(distance), ordered=TRUE) +
   geom_bar(aes(y=cdata$V1, fill=factor(resolution)), colour="black", position = "dodge", stat="identity") +
-  scale_fill_discrete(name="Hi-C Resolutions") +
+  scale_fill_discrete(name="Hi-C Resolution") +
   ggtitle('Binned minimum window size around TSS containing nearest loop-edge in K562 cell-line\nHistogram') +
-  xlab('Window size') +
-  ylab('#genes') +
+  xlab('Loop-window') +
+  ylab('Number of genes') +
   theme_bw()
 
 #only line and point plot
 ggplot(cdata, aes(distance, y=cdata$cumsum), ordered=TRUE) +
-  geom_line(aes(group=factor(resolution), colour=factor(resolution))) + 
+  geom_line(aes(group=factor(resolution, levels=c("5000","10000","25000","All")), colour=factor(resolution,levels=c("5000","10000","25000","All"))),size=1.5) + 
   geom_point(colour="darkgrey") +
-  scale_colour_discrete(name = "Hi-C Resolutions") +
+  scale_colour_discrete(name = "Hi-C Resolution") +
   ggtitle('Binned minimum window size around TSS containing nearest loop-edge in K562 cell-line\nCumulative histogram') +
-  xlab('Window size') +
-  ylab('#genes') +
+  xlab('Loop-window') +
+  ylab('Number of genes') +
   theme_bw()
 
 # combined plot
@@ -69,9 +69,9 @@ ggplot(cdata, aes(distance, y=cdata$cumsum), ordered=TRUE) +
   geom_bar(aes(y=cdata$V1, fill=factor(resolution)), colour="black", position = "dodge", stat="identity") +
   geom_line(aes(group=factor(resolution), colour=factor(resolution))) + 
   geom_point(colour="darkgrey") +
-  scale_fill_discrete(name="Hi-C Resolutions") +
-  scale_colour_discrete(name = "Hi-C Resolutions\ncumulative #genes") +
+  scale_fill_discrete(name="Hi-C Resolution") +
+  scale_colour_discrete(name = "Hi-C Resolution\ncumulative #genes") +
   ggtitle('Binned minimum window size around TSS containing nearest loop-edge in K562 cell-line\nCombined histogram') +
-  xlab('Window size') +
-  ylab('#genes') +
+  xlab('Loop-window') +
+  ylab('Number of genes') +
   theme_bw()

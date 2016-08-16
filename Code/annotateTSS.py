@@ -57,7 +57,7 @@ def aggregateAffinity(old,new,factor):
 	return old
 
 
-def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay):
+def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling):
 	geneAffinities={}
 	tfpa=readTFPA(filename)
 	for geneID in tss:
@@ -97,26 +97,30 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 							s = tfpa[loci]
 							middles=s[0].split(":")[1].split("-")
 							middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
-							if(not tupel[1]):
-								loopprops = looplookuptable[tupel[0]]
+							loopprops = looplookuptable[tupel[0]]
+							loopcount = loopprops[5] # extract observation count of loop
+							if(not tupel[1]):	# check if current loop-site is further away from the gene than other loop-site
 								distance = loopprops[3] - loopprops[2]
 								middle += distance
-							aff.append((middle, s))
+							aff.append((middle, s, loopcount))
 							
 						for region in regions[1]:	#walk through right side of loop
 							loci = tss[geneID][0]+":"+str(region[0])+"-"+str(region[1])
 							s = tfpa[loci]
 							middles=s[0].split(":")[1].split("-")
 							middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
-							if(tupel[1]):
-								loopprops = looplookuptable[tupel[0]]
+							loopprops = looplookuptable[tupel[0]]
+							loopcount = loopprops[5] # extract observation count of loop
+							if(tupel[1]):	# check if current loop-site is further away from the gene than other loop-site
 								distance = loopprops[3] - loopprops[2]
 								middle -= distance
-							aff.append((middle, s))
+							aff.append((middle, s, loopcount))
 						
 						for afftupel in aff:
 							if (loopdecay):
 								factor=math.exp(-(float(float(abs(startpos-afftupel[0]))/5000.0)))
+								if loopcountscaling:
+									factor = factor * aff[2]
 								if (geneAffinities.has_key(geneID)):
 									geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],afftupel[1][1:],factor)
 								else:
@@ -125,10 +129,16 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 										numbers[i]=float(factor)*float(numbers[i])
 									geneAffinities[geneID]=numbers				
 							else:
+								factor = 1.0
+								if loopcountscaling:
+									factor = factor * aff[2]
 								if (geneAffinities.has_key(geneID)):
-									geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],afftupel[1][1:],1.0)
+									geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],afftupel[1][1:],factor)
 								else:
-									geneAffinities[geneID]=afftupel[1][1:]
+									numbers=afftupel[1][1:]
+									for i in xrange(0,len(numbers)-1):
+										numbers[i]=float(factor)*float(numbers[i])
+									geneAffinities[geneID]=numbers	
 	
 	return geneAffinities
 
@@ -315,8 +325,10 @@ def main():
 	parser.add_argument("--resolution",nargs="?",help="Defines the Hi-C resolution of the loops which should be considered. Uses the smallest one found if the a resolution is not available in the loopfile.",default=5000)
 	parser.add_argument("--usemiddle",nargs="?",help="Defines whether to use the middle of a loop to decide if a loop lies withing a window or the edges.",default="False")
 	parser.add_argument("--loopdecay",nargs="?",help="True if exponential decay should be used for oc regions in loops, False otherwise. Default is False",default="False")
+	parser.add_argument("--loopcountscaling",nargs="?",help="True if OpenChromatin regions inside Loop-regions should be scaled with the loopcount given by the Hi-C matrix, False otherwise. Default is False",default="False")
 	args=parser.parse_args() 
 
+	# Check arguments
 	prefixs=args.affinity[0].split(".")
 	prefix=prefixs[0]
 	if (args.geneViewAffinity==""):
@@ -327,15 +339,19 @@ def main():
 	else:
 		decay=True
 	
-	if (args.loopdecay.upper()=="FALSE") or (args.decay=="0"):
+	if (args.loopdecay.upper()=="FALSE") or (args.loopdecay=="0"):
 		loopdecay=False
 	else:
 		loopdecay=True
+	
+	if (args.loopcountscaling.upper()=="FALSE") or (args.loopcountscaling=="0"):
+		loopcountscaling=False
+	else:
+		loopcountscaling=True
 		
 	now = datetime.datetime.now()
 	print 'Start time: ' + now.strftime("%Y-%m-%d-%H-%M-%S")
 	
-	# Check arguments
 	
 	# Extract TSS of GTF files
 	tss=readGTF(args.gtf[0])
@@ -359,6 +375,7 @@ def main():
 		else:
 			usemiddle = False
 		loopsactivated = True
+		loopcountscaling = True
 		
 		loops = utils.readIntraLoops(args.loopfile)
 
@@ -431,7 +448,7 @@ def main():
 						openChromatinInGenes[gene]=[loci]
 	
 	# Extract bound transcription factors
-	affinities=extractTF_Affinity(openChromatinInGenes,args.affinity[0],tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay)
+	affinities=extractTF_Affinity(openChromatinInGenes,args.affinity[0],tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling)
 	
 	if (decay):
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss)	
@@ -440,7 +457,7 @@ def main():
 
 	scaledAffinities={}
 	if (args.signalScale != ""):
-		scaledAffinities=extractTF_Affinity(openChromatinInGenes,args.signalScale,tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay)
+		scaledAffinities=extractTF_Affinity(openChromatinInGenes,args.signalScale,tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling)
 		if (decay):
 			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss)
 		else:

@@ -40,3 +40,4 @@
 # Project specific output files
 Code/*.txt
 tools/*.txt
+build/*

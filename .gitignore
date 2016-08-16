@@ -38,5 +38,5 @@
 *.pyc
 
 # Project specific output files
-Code/*ResolutionPerWindowToSize.txt
-Code/*kb.txt
+Code/*.txt
+tools/*.txt

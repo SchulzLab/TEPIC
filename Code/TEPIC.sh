@@ -8,7 +8,9 @@ Optional parameters:\n
 [-n column in the -b file containg the average per base signal within a peak. If this option is used, the -d option must not be used.]\n
 [-w size of the window to be considered to generate gene view (default 50000bp)]\n
 [-e flag to be set if exponential decay should not be used]\n
-[-l input Hi-C loopfile]"
+[-l input Hi-C loopfile]\n
+[-s sparse matrix representation]"
+
 
 #Initialising parameters
 genome=""
@@ -22,9 +24,10 @@ annotation=""
 window=50000
 decay="TRUE"
 hicloops=""	# will be a normal fasta later on, TODO: integrate HiCCUPS pipeline
+sparsity=0
 
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:e:lh" o;
+while getopts "g:b:o:c:p:d:n:a:w:e:l:sh" o;
 do
                     case $o in
                     g)                  genome=$OPTARG;;
@@ -38,8 +41,9 @@ do
                     w)                  window=$OPTARG;;
                     e)                  decay="FALSE";;
                     l)                  hicloops=$OPTARG;;
+                    s)					sparsity=$OPTARG;;
 					h)					echo -e $help
-										exit1;;
+										exit 1;;
                     [?])                echo -e $help
                                         exit 1;;
                     esac
@@ -143,6 +147,8 @@ if [ -n "$annotation" ];
 then
 echo "window	"$window >> $metadatafile
 echo "decay	"$decay >> $metadatafile
+echo "Hi-C file "$hicloops >> $metadatafile
+echo "sparsity	"$sparsity >> $metadatafile
 fi
 echo "" >> $metadatafile
 echo "[Metrics]" >> $metadatafile
@@ -153,7 +159,7 @@ echo "Number of considered pwms	"$numMat >> $metadatafile
 
 
 echo "Preprocessing region file"
-python removeInvalidRegions.py $regions
+python removeInvalidGenomicPositions.py $regions
 sort -s -V -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions.bed > ${filteredRegions}_sorted.bed
 rm ${filteredRegions}_Filtered_Regions.bed
 echo "Runnig bedtools"
@@ -200,9 +206,9 @@ then
 	echo "Generating gene scores"
 	if [ -n "$dnase" ] ||  [ -n "$column" ];
 	then
-		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--loopfile" $hicloops "--loopwindows" 50000 "--resolution" 5000
+		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--loopfile" $hicloops "--loopwindows" 50000 "--resolution" 5000 "--sparseRep" $sparsity
 	else
-		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--loopfile" $hicloops "--loopwindows" 50000 "--resolution" 5000
+		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--loopfile" $hicloops "--loopwindows" 50000 "--resolution" 5000 "--sparseRep" $sparsity
 	fi
 
 	#Creating files containing only genes for which TF predictions are available
@@ -226,7 +232,6 @@ then
 		python filterGeneView.py ${prefix}_Affinity_Gene_View.txt
 		rm ${prefix}_Affinity_Gene_View.txt
 	fi
-
 fi
 
 

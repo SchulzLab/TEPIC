@@ -9,17 +9,23 @@ def main():
 	affinities=open(args.affinity[0],"r")
 	print("\t"+affinities.readline().strip())
 	scales=open(args.signalScales[0],"r")
-	for sl in scales:
-		if (len(sl.split())!=1):
-			factor=float(sl.split()[3])
-		else:
-			factor=float(sl.split()[0])
-		al=affinities.readline()
+	for al in affinities:
 		als=al.split()
-		newstring=str(als[0])
-		for i in xrange(1,len(als)):
-			newstring+="\t"+str(float(als[i])*factor)
-		print newstring	
+		while(True):
+			sl=scales.readline()
+			s=sl.split()
+			if ("#" not in sl):
+				factor=float(s[3])
+				pos=str(s[0])+":"+str(s[1])+"-"+str(s[2])
+			else:
+				pos="NA"
+			if(pos == str(als[0])):
+				newstring=str(als[0])
+				for i in xrange(1,len(als)):
+					newstring+="\t"+str(float(als[i])*factor)
+				print newstring	
+				break;
+
 
 	affinities.close()
 	scales.close()

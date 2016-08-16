@@ -170,6 +170,26 @@ def createAffinityFile(affinities,tfNames,filename,tss):
 	output.close()
 
 
+def createSparseFile(affinities,tfNames,filename,tss,number):
+	if (len(tfNames) < number):
+		number=len(tfNames)
+		print("Warning: The value of sparseRep is to large, representation will contain all possible TFs")
+	output=open(filename,"w")
+	header="geneID\tTF\tAffinity\n"
+	output.write(header)
+	for Gene in tss.keys():
+		tfList=[]
+		if (affinities.has_key(Gene)):
+			geneID=str(Gene.replace("\"","").replace(";","").split(".")[0])
+			temp=affinities[Gene]
+			for i in xrange(0,len(tfNames)):
+				tfList=tfList+[((tfNames[i],float(temp[i])))]
+			tfList.sort(key=lambda tup:tup[1],reverse=True)
+			for i in xrange(0,number):	
+				output.write(str(geneID)+"\t"+str(tfList[i][0])+"\t"+str(tfList[i][1])+"\n")
+	output.close()
+
+
 def makeTupels(values,names):
 	l=[]
 	for i in xrange(0,len(values)-1):
@@ -326,6 +346,7 @@ def main():
 	parser.add_argument("--usemiddle",nargs="?",help="Defines whether to use the middle of a loop to decide if a loop lies withing a window or the edges.",default="False")
 	parser.add_argument("--loopdecay",nargs="?",help="True if exponential decay should be used for oc regions in loops, False otherwise. Default is False",default="False")
 	parser.add_argument("--loopcountscaling",nargs="?",help="True if OpenChromatin regions inside Loop-regions should be scaled with the loopcount given by the Hi-C matrix, False otherwise. Default is False",default="False")
+	parser.add_argument("--sparseRep",nargs="?",help="Number of top TFs that should be contained in the sparse representation",default=0,type=int)
 	args=parser.parse_args() 
 
 	# Check arguments
@@ -452,21 +473,31 @@ def main():
 	
 	if (decay):
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss)	
+		if (args.sparseRep != 0):
+			createSparseFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Sparse_Affinity_Gene_View.txt"),tss,args.sparseRep)
 	else:
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity,tss)
+		if (args.sparseRep != 0):
+			createSparseFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Sparse_Affinity_Gene_View.txt"),tss,args.sparseRep)
+
 
 	scaledAffinities={}
 	if (args.signalScale != ""):
 		scaledAffinities=extractTF_Affinity(openChromatinInGenes,args.signalScale,tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling)
 		if (decay):
 			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss)
+			if (args.sparseRep != 0):
+				createSparseFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Sparse_Affinity_Gene_View.txt"),tss,args.sparseRep)
 		else:
-			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Scaled_Affinity_Gene_View.txt"),tss)
+			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Scaled_Affinity_Gene_View.txt"),tss)	
+			if (args.sparseRep != 0):
+				createSparseFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Sparse_Scaled_Affinity_Gene_View.txt"),tss,args.sparseRep)
 	
 	if(loopsactivated):
 		createGenesWithLoopsFile(geneloops, args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_GenesWithLoops.txt"))
 	
 	now = datetime.datetime.now()
-	print 'End time: ' + now.strftime("%Y-%m-%d-%H-%M-%S")
+	print 'Finished annotation: ' + now.strftime("%Y-%m-%d-%H-%M-%S")
+
 
 main()

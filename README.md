@@ -42,6 +42,14 @@ Each run of TEPIC generates an *analysis meta datafile (amd)* containing all par
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
 *MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
 
+
+##Required Software
+In order to run TEPIC on a linux system, the following software must be available:
+* R (minimum version 3.x.x)
+* Python (minimum version 2.7)
+* bedtools (Available at: <https://github.com/arq5x/bedtools2>)
+* The R package of TRAP (Available at: <http://trap.molgen.mpg.de/cgi-bin/download.cgi>)
+
 ##Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Example* folder. You can run it with the command
 

@@ -24,6 +24,8 @@ annotation=""
 window=50000
 decay="TRUE"
 hicloops=""	# will be a normal fasta later on, TODO: integrate HiCCUPS pipeline
+loopwindows=25000
+resolution=5000
 sparsity=0
 
 #Parsing command line
@@ -206,9 +208,20 @@ then
 	echo "Generating gene scores"
 	if [ -n "$dnase" ] ||  [ -n "$column" ];
 	then
-		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--loopfile" $hicloops "--loopwindows" 50000 "--resolution" 5000 "--sparseRep" $sparsity
+		if [ -n "$hicloops"];
+		then
+			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--loopfile" $hicloops "--loopwindows" $loopwindows "--resolution" $resolution "--sparseRep" $sparsity
+		else
+			echo "Configuration: Scaled affinites, no Hi-C data."
+			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity
+		fi
 	else
-		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--loopfile" $hicloops "--loopwindows" 50000 "--resolution" 5000 "--sparseRep" $sparsity
+		if [ -n "$hicloops"];
+		then
+			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--loopfile" $hicloops "--loopwindows" $loopwindows "--resolution" $resolution "--sparseRep" $sparsity
+		else
+			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--sparseRep" $sparsity
+		fi
 	fi
 
 	#Creating files containing only genes for which TF predictions are available

@@ -338,14 +338,14 @@ def main():
 	parser.add_argument("affinity",nargs=1,help="TRAP generated TF Affinity file")
 	parser.add_argument("--geneViewAffinity",nargs="?",help="Name of the gene view affinity files. If this is not specified, the prefix of the input files will be used.",default="")
 	parser.add_argument("--windows",nargs="?",help="Size of the considered window around the TSS. Default is 3000.",default=3000,type=int)
-	parser.add_argument("--decay",nargs="?",help="True if exponential decay should be used, False otherwise. Default is True",default="True")
-	parser.add_argument("--signalScale",nargs="?",help="If the name of the scaled affinity file is provied, a Gene view file is computed for those Affinity values.",default="")
-	parser.add_argument("--loopfile",nargs="?",help="If the name of the loop file is provied, all open chromatin regions will be intersected with loop regions around the TSS of each gene.",default="")
+	parser.add_argument("--decay",nargs="?",help="True if exponential decay should be used, False otherwise. Default is True.",default="True")
+	parser.add_argument("--signalScale",nargs="?",help="If the name of the scaled affinity file is provided, another GeneView is computed.",default="")
+	parser.add_argument("--loopfile",nargs="?",help="If the name of the loop file is provided, all open chromatin regions will be intersected with loop regions around the TSS of each gene.",default="")
 	parser.add_argument("--loopwindows",nargs="?",help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.",default=10000,type=int)
 	parser.add_argument("--resolution",nargs="?",help="Defines the Hi-C resolution of the loops which should be considered. Uses the smallest one found if the a resolution is not available in the loopfile.",default=5000)
 	parser.add_argument("--usemiddle",nargs="?",help="Defines whether to use the middle of a loop to decide if a loop lies withing a window or the edges.",default="False")
-	parser.add_argument("--loopdecay",nargs="?",help="True if exponential decay should be used for oc regions in loops, False otherwise. Default is False",default="False")
-	parser.add_argument("--loopcountscaling",nargs="?",help="True if OpenChromatin regions inside Loop-regions should be scaled with the loopcount given by the Hi-C matrix, False otherwise. Default is False",default="False")
+	parser.add_argument("--loopdecay",nargs="?",help="True if exponential decay should be used for oc regions in loops, False otherwise. Default is False.",default="False")
+	parser.add_argument("--loopcountscaling",nargs="?",help="True if OpenChromatin regions inside Loop-regions should be scaled with the loopcount given by the Hi-C matrix, False otherwise. Default is False.",default="False")
 	parser.add_argument("--sparseRep",nargs="?",help="Number of top TFs that should be contained in the sparse representation",default=0,type=int)
 	args=parser.parse_args() 
 
@@ -391,6 +391,7 @@ def main():
 	
 	# Extract loops of Hi-C loopfile
 	if(args.loopfile != ""):
+		print 'Running annotation in Hi-C mode'
 		if(args.usemiddle.upper() == "TRUE"):
 			usemiddle = True
 		else:
@@ -417,6 +418,8 @@ def main():
 		intersectResults = intersectRegions(oC, loops)
 		#oC = intersectResults[0]
 		loopOCregions = intersectResults
+	else:
+		print 'Running annotation in original mode'
 		
 	
 	# Determine gene windows in open chromatin regions

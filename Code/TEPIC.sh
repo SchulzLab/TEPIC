@@ -9,10 +9,14 @@ Optional parameters:\n
 [-w size of the window to be considered to generate gene view (default 50000bp)]\n
 [-e flag to be set if exponential decay should not be used]\n
 [-l input Hi-C loopfile]\n
-[-s sparse matrix representation]"
+[-v size of the window to be considered to search for Hi-C loops around a TSS (default 25000bp)]\n
+[-r defines the Hi-C resolution of the loops to use. Loops having the defined resolution should exist in the Hi-C file. r=All is also allowed, as it automatically searches for all available resolutions. (default 5000bp)]\n
+[-j flag to be set if exponential decay should not be used in loops]\n
+[-k flag to be set if scaling of open chromatin regions inside loop-sites using the loop-count value should be activated]\n
+[-s sparse matrix representation output]"
 
 
-#Initialising parameters
+#Initializing parameters
 genome=""
 regions=""
 prefixP=""
@@ -26,23 +30,30 @@ decay="TRUE"
 hicloops=""	# will be a normal fasta later on, TODO: integrate HiCCUPS pipeline
 loopwindows=25000
 resolution=5000
+loopdecay="TRUE"
+loopcountscaling="FALSE"
 sparsity=0
 
+
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:e:l:sh" o;
+while getopts "g:b:o:p:c:d:a:n:w:e:l:v:r:j:k:sh" o;
 do
                     case $o in
                     g)                  genome=$OPTARG;;
                     b)                  regions=$OPTARG;;
                     o)                  prefixP=$OPTARG;;
-                    c)                  cores=$OPTARG;;
                     p)                  pwms=$OPTARG;;
+                    c)                  cores=$OPTARG;;
                     d)                  dnase=$OPTARG;;
-                    n)                  column=$OPTARG;;
                     a)                  annotation=$OPTARG;;
+                    n)                  column=$OPTARG;;
                     w)                  window=$OPTARG;;
                     e)                  decay="FALSE";;
                     l)                  hicloops=$OPTARG;;
+                    v)					loopwindows=$OPTARG;;
+                    r)					resolution=$OPTARG;;
+                    j)					loopdecay="FALSE";;
+                    k)					loopcountscaling="TRUE";;
                     s)					sparsity=$OPTARG;;
 					h)					echo -e $help
 										exit 1;;
@@ -87,16 +98,64 @@ then
 	exit 1;
 fi
 
+re='^[0-9]+$'
+if ! [[ $cores =~ $re ]] ;
+then
+   echo "Error: Number of cores is not a number" >&2;
+   exit 1;
+fi
+
+if ! [[ $window =~ $re ]] ;
+then
+   echo "Error: Window size is not a number" >&2;
+   exit 1;
+fi
+
+if [ $window -gt 500000 ] ;
+then
+   echo "WARNING: We recommend to use a smaller value for the TSS-window. Proceeding anyway...";
+fi
+
+if ! [[ $loopwindows =~ $re ]] ;
+then
+   echo "Error: Loopwindow size is not a number" >&2;
+   exit 1;
+fi
+
+if [ $loopwindows -gt 500000 ] ;
+then
+   echo "WARNING: We recommend to use a smaller value for Loop-window. Proceeding anyway...";
+fi
+
+if ! [[ $resolution =~ $re ]] ;
+then
+	if [ "$x" == "valid" ];
+   echo "Error: Hi-C resolution is not a number" >&2;
+   exit 1;
+fi
+
+if ! [[ $sparsity =~ $re ]] ;
+then
+   echo "Error: Sparsity is not a number" >&2;
+   exit 1;
+fi
+
+
+#Building prefix
 d=$(date +%D)
 d=`echo $d | sed 's/\//\_/g'`
 t=$(date +%T | sed 's/:/_/g')
 
 prefix=$prefixP"_TEPIC_"${d}"_"${t}
 filteredRegions=`echo $regions | awk -F ".bed" '{print $1}'`
+
+
 #Generating name of the fasta file containing the overlapping regions
 openRegionSequences=${prefix}.OpenChromatin.fasta
 metadatafile=${prefix}.amd.tsv
-#Create metadata file
+
+
+#Creating metadata file
 touch $metadatafile
 echo "[Description]" >> $metadatafile
 echo "process	TEPICv1" >> $metadatafile
@@ -159,7 +218,7 @@ echo "Number of analysed regions	"$numReg >> $metadatafile
 numMat=`grep ">" $pwms | wc -l`
 echo "Number of considered pwms	"$numMat >> $metadatafile 
 
-
+#Preprocessing
 echo "Preprocessing region file"
 python removeInvalidGenomicPositions.py $regions
 sort -s -V -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions.bed > ${filteredRegions}_sorted.bed
@@ -173,11 +232,12 @@ echo "Converting invalid characters"
 #Remove R and Y from the sequence
 python convertInvalidCharacterstoN.py $openRegionSequences $prefixP-FilteredSequences.fa
 
+
 #Use TRAP to compute transcription factor affinities to the above extracted sequences
 affinity=${prefix}_Affinity.txt
-
 echo "Starting TRAP"
 R3script TRAP.R3script $prefixP-FilteredSequences.fa ${affinity}_temp $cores $pwms
+
 
 #Computing DNase Coverage in Peak regions
 if [ -n "$dnase" ];
@@ -202,6 +262,7 @@ then
 	rm ${prefix}_Scaled_Affinity_temp.txt
 fi
 
+
 #If an annotation file is provied, the gene view is generated
 if [ -n "$annotation" ]; 
 then
@@ -210,7 +271,7 @@ then
 	then
 		if [ -n "$hicloops"];
 		then
-			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--loopfile" $hicloops "--loopwindows" $loopwindows "--resolution" $resolution "--sparseRep" $sparsity
+			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--loopfile" $hicloops "--loopwindows" $loopwindows "--resolution" $resolution "--loopdecay" $loopdecay "--loopcountscaling" $loopcountscaling "--sparseRep" $sparsity
 		else
 			echo "Configuration: Scaled affinites, no Hi-C data."
 			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity
@@ -218,12 +279,13 @@ then
 	else
 		if [ -n "$hicloops"];
 		then
-			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--loopfile" $hicloops "--loopwindows" $loopwindows "--resolution" $resolution "--sparseRep" $sparsity
+			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--loopfile" $hicloops "--loopwindows" $loopwindows "--resolution" $resolution "--loopdecay" $loopdecay "--loopcountscaling" $loopcountscaling "--sparseRep" $sparsity
 		else
 			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--sparseRep" $sparsity
 		fi
 	fi
-
+	
+	
 	#Creating files containing only genes for which TF predictions are available
 	echo "Filter genes for which no information is available."
 	if [ "$decay" == "TRUE" ];

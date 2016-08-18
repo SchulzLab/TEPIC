@@ -95,30 +95,32 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 							if countersiteonly and tupel[1]:
 								break
 							loci = tss[geneID][0]+":"+str(region[0])+"-"+str(region[1])
-							s = tfpa[loci]
-							middles=s[0].split(":")[1].split("-")
-							middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
-							loopprops = looplookuptable[tupel[0]]
-							loopcount = loopprops[5] # extract observation count of loop
-							if(not tupel[1]):	# check if current loop-site is further away from the gene than other loop-site
-								distance = loopprops[3] - loopprops[2]
-								middle += distance
-							aff.append((middle, s, loopcount))
+							if (tfpa.has_key(loci)):
+								s = tfpa[loci]
+								middles=s[0].split(":")[1].split("-")
+								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
+								loopprops = looplookuptable[tupel[0]]
+								loopcount = loopprops[5] # extract observation count of loop
+								if(not tupel[1]):	# check if current loop-site is further away from the gene than other loop-site
+									distance = loopprops[3] - loopprops[2]
+									middle += distance
+								aff.append((middle, s, loopcount))
 							
 						for region in regions[1]:	#walk through right side of loop
 							if countersiteonly and not tupel[1]:
 								break
 							loci = tss[geneID][0]+":"+str(region[0])+"-"+str(region[1])
-							s = tfpa[loci]
-							middles=s[0].split(":")[1].split("-")
-							middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
-							loopprops = looplookuptable[tupel[0]]
-							loopcount = loopprops[5] # extract observation count of loop
-							if(tupel[1]):	# check if current loop-site is further away from the gene than other loop-site
-								distance = loopprops[3] - loopprops[2]
-								middle -= distance
-							aff.append((middle, s, loopcount))
-						
+							if (tfpa.has_key(loci)):
+								s = tfpa[loci]
+								middles=s[0].split(":")[1].split("-")
+								middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
+								loopprops = looplookuptable[tupel[0]]
+								loopcount = loopprops[5] # extract observation count of loop
+								if(tupel[1]):	# check if current loop-site is further away from the gene than other loop-site
+									distance = loopprops[3] - loopprops[2]
+									middle -= distance
+								aff.append((middle, s, loopcount))
+
 						for afftupel in aff:
 							if (loopdecay):
 								factor=math.exp(-(float(float(abs(startpos-afftupel[0]))/5000.0)))
@@ -345,7 +347,7 @@ def main():
 	parser.add_argument("--signalScale",nargs="?",help="If the name of a scaled affinity file is provided, a second GeneView file is computed.",default="")
 	parser.add_argument("--loopfile",nargs="?",help="If the name of the Hi-C loop file is provided, all open chromatin regions will be intersected with loop regions around the TSS of each gene.",default="")
 	parser.add_argument("--loopwindows",nargs="?",help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.",default=10000,type=int)
-	parser.add_argument("--resolution",nargs="?",help="Defines the Hi-C resolution of the loops which should be considered. Uses the smallest one found if the a resolution is not available in the loopfile.",default=5000)
+	parser.add_argument("--resolution",nargs="?",help="Defines the Hi-C resolution of the loops which should be considered.",default=5000)
 	parser.add_argument("--usemiddle",nargs="?",help="Defines whether to use the middle of a loop to decide if a loop lies withing a window or the edges.",default="False")
 	parser.add_argument("--loopdecay",nargs="?",help="Set True if exponential decay should be used for oc regions in loops, false otherwise. Default is False.",default="False")
 	parser.add_argument("--loopcountscaling",nargs="?",help="Set True if open chromatin regions inside loop-sites should be scaled with the loopcount given by the Hi-C loop-file, false otherwise. Default is False.",default="False")
@@ -359,30 +361,29 @@ def main():
 	if (args.geneViewAffinity==""):
 		args.geneViewAffinity=prefix+"_Affinity_Gene_View.txt"
 
-	if (args.decay.upper()=="FALSE") or (args.decay=="0"):
-		decay=False
-	else:
+	decay=False
+	if (args.decay.upper()=="TRUE") or (args.decay=="1"):
 		decay=True
-	
-	if (args.loopdecay.upper()=="FALSE") or (args.loopdecay=="0"):
-		loopdecay=False
-	else:
-		loopdecay=True
-	
-	if (args.loopcountscaling.upper()=="FALSE") or (args.loopcountscaling=="0"):
-		loopcountscaling=False
-	else:
-		loopcountscaling=True
 
-	if (args.countersiteonly.upper()=="FALSE") or (args.countersiteonly=="0"):
-		countersiteonly=False
-	else:
-		countersiteonly=True
-		
+	loopdecay=False
+	if (args.loopdecay.upper()=="TRUE") or (args.loopdecay=="1"):
+		loopdecay=True
+
+	loopcountscaling = False
+	if (args.loopcountscaling.upper()=="TRUE") or (args.loopcountscaling=="1"):
+		loopcountscaling = True
+
+	countersiteonly=False
+	if (args.countersiteonly.upper()=="TRUE") or (args.countersiteonly=="1"):
+		countersiteonly = True
+
+	usemiddle = False
+	if (args.usemiddle.upper()=="TRUE") or (args.usemiddle=="1"):
+		usemiddle = True
+
 	now = datetime.datetime.now()
 	print 'Start time: ' + now.strftime("%Y-%m-%d-%H-%M-%S")
-	
-	
+
 	# Extract TSS of GTF files
 	tss=readGTF(args.gtf[0])
 	# Load open chromatin positions from TF-Affinity file
@@ -401,10 +402,6 @@ def main():
 	# Extract loops of Hi-C loopfile
 	if(args.loopfile != ""):
 		print 'Running annotation in Hi-C mode'
-		if(args.usemiddle.upper() == "TRUE"):
-			usemiddle = True
-		else:
-			usemiddle = False
 		loopsactivated = True
 		
 		loops = utils.readIntraLoops(args.loopfile)
@@ -423,9 +420,7 @@ def main():
 		looplookuptable = utils.readIntraLoopsLookupTable(args.loopfile) # maybe use this later on
 		
 		# intersect openchromatin regions with all loopregions in TSS windows
-		intersectResults = intersectRegions(oC, loops)
-		#oC = intersectResults[0]
-		loopOCregions = intersectResults
+		loopOCregions = intersectRegions(oC, loops)
 	else:
 		print 'Running annotation in original mode'
 		

@@ -303,8 +303,8 @@ then
 			python filterGeneView.py ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
 			rm ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
 		fi
-			python filterGeneView.py ${prefix}_Decay_Affinity_Gene_View.txt
-			rm ${prefix}_Decay_Affinity_Gene_View.txt
+		python filterGeneView.py ${prefix}_Decay_Affinity_Gene_View.txt
+		rm ${prefix}_Decay_Affinity_Gene_View.txt
 		
 	else
 		if [ -n "$dnase" ] ||  [ -n "$column" ];

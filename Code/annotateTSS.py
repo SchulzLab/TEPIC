@@ -57,7 +57,7 @@ def aggregateAffinity(old,new,factor):
 	return old
 
 
-def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling):
+def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling,countersiteonly):
 	geneAffinities={}
 	tfpa=readTFPA(filename)
 	for geneID in tss:
@@ -91,8 +91,9 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 					if(loopOCregions.has_key(tupel[0])):
 						regions = loopOCregions[tupel[0]]
 						aff = []
-						
 						for region in regions[0]:	# walk through left side of loop
+							if countersiteonly and tupel[1]:
+								break
 							loci = tss[geneID][0]+":"+str(region[0])+"-"+str(region[1])
 							s = tfpa[loci]
 							middles=s[0].split(":")[1].split("-")
@@ -105,6 +106,8 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 							aff.append((middle, s, loopcount))
 							
 						for region in regions[1]:	#walk through right side of loop
+							if countersiteonly and not tupel[1]:
+								break
 							loci = tss[geneID][0]+":"+str(region[0])+"-"+str(region[1])
 							s = tfpa[loci]
 							middles=s[0].split(":")[1].split("-")
@@ -344,8 +347,9 @@ def main():
 	parser.add_argument("--loopwindows",nargs="?",help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.",default=10000,type=int)
 	parser.add_argument("--resolution",nargs="?",help="Defines the Hi-C resolution of the loops which should be considered. Uses the smallest one found if the a resolution is not available in the loopfile.",default=5000)
 	parser.add_argument("--usemiddle",nargs="?",help="Defines whether to use the middle of a loop to decide if a loop lies withing a window or the edges.",default="False")
-	parser.add_argument("--loopdecay",nargs="?",help="True if exponential decay should be used for oc regions in loops, false otherwise. Default is False.",default="False")
-	parser.add_argument("--loopcountscaling",nargs="?",help="True if open chromatin regions inside loop-sites should be scaled with the loopcount given by the Hi-C loop-file, false otherwise. Default is False.",default="False")
+	parser.add_argument("--loopdecay",nargs="?",help="Set True if exponential decay should be used for oc regions in loops, false otherwise. Default is False.",default="False")
+	parser.add_argument("--loopcountscaling",nargs="?",help="Set True if open chromatin regions inside loop-sites should be scaled with the loopcount given by the Hi-C loop-file, false otherwise. Default is False.",default="False")
+	parser.add_argument("--countersiteonly",nargs="?",help="Set True if only the counter loop-site should affect the scores. The loop-site lying near the TSS will be disabled. Default is false.",default="False")
 	parser.add_argument("--sparseRep",nargs="?",help="Number of top TFs that should be contained in the sparse representation",default=0,type=int)
 	args=parser.parse_args()
 
@@ -369,6 +373,11 @@ def main():
 		loopcountscaling=False
 	else:
 		loopcountscaling=True
+
+	if (args.countersiteonly.upper()=="FALSE") or (args.countersiteonly=="0"):
+		countersiteonly=False
+	else:
+		countersiteonly=True
 		
 	now = datetime.datetime.now()
 	print 'Start time: ' + now.strftime("%Y-%m-%d-%H-%M-%S")
@@ -381,7 +390,7 @@ def main():
 	# Create a TF name index
 	tfNames=tfIndex(args.affinity[0])
 	shift=int(args.windows/2)
-	
+	# Initialize variables
 	loopwindows = args.loopwindows
 	resolution = args.resolution
 	loopsactivated = False
@@ -397,7 +406,6 @@ def main():
 		else:
 			usemiddle = False
 		loopsactivated = True
-		loopcountscaling = True
 		
 		loops = utils.readIntraLoops(args.loopfile)
 
@@ -472,7 +480,7 @@ def main():
 						openChromatinInGenes[gene]=[loci]
 	
 	# Extract bound transcription factors
-	affinities=extractTF_Affinity(openChromatinInGenes,args.affinity[0],tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling)
+	affinities=extractTF_Affinity(openChromatinInGenes,args.affinity[0],tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling,countersiteonly)
 	
 	if (decay):
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss)	
@@ -486,7 +494,7 @@ def main():
 
 	scaledAffinities={}
 	if (args.signalScale != ""):
-		scaledAffinities=extractTF_Affinity(openChromatinInGenes,args.signalScale,tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling)
+		scaledAffinities=extractTF_Affinity(openChromatinInGenes,args.signalScale,tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling,countersiteonly)
 		if (decay):
 			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss)
 			if (args.sparseRep != 0):

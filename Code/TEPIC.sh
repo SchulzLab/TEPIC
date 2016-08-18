@@ -13,6 +13,7 @@ Optional parameters:\n
 [-r defines the Hi-C resolution of the loops to use. Loops having the defined resolution should exist in the Hi-C file. r=All is also allowed, as it automatically searches for all available resolutions. (default 5000bp)]\n
 [-j flag to be set if exponential decay should not be used in loops]\n
 [-k flag to be set if scaling of open chromatin regions inside loop-sites using the loop-count value should be activated]\n
+[-x flag to be set if only the counter loop-site of the Hi-C loops should affect the scores. The loop-site lying near the TSS will be disabled.]\n
 [-s sparse matrix representation output]"
 
 
@@ -32,11 +33,12 @@ loopwindows=25000
 resolution=5000
 loopdecay="TRUE"
 loopcountscaling="FALSE"
+countersiteonly="FALSE"
 sparsity=0
 
 
 #Parsing command line
-while getopts "g:b:o:p:c:d:a:n:w:e:l:v:r:j:k:sh" o;
+while getopts "g:b:o:p:c:d:a:n:w:e:l:v:r:j:k:x:sh" o;
 do
                     case $o in
                     g)                  genome=$OPTARG;;
@@ -54,6 +56,7 @@ do
                     r)					resolution=$OPTARG;;
                     j)					loopdecay="FALSE";;
                     k)					loopcountscaling="TRUE";;
+                    x)                  countersiteonly="TRUE";;
                     s)					sparsity=$OPTARG;;
 					h)					echo -e $help
 										exit 1;;
@@ -209,6 +212,11 @@ then
 echo "window	"$window >> $metadatafile
 echo "decay	"$decay >> $metadatafile
 echo "Hi-C file "$hicloops >> $metadatafile
+echo "loopwindows   "$loopwindows >> $metadatafile
+echo "resolution   "$resolution >> $metadatafile
+echo "loopdecay   "$loopdecay >> $metadatafile
+echo "loopcountscaling   "$loopcountscaling >> $metadatafile
+echo "countersiteonly   "$countersiteonly >> $metadatafile
 echo "sparsity	"$sparsity >> $metadatafile
 fi
 echo "" >> $metadatafile
@@ -271,7 +279,7 @@ then
 	then
 		if [ -n "$hicloops"];
 		then
-			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--loopfile" $hicloops "--loopwindows" $loopwindows "--resolution" $resolution "--loopdecay" $loopdecay "--loopcountscaling" $loopcountscaling "--sparseRep" $sparsity
+			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--loopfile" $hicloops "--loopwindows" $loopwindows "--resolution" $resolution "--loopdecay" $loopdecay "--loopcountscaling" $loopcountscaling "--countersiteonly" $countersiteonly "--sparseRep" $sparsity
 		else
 			echo "Configuration: Scaled affinites, no Hi-C data."
 			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity
@@ -279,7 +287,7 @@ then
 	else
 		if [ -n "$hicloops"];
 		then
-			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--loopfile" $hicloops "--loopwindows" $loopwindows "--resolution" $resolution "--loopdecay" $loopdecay "--loopcountscaling" $loopcountscaling "--sparseRep" $sparsity
+			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--loopfile" $hicloops "--loopwindows" $loopwindows "--resolution" $resolution "--loopdecay" $loopdecay "--loopcountscaling" $loopcountscaling "--countersiteonly" $countersiteonly "--sparseRep" $sparsity
 		else
 			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--sparseRep" $sparsity
 		fi

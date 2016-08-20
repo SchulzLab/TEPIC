@@ -122,28 +122,19 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 								aff.append((middle, s, loopcount))
 
 						for afftupel in aff:
+							factor = 1.0
 							if (loopdecay):
 								factor=math.exp(-(float(float(abs(startpos-afftupel[0]))/5000.0)))
-								if loopcountscaling:
-									factor = factor * afftupel[2]
-								if (geneAffinities.has_key(geneID)):
-									geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],afftupel[1][1:],factor)
-								else:
-									numbers=afftupel[1][1:]
-									for i in xrange(0,len(numbers)-1):
-										numbers[i]=float(factor)*float(numbers[i])
-									geneAffinities[geneID]=numbers				
+							if loopcountscaling:
+								factor = factor * afftupel[2]
+							if (geneAffinities.has_key(geneID)):
+								geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],afftupel[1][1:],factor)
 							else:
-								factor = 1.0
-								if loopcountscaling:
-									factor = factor * afftupel[2]
-								if (geneAffinities.has_key(geneID)):
-									geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],afftupel[1][1:],factor)
-								else:
-									numbers=afftupel[1][1:]
-									for i in xrange(0,len(numbers)-1):
-										numbers[i]=float(factor)*float(numbers[i])
-									geneAffinities[geneID]=numbers	
+								numbers=afftupel[1][1:]
+								for i in xrange(0,len(numbers)-1):
+									numbers[i]=float(factor)*float(numbers[i])
+								geneAffinities[geneID]=numbers
+
 	
 	return geneAffinities
 

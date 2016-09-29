@@ -91,7 +91,8 @@ def main():
             intersections += 1
 
     print "Parsed " + str(loopcount) + " loops."
-    print str('%.1f' % round(float(intersections) / float(loopcount) * 100, 1)) + '% of all loops contain open chromatin regions.'
+    print "Found " + str(intersections) + " loops intersecting in both loop-sites with affinity regions."
+    print "That are " + str('%.1f' % round(float(intersections) / float(loopcount) * 100, 1)) + '%'
 
 
 main()

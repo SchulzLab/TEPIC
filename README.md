@@ -46,9 +46,13 @@ In order to run TEPIC on a linux system, the following software must be availabl
 * R (minimum version 3.3.1)
 * Python (minimum version 2.7)
 * [bedtools](https://github.com/arq5x/bedtools2)
-* The R package of [TRAP](http://trap.molgen.mpg.de/cgi-bin/download.cgi)
 * The R package [biostrings](http://bioconductor.org/packages/release/bioc/html/Biostrings.html)
 * The R package [evd](https://cran.rstudio.com/web/packages/evd/index.html)
+* The R package of [TRAP](http://trap.molgen.mpg.de/cgi-bin/download.cgi)
+
+To simplify installing the R packages the script 
+	Code/install_required_packages.sh
+can be used.
 
 ##Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Example* folder. You can run it with the command

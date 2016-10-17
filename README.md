@@ -51,7 +51,7 @@ In order to run TEPIC on a linux system, the following software must be availabl
 * The R package of [TRAP](http://trap.molgen.mpg.de/cgi-bin/download.cgi)
 
 To simplify installing the R packages the script 
-	Code/install_required_packages.sh
+	[Code/install_required_packages.sh](Code/install_required_packages.sh)
 can be used.
 
 ##Example

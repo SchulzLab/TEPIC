@@ -170,7 +170,7 @@ python convertInvalidCharacterstoN.py $openRegionSequences $prefixP-FilteredSequ
 affinity=${prefix}_Affinity.txt
 
 echo "Starting TRAP"
-R3script TRAP.R3script $prefixP-FilteredSequences.fa ${affinity}_temp $cores $pwms
+Rscript TRAP.Rscript $prefixP-FilteredSequences.fa ${affinity}_temp $cores $pwms
 
 #Computing DNase Coverage in Peak regions
 if [ -n "$dnase" ];

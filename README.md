@@ -37,18 +37,18 @@ Depending on the used arguments, TEPIC produces files containing:
 * A file holding all regions which were annotated.
 * A file containing the factors used to scale the original TF affinities.
 
-
 Each run of TEPIC generates an *analysis meta datafile (amd)* containing all parameters, files, and outputs associated with the last run of TEPIC.
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
 *MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
 
-
 ##Required Software
 In order to run TEPIC on a linux system, the following software must be available:
-* R (minimum version 3.x.x)
+* R (minimum version 3.3.1)
 * Python (minimum version 2.7)
-* bedtools (Available at: <https://github.com/arq5x/bedtools2>)
-* The R package of TRAP (Available at: <http://trap.molgen.mpg.de/cgi-bin/download.cgi>)
+* [bedtools](https://github.com/arq5x/bedtools2)
+* The R package of [TRAP](http://trap.molgen.mpg.de/cgi-bin/download.cgi)
+* The R package [biostrings](http://bioconductor.org/packages/release/bioc/html/Biostrings.html)
+* The R package [evd](https://cran.rstudio.com/web/packages/evd/index.html)
 
 ##Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Example* folder. You can run it with the command
@@ -59,9 +59,6 @@ This will generate gene scores for the genes contained in *example_annotation.gt
 exponential decay.
 
 
-
 > (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.
-
 > (2) ChIP-Seq of transcription factors predicts absolute and differential gene expression in embryonic stem cells, Ouyang Z, et al.,  PNAS, 2009.
-
 > (3) A general concept for consistent documentation of computational analyses, Ebert P, et al.,  Database, 2015.

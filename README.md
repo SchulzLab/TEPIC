@@ -60,5 +60,7 @@ exponential decay.
 
 
 > (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.
+
 > (2) ChIP-Seq of transcription factors predicts absolute and differential gene expression in embryonic stem cells, Ouyang Z, et al.,  PNAS, 2009.
+
 > (3) A general concept for consistent documentation of computational analyses, Ebert P, et al.,  Database, 2015.

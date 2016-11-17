@@ -46,7 +46,7 @@ Together with the provided process xml file, the executed command lines  can be 
 In order to run TEPIC on a linux system, the following software must be available:
 * Python (minimum version 2.7)
 * [bedtools](https://github.com/arq5x/bedtools2)
-* A g++ compiler.
+* A g++ compiler supporting openmp to use the parallel implementation of TRAP.
 
 To compile the C++ version of TRAP execute the script
 	[Code/compileTRAP.sh](Code/compileTRAP.sh).
@@ -62,7 +62,6 @@ exponential decay.
 ##Provided files
 We provide the gtf file used to produce the results presented in the TEPIC manuscript. Further, the position weight matrices used in the article are stored in the file
 	[Code/pwm_vertebrates_jaspar_uniprobe_original.txt](Code/pwm_vertebrates_jaspar_uniprobe_original.txt).
-
 An extended set of pwms is also available:
 	[Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt](Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt)
 

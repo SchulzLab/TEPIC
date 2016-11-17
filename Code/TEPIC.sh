@@ -7,6 +7,7 @@ Optional parameters:\n
 [-a gene annotation file, required to generate the gene view]\n
 [-n column in the -b file containg the average per base signal within a peak. If this option is used, the -d option must not be used.]\n
 [-w size of the window to be considered to generate gene view (default 50000bp)]\n
+[-f annotate only DNase peaks that are within a window specified by the -w option around all genes contained in the gene annotation file specified by this option]\n
 [-e flag to be set if exponential decay should not be used]\n
 [-s sparse matrix representation]"
 
@@ -24,7 +25,7 @@ decay="TRUE"
 sparsity=0
 
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:s:eh" o;
+while getopts "g:b:o:c:p:d:n:a:w:s:f:eh" o;
 do
                     case $o in
                     g)                  genome=$OPTARG;;
@@ -36,8 +37,10 @@ do
                     n)                  column=$OPTARG;;
                     a)                  annotation=$OPTARG;;
                     w)                  window=$OPTARG;;
-                    e)                  decay="FALSE";;
-	s)	sparsity=$OPTARG;;
+                   	s)					sparsity=$OPTARG;;
+					f)					filter=$OPTARG;;
+					e)                  decay="FALSE";;
+
 	h)	echo -e $help
 		exit1;;
                     [?])                echo -e $help
@@ -101,6 +104,7 @@ echo "analysis_id	"$prefix >> $metadatafile
 echo "" >> $metadatafile
 echo "[Inputs]" >> $metadatafile
 echo "region_file	"$regions >> $metadatafile
+echo "gene_filter_file "$filter >> $metadatafile
 echo "" >> $metadatafile
 echo "[References]" >> $metadatafile
 echo "genome_reference	"$genome >> $metadatafile
@@ -157,6 +161,16 @@ echo "Preprocessing region file"
 python removeInvalidGenomicPositions.py $regions
 sort -s -V -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions.bed > ${filteredRegions}_sorted.bed
 rm ${filteredRegions}_Filtered_Regions.bed
+
+if [ -n "$filter" ];
+then
+echo "Filter total peak set"
+python generateIntersectionWindows.py ${filter} ${window} > ${prefix}_gene_windows.temp 
+bedtools intersect -b ${prefix}_gene_windows.temp -a ${filteredRegions}_sorted.bed -u > ${filteredRegions}_temp.bed
+mv ${filteredRegions}_temp.bed ${filteredRegions}_sorted.bed
+rm ${prefix}_gene_windows.temp 
+fi
+
 echo "Runnig bedtools"
 #Run bedtools to get a fasta file containing the sequence data for predicted open chromatin regions contained in the bedfile
 bedtools getfasta -fi $genome -bed ${filteredRegions}_sorted.bed -fo $openRegionSequences
@@ -170,7 +184,7 @@ python convertInvalidCharacterstoN.py $openRegionSequences $prefixP-FilteredSequ
 affinity=${prefix}_Affinity.txt
 
 echo "Starting TRAP"
-Rscript TRAP.Rscript $prefixP-FilteredSequences.fa ${affinity}_temp $cores $pwms
+./TRAPmulti $pwms ${prefixP}-FilteredSequences.fa $cores > ${affinity}_temp 
 
 #Computing DNase Coverage in Peak regions
 if [ -n "$dnase" ];

@@ -21,12 +21,13 @@ The following parameters are required to run TEPIC:
 
 The optional parameters are:
 
-* -a Genome annotation file (gtf). All genes contained in this file will be annotated.
+* -a Genome annotation file (gtf). All genes contained in this file will be annotated. The file must have the original format provided by gencode. 
 * -w Size of the window around the TSS of genes.
 * -d Signal of the open chromatin assay in bg format. Used to compute the average per peak coverage within the regions specified in -b
 * -e Deactivates the exponential decay
 * -n Indicates that the file in -b contains the average signal in the peaks in the specified column. In this case the -d option is not required to obtain scaled TF affinities.
 * -c Number of cores used within TRAP.
+* -f A gtf file containing genes of interest. Only regions contained in the file specified by the -b option that are within the window specified by the -w option around these genes will be annotated.
 
 Depending on the used arguments, TEPIC produces files containing:
 
@@ -43,24 +44,27 @@ Together with the provided process xml file, the executed command lines  can be 
 
 ##Required Software
 In order to run TEPIC on a linux system, the following software must be available:
-* R (minimum version 3.3.1)
 * Python (minimum version 2.7)
 * [bedtools](https://github.com/arq5x/bedtools2)
-* The R package [biostrings](http://bioconductor.org/packages/release/bioc/html/Biostrings.html)
-* The R package [evd](https://cran.rstudio.com/web/packages/evd/index.html)
-* The R package of [TRAP](http://trap.molgen.mpg.de/cgi-bin/download.cgi)
+* A g++ compiler.
 
-To simplify installing the R packages the script 
-	[Code/install_required_packages.sh](Code/install_required_packages.sh)
-can be used.
+To compile the C++ version of TRAP execute the script
+	[Code/compileTRAP.sh](Code/compileTRAP.sh).
 
 ##Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Example* folder. You can run it with the command
 
-	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p pwm_vertebrates_jaspar_uniprobe_converted.txt -a ../Example/example_annotation.gtf -w 3000 -e
+	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p pwm_vertebrates_jaspar_uniprobe_original.txt -a ../Example/example_annotation.gtf -w 3000 -e
 
 This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.txt*, and without 
-exponential decay.
+exponential decay. 
+
+##Provided files
+We provide the gtf file used to produce the results presented in the TEPIC manuscript. Further, the position weight matrices used in the article are stored in the file
+	[Code/pwm_vertebrates_jaspar_uniprobe_original.txt](Code/pwm_vertebrates_jaspar_uniprobe_original.txt).
+
+An extended set of pwms is also available:
+	[Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt](Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt)
 
 
 > (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.

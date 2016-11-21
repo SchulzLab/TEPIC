@@ -354,7 +354,7 @@ def main():
 	parser.add_argument("--loopfile",nargs="?",help="If the name of the Hi-C loop file is provided, all open chromatin regions will be intersected with loop regions around the TSS of each gene. Activates the Hi-C mode.",default="")
 	parser.add_argument("--loopwindows",nargs="?",help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.",default=10000,type=int)
 	parser.add_argument("--resolution",nargs="?",help="Defines the Hi-C resolution of the loops which should be considered.",default=5000)
-	parser.add_argument("--usemiddle",nargs="?",help="Defines whether to use the middle of a loop to decide if a loop lies withing a window or the edges.",default="False")
+	parser.add_argument("--usemiddle",nargs="?",help="Defines whether to use the middle of a loop to decide if a loop lies within a window or the edges.",default="False")
 	parser.add_argument("--loopdecay",nargs="?",help="Set True if exponential decay should be used for oc regions in loops, false otherwise. Default is False.",default="False")
 	parser.add_argument("--loopcountscaling",nargs="?",help="Set True if open chromatin regions inside loop-sites should be scaled with the loopcount given by the Hi-C loop-file, false otherwise. Default is False.",default="False")
 	parser.add_argument("--countersiteonly",nargs="?",help="Set True if only the counter loop-site should affect the scores. The loop-site lying near the TSS will be disabled. Default is false.",default="False")

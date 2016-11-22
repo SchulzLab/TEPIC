@@ -14,6 +14,7 @@
 #include<string.h>
 #include<iomanip>
 #include<omp.h>
+
 using namespace std;
 
 const int A = 0;
@@ -186,7 +187,7 @@ int main(int argc, char *argv[]){
 	int firstrun = 1; //indicates first header
 	string bases; //complete sequence
 	string newbases; //sequence in each row of fasta file
-
+	
 	omp_set_num_threads(num_workers);
 	while(!fasta.eof()){ //GO THROUGH FASTA FILE
 		getline(fasta,newbases);

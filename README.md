@@ -14,7 +14,7 @@ To start TEPIC, run the script *TEPIC.sh*
 
 The following parameters are required to run TEPIC:
 
-* -g The reference genome.
+* -g The reference genome. This must be in RefSeq format (without "chr" prefix).
 * -b Regions the user want to be annotated.
 * -o Prefix of the output files.
 * -p File containing position weight matrices (PWMs) in Jaspar format.

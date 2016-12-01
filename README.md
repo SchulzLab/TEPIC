@@ -65,6 +65,11 @@ We provide the gtf file used to produce the results presented in the TEPIC manus
 An extended set of pwms is also available:
 	[Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt](Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt)
 
+##Citation
+*Combining transcription factor binding affinities with open-chromatin data for accurate gene expression prediction*
+Florian Schmidt; Nina Gasparoni; Gilles Gasparoni; Kathrin Gianmoena; Cristina Cadenas; Julia K. Polansky; Peter Ebert; Karl NordstrÃ¶m; Matthias Barann; Anupam Sinha; Sebastian FÃ¶ler; Jieyi Xiong; Azim Dehghani Amirabad; Fatemeh Behjati Ardakani; Barbara Hutter; Gideon Zipprich; Ãrbel Felder; JÃrgen Eils; Benedikt Brors; Wei Chen; Jan G. Hengstler; Alf Hamann; Thomas Lengauer; Philip Rosenstiel; JÃrn Walter; Marcel H. Schulz
+Nucleic Acids Research 2016;
+doi: 10.1093/nar/gkw1061
 
 > (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.
 

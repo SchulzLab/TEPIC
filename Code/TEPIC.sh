@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-help="Usage: ./TEPIC.sh [-g input fasta file] [-b bed file containing open chromatin regions] [-o prefix of outputfiles] [-p pwms] \n
+help="Usage: ./TEPIC.sh [-g input fasta file (in RefSeq format, without \"chr\" prefix] [-b bed file containing open chromatin regions] [-o prefix of outputfiles] [-p pwms] \n
 Optional parameters:\n
 [-c number of cores to use (default 1)]\n
 [-d bedgraph file containing open chromatin signal, e.g. DNase1-seq]\n

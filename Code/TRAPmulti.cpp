@@ -13,6 +13,7 @@
 #include<iostream>
 #include<string.h>
 #include<iomanip>
+#include<omp.h>
 
 using namespace std;
 
@@ -186,7 +187,8 @@ int main(int argc, char *argv[]){
 	int firstrun = 1; //indicates first header
 	string bases; //complete sequence
 	string newbases; //sequence in each row of fasta file
-	#pragma omp_set_num_threads(num_workers)
+	
+	omp_set_num_threads(num_workers);
 	while(!fasta.eof()){ //GO THROUGH FASTA FILE
 		getline(fasta,newbases);
 		if(newbases.substr(0,1) == "#"){ //

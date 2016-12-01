@@ -58,14 +58,14 @@ This will generate gene scores for the genes contained in *example_annotation.gt
 exponential decay. 
 
 ##Provided files
-We provide the gtf file used to produce the results presented in the TEPIC manuscript. Further, the position weight matrices used in the article are stored in the file
+The position weight matrices used in the article are stored in the file
 	[Code/pwm_vertebrates_jaspar_uniprobe_original.txt](Code/pwm_vertebrates_jaspar_uniprobe_original.txt).
 An extended set of pwms is also available:
 	[Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt](Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt)
 
 ##Citation
 *Combining transcription factor binding affinities with open-chromatin data for accurate gene expression prediction*
-Florian Schmidt; Nina Gasparoni; Gilles Gasparoni; Kathrin Gianmoena; Cristina Cadenas; Julia K. Polansky; Peter Ebert; Karl Nordstr&ouml;m; Matthias Barann; Anupam Sinha; Sebastian F√∂ler; Jieyi Xiong; Azim Dehghani Amirabad; Fatemeh Behjati Ardakani; Barbara Hutter; Gideon Zipprich;B&auml;rbel Felder; J&uuml;rgen Eils; Benedikt Brors; Wei Chen; Jan G. Hengstler; Alf Hamann; Thomas Lengauer; Philip Rosenstiel; J&ouml;rn Walter; Marcel H. Schulz
+Florian Schmidt; Nina Gasparoni; Gilles Gasparoni; Kathrin Gianmoena; Cristina Cadenas; Julia K. Polansky; Peter Ebert; Karl Nordstr&ouml;m; Matthias Barann; Anupam Sinha; Sebastian Fr√hler; Jieyi Xiong; Azim Dehghani Amirabad; Fatemeh Behjati Ardakani; Barbara Hutter; Gideon Zipprich; B&auml;rbel Felder; J&uuml;rgen Eils; Benedikt Brors; Wei Chen; Jan G. Hengstler; Alf Hamann; Thomas Lengauer; Philip Rosenstiel; J&ouml;rn Walter; Marcel H. Schulz
 Nucleic Acids Research 2016;
 doi: 10.1093/nar/gkw1061
 

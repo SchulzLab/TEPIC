@@ -42,8 +42,6 @@ Each run of TEPIC generates an *analysis meta datafile (amd)* containing all par
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
 *MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
 
-##Required Software
-In order to run TEPIC on a linux system, the following software must be available:
 * Python (minimum version 2.7)
 * [bedtools](https://github.com/arq5x/bedtools2)
 * A g++ compiler supporting openmp to use the parallel implementation of TRAP.
@@ -67,7 +65,7 @@ An extended set of pwms is also available:
 
 ##Citation
 *Combining transcription factor binding affinities with open-chromatin data for accurate gene expression prediction*
-Florian Schmidt; Nina Gasparoni; Gilles Gasparoni; Kathrin Gianmoena; Cristina Cadenas; Julia K. Polansky; Peter Ebert; Karl Nordstr√∂m; Matthias Barann; Anupam Sinha; Sebastian F√∂ler; Jieyi Xiong; Azim Dehghani Amirabad; Fatemeh Behjati Ardakani; Barbara Hutter; Gideon Zipprich; √rbel Felder; J√rgen Eils; Benedikt Brors; Wei Chen; Jan G. Hengstler; Alf Hamann; Thomas Lengauer; Philip Rosenstiel; J√rn Walter; Marcel H. Schulz
+Florian Schmidt; Nina Gasparoni; Gilles Gasparoni; Kathrin Gianmoena; Cristina Cadenas; Julia K. Polansky; Peter Ebert; Karl Nordstr&ouml;m; Matthias Barann; Anupam Sinha; Sebastian F√∂ler; Jieyi Xiong; Azim Dehghani Amirabad; Fatemeh Behjati Ardakani; Barbara Hutter; Gideon Zipprich;B&auml;rbel Felder; J&uuml;rgen Eils; Benedikt Brors; Wei Chen; Jan G. Hengstler; Alf Hamann; Thomas Lengauer; Philip Rosenstiel; J&ouml;rn Walter; Marcel H. Schulz
 Nucleic Acids Research 2016;
 doi: 10.1093/nar/gkw1061
 

@@ -42,8 +42,6 @@ Each run of TEPIC generates an *analysis meta datafile (amd)* containing all par
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
 *MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
 
-##Required Software
-In order to run TEPIC on a linux system, the following software must be available:
 * Python (minimum version 2.7)
 * [bedtools](https://github.com/arq5x/bedtools2)
 * A g++ compiler supporting openmp to use the parallel implementation of TRAP.
@@ -60,12 +58,19 @@ This will generate gene scores for the genes contained in *example_annotation.gt
 exponential decay. 
 
 ##Provided files
-We provide the gtf file used to produce the results presented in the TEPIC manuscript. Further, the position weight matrices used in the article are stored in the file
+The position weight matrices used in the article are stored in the file
 	[Code/pwm_vertebrates_jaspar_uniprobe_original.txt](Code/pwm_vertebrates_jaspar_uniprobe_original.txt).
 An extended set of pwms is also available:
 	[Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt](Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt)
 
+##Citation
+If you are using TEPIC please cite:
 
+**Combining transcription factor binding affinities with open-chromatin data for accurate gene expression prediction**
+Florian Schmidt et al.
+Nucleic Acids Research 2016; doi: 10.1093/nar/gkw1061 [full text](http://nar.oxfordjournals.org/content/early/2016/11/29/nar.gkw1061.full) 
+
+Other works that have influenced ours:
 > (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.
 
 > (2) ChIP-Seq of transcription factors predicts absolute and differential gene expression in embryonic stem cells, Ouyang Z, et al.,  PNAS, 2009.

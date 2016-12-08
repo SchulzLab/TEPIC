@@ -67,8 +67,7 @@ An extended set of pwms is also available:
 If you are using TEPIC please cite:
 
 **Combining transcription factor binding affinities with open-chromatin data for accurate gene expression prediction**
-Florian Schmidt et al.
-Nucleic Acids Research 2016; doi: 10.1093/nar/gkw1061 [full text](http://nar.oxfordjournals.org/content/early/2016/11/29/nar.gkw1061.full) 
+Schmidt et al., Nucleic Acids Research 2016; doi: 10.1093/nar/gkw1061 [full text](http://nar.oxfordjournals.org/content/early/2016/11/29/nar.gkw1061.full) 
 
 Other works that have influenced ours:
 > (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.

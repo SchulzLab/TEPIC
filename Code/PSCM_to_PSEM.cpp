@@ -2,7 +2,7 @@
 //INSTITUTION: Max Planck Institute for Molecular Genetics - Berlin
 //DATE: 20/11/2006
 
-//takes a count matrix, adds pseudocounts and removes uninformative positions
+//takes a count matrix in TRANSFAC format, adds pseudocounts and removes uninformative positions
 //and then converts the modified count matrix into an energy matrix
 
 //Modified by Marcel Schulz and Florian Schmidt

@@ -23,6 +23,7 @@ annotation=""
 window=50000
 decay="TRUE"
 sparsity=0
+working_dir=$(cd $(dirname "$0") && pwd -P)/
 
 #Parsing command line
 while getopts "g:b:o:c:p:d:n:a:w:s:f:eh" o;
@@ -158,14 +159,14 @@ echo "Number of considered pwms	"$numMat >> $metadatafile
 
 
 echo "Preprocessing region file"
-python removeInvalidGenomicPositions.py $regions
+python ${working_dir}/removeInvalidGenomicPositions.py $regions
 sort -s -V -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions.bed > ${filteredRegions}_sorted.bed
 rm ${filteredRegions}_Filtered_Regions.bed
 
 if [ -n "$filter" ];
 then
 echo "Filter total peak set"
-python generateIntersectionWindows.py ${filter} ${window} > ${prefix}_gene_windows.temp 
+python ${working_dir}/generateIntersectionWindows.py ${filter} ${window} > ${prefix}_gene_windows.temp 
 bedtools intersect -b ${prefix}_gene_windows.temp -a ${filteredRegions}_sorted.bed -u > ${filteredRegions}_temp.bed
 mv ${filteredRegions}_temp.bed ${filteredRegions}_sorted.bed
 rm ${prefix}_gene_windows.temp 
@@ -178,34 +179,34 @@ bedtools getfasta -fi $genome -bed ${filteredRegions}_sorted.bed -fo $openRegion
 
 echo "Converting invalid characters"
 #Remove R and Y from the sequence
-python convertInvalidCharacterstoN.py $openRegionSequences $prefixP-FilteredSequences.fa
+python ${working_dir}/convertInvalidCharacterstoN.py $openRegionSequences $prefixP-FilteredSequences.fa
 
 #Use TRAP to compute transcription factor affinities to the above extracted sequences
 affinity=${prefix}_Affinity.txt
 
 echo "Starting TRAP"
-./TRAPmulti $pwms ${prefixP}-FilteredSequences.fa $cores > ${affinity}_temp 
+${working_dir}/TRAPmulti $pwms ${prefixP}-FilteredSequences.fa $cores > ${affinity}_temp 
 
 #Computing DNase Coverage in Peak regions
 if [ -n "$dnase" ];
 then 
 	sort -s -V -k1,1 -k2,2 -k3,3 $dnase > ${dnase}_sorted
-	python computeDNaseCoverage.py ${dnase}_sorted ${filteredRegions}_sorted.bed > ${prefix}_Peak_Coverage.txt
+	python ${working_dir}/computeDNaseCoverage.py ${dnase}_sorted ${filteredRegions}_sorted.bed > ${prefix}_Peak_Coverage.txt
 	rm ${dnase}_sorted
-	python scaleAffinity.py ${prefix}_Peak_Coverage.txt ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
+	python ${working_dir}/scaleAffinity.py ${prefix}_Peak_Coverage.txt ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
 fi
 
 if [ -n "${column}" ] ;
 then
 	cut -f ${column} ${filteredRegions}_sorted.bed > ${prefix}_NOMe_average.txt
-	python scaleAffinity.py ${prefix}_NOMe_average.txt ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
+	python ${working_dir}/scaleAffinity.py ${prefix}_NOMe_average.txt ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
 fi	
 
 echo "Filter regions that could not be annotated."
-python filterInvalidRegions.py ${affinity}_temp $affinity
+python ${working_dir}/filterInvalidRegions.py ${affinity}_temp $affinity
 if [ -n "$dnase" ] ||  [ -n "$column" ];
 then
-	python filterInvalidRegions.py ${prefix}_Scaled_Affinity_temp.txt ${prefix}_Scaled_Affinity.txt
+	python ${working_dir}/filterInvalidRegions.py ${prefix}_Scaled_Affinity_temp.txt ${prefix}_Scaled_Affinity.txt
 	rm ${prefix}_Scaled_Affinity_temp.txt
 fi
 
@@ -215,9 +216,9 @@ then
 	echo "Generating gene scores"
 	if [ -n "$dnase" ] ||  [ -n "$column" ];
 	then
-		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity
+		python ${working_dir}/annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity
 	else
-		python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--sparseRep" $sparsity
+		python ${working_dir}/annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--sparseRep" $sparsity
 	fi
 
 	#Creating files containing only genes for which TF predictions are available
@@ -226,19 +227,19 @@ then
 	then
 		if [ -n "$dnase" ] || [ -n "$column" ];
 		then
-			python filterGeneView.py ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
+			python ${working_dir}/filterGeneView.py ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
 			rm ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
 		fi
-			python filterGeneView.py ${prefix}_Decay_Affinity_Gene_View.txt
+			python ${working_dir}/filterGeneView.py ${prefix}_Decay_Affinity_Gene_View.txt
 			rm ${prefix}_Decay_Affinity_Gene_View.txt
 		
 	else
 		if [ -n "$dnase" ] ||  [ -n "$column" ];
 		then
-			python filterGeneView.py ${prefix}_Scaled_Affinity_Gene_View.txt
+			python ${working_dir}/filterGeneView.py ${prefix}_Scaled_Affinity_Gene_View.txt
 			rm ${prefix}_Scaled_Affinity_Gene_View.txt
 		fi
-		python filterGeneView.py ${prefix}_Affinity_Gene_View.txt
+		python ${working_dir}/filterGeneView.py ${prefix}_Affinity_Gene_View.txt
 		rm ${prefix}_Affinity_Gene_View.txt
 	fi
 fi

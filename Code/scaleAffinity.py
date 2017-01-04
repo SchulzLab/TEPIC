@@ -33,6 +33,9 @@ def scaling_sorted(args):
                 annreg = aln.strip().split()
                 scaled = [str(float(x) * factor) for x in annreg[1:]]
                 sys.stdout.write(annreg[0] + '\t' + '\t'.join(scaled) + '\n')
+            # assert that both files have the same number of lines
+            assert not affn.readline(), 'Iteration through affinity file not exhaustive'
+            assert not scales.readline(), 'Iteration through scaling file not exhaustive'
     return
 
 
@@ -93,8 +96,8 @@ def main():
     """
     """
     args = parse_commandline()
-    assert args.scalecol >= 0, 'Index for column containing scaling factor has to be >= 0; ' \
-                               'you specified {}'.format(args.scalecol)
+    assert args.scalecol > 0, 'Index for column containing scaling factor has to be >= 1; ' \
+                              'you specified {}'.format(args.scalecol)
     if args.issorted:
         scaling_sorted(args)
     else:

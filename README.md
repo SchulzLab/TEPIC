@@ -7,6 +7,25 @@ Annotation of genomic regions using Transcription factor (TF) binding sites and 
 These predictions are aggregated to gene scores. 
 Within this aggregation TEPIC offers exponential decay (2) and scaling of TF region scores using the signal of an open chromatin assay.
 
+##Installing TEPIC
+To run *TEPIC* the following packages/software must be installed:
+* Python (minimum version 2.7)
+* [bedtools](https://github.com/arq5x/bedtools2)
+* A g++ compiler supporting openmp to use the parallel implementation of TRAP.
+
+To compile the C++ version of TRAP execute the script
+	[Code/compileTRAP.sh](Code/compileTRAP.sh).
+
+##Position weight matrices
+The position weight matrices used in the *TEPIC* manuscript are stored in the file
+	[PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt](PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt).
+An extended set of pwms is also available:
+	[PWMs/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt](PWMs/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt)
+
+Additional position weight matrices can be transformed to a usable format using 
+	[Code/PSCM_to_PSEM.cpp] (Code/PSCM_to_PSEM.cpp).
+This program converts matrices in TRANSFAC format to the energy format used by TRAP.
+
 ##Using TEPIC
 To start TEPIC, run the script *TEPIC.sh*
 
@@ -17,7 +36,7 @@ The following parameters are required to run TEPIC:
 * -g The reference genome. This must be in RefSeq format (without "chr" prefix).
 * -b Regions the user want to be annotated.
 * -o Prefix of the output files.
-* -p File containing position weight matrices (PWMs) in Jaspar format.
+* -p File containing position weight matrices (PWMs).
 
 The optional parameters are:
 
@@ -42,26 +61,14 @@ Each run of TEPIC generates an *analysis meta datafile (amd)* containing all par
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
 *MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
 
-* Python (minimum version 2.7)
-* [bedtools](https://github.com/arq5x/bedtools2)
-* A g++ compiler supporting openmp to use the parallel implementation of TRAP.
-
-To compile the C++ version of TRAP execute the script
-	[Code/compileTRAP.sh](Code/compileTRAP.sh).
 
 ##Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Example* folder. You can run it with the command
 
-	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p pwm_vertebrates_jaspar_uniprobe_original.txt -a ../Example/example_annotation.gtf -w 3000 -e
+	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt -a ../Example/example_annotation.gtf -w 3000 -e
 
 This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.txt*, and without 
 exponential decay. 
-
-##Provided files
-The position weight matrices used in the article are stored in the file
-	[Code/pwm_vertebrates_jaspar_uniprobe_original.txt](Code/pwm_vertebrates_jaspar_uniprobe_original.txt).
-An extended set of pwms is also available:
-	[Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt](Code/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt)
 
 ##Citation
 If you are using TEPIC please cite:

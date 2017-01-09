@@ -39,3 +39,6 @@
 # Project specific output files
 Code/*ResolutionPerWindowToSize.txt
 Code/*kb.txt
+
+# PyCharm IDE .idea folder
+.idea/

@@ -130,8 +130,7 @@ then
 	echo "scaled_affinity_gene_view_filtered	"$prefix"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
 fi
 if [ -n "$column" ];
-then 
-	echo "signal_scaling_factors	"$prefix"_NOME_average.txt" >> $metadatafile
+then
 	echo "scaled affinity_peak_view	"$prefix"_Scaled_Affinity.txt" >> $metadatafile
 	echo "scaled_affinity_gene_view_filtered	"$prefix"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
 fi
@@ -142,7 +141,7 @@ echo "SampleID:	"$prefixP >> $metadatafile
 echo "cores	"$cores >> $metadatafile
 if [ -n "$column" ];
 then
-	echo "column	"$column >> $metadatafile
+	echo "scaling_factors_column	"$column >> $metadatafile
 fi
 if [ -n "$annotation" ];
 then
@@ -193,13 +192,12 @@ then
 	sort -s -V -k1,1 -k2,2 -k3,3 $dnase > ${dnase}_sorted
 	python ${working_dir}/computeDNaseCoverage.py ${dnase}_sorted ${filteredRegions}_sorted.bed > ${prefix}_Peak_Coverage.txt
 	rm ${dnase}_sorted
-	python ${working_dir}/scaleAffinity.py ${prefix}_Peak_Coverage.txt ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
+	python ${working_dir}/scaleAffinity.py --is-sorted -s ${prefix}_Peak_Coverage.txt -a ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
 fi
 
 if [ -n "${column}" ] ;
 then
-	cut -f ${column} ${filteredRegions}_sorted.bed > ${prefix}_NOMe_average.txt
-	python ${working_dir}/scaleAffinity.py ${prefix}_NOMe_average.txt ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
+	python ${working_dir}/scaleAffinity.py --is-sorted --scale-col ${column} -s ${filteredRegions}_sorted.bed -a ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
 fi	
 
 echo "Filter regions that could not be annotated."

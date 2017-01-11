@@ -52,14 +52,14 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 	tfpa.readline()
 	for l in tfpa:
 		s=l.split()
-		middles=s[0].split(":")[1].split("-")
-		middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
 		if (genesInOpenChromatin.has_key(s[0])):
 			for geneID in genesInOpenChromatin[s[0]]:
-				tss=genePositions[geneID][1]
-				factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
 				if(s[0] in openRegions):
+					tss=genePositions[geneID][1]
 					if (expDecay):
+						middles=s[0].split(":")[1].split("-")
+						middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
+						factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
 						if (geneAffinities.has_key(geneID)):
 							geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],factor)
 						else:

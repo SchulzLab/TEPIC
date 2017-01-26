@@ -9,7 +9,8 @@ Optional parameters:\n
 [-w size of the window to be considered to generate gene view (default 50000bp)]\n
 [-f annotate only DNase peaks that are within a window specified by the -w option around all genes contained in the gene annotation file specified by this option]\n
 [-e flag to be set if exponential decay should not be used]\n
-[-s sparse matrix representation]"
+[-s sparse matrix representation]
+[-y use the entire gene body to screen for TF binding. The search window is extended by a region half of the size that is specified by the -w option.]\n"
 
 #Initialising parameters
 genome=""
@@ -23,10 +24,11 @@ annotation=""
 window=50000
 decay="TRUE"
 sparsity=0
+geneBody="FALSE"
 working_dir=$(cd $(dirname "$0") && pwd -P)/
 
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:s:f:eh" o;
+while getopts "g:b:o:c:p:d:n:a:w:s:f:y:eh" o;
 do
                     case $o in
                     g)                  genome=$OPTARG;;
@@ -38,9 +40,10 @@ do
                     n)                  column=$OPTARG;;
                     a)                  annotation=$OPTARG;;
                     w)                  window=$OPTARG;;
-                   	s)					sparsity=$OPTARG;;
-					f)					filter=$OPTARG;;
-					e)                  decay="FALSE";;
+                   	s)				sparsity=$OPTARG;;
+				f)				filter=$OPTARG;;
+				y)				geneBody=$OPTARG;;
+				e)                  decay="FALSE";;
 
 	h)	echo -e $help
 		exit1;;
@@ -148,6 +151,7 @@ then
 echo "window	"$window >> $metadatafile
 echo "decay	"$decay >> $metadatafile
 echo "sparsity	"$sparsity >> $metadatafile
+echo "genebody "$geneBody >> $metadatafile
 fi
 echo "" >> $metadatafile
 echo "[Metrics]" >> $metadatafile
@@ -165,10 +169,10 @@ rm ${filteredRegions}_Filtered_Regions.bed
 if [ -n "$filter" ];
 then
 echo "Filter total peak set"
-python ${working_dir}/generateIntersectionWindows.py ${filter} ${window} > ${prefix}_gene_windows.temp 
+python ${working_dir}/generateIntersectionWindowsExtended.py ${filter} ${window} ${geneBody} > ${prefix}_gene_windows.temp 
 bedtools intersect -b ${prefix}_gene_windows.temp -a ${filteredRegions}_sorted.bed -u > ${filteredRegions}_temp.bed
 mv ${filteredRegions}_temp.bed ${filteredRegions}_sorted.bed
-rm ${prefix}_gene_windows.temp 
+#rm ${prefix}_gene_windows.temp 
 fi
 
 echo "Runnig bedtools"
@@ -214,9 +218,9 @@ then
 	echo "Generating gene scores"
 	if [ -n "$dnase" ] ||  [ -n "$column" ];
 	then
-		python ${working_dir}/annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity
+		python ${working_dir}/annotateTSSExtended.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity "--geneBody" ${geneBody}
 	else
-		python ${working_dir}/annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--sparseRep" $sparsity
+		python ${working_dir}/annotateTSSExtended.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--geneBody" $geneBody "--sparseRep" $sparsity "--geneBody" ${geneBody}
 	fi
 
 	#Creating files containing only genes for which TF predictions are available

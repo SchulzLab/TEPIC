@@ -169,7 +169,7 @@ rm ${filteredRegions}_Filtered_Regions.bed
 if [ -n "$filter" ];
 then
 echo "Filter total peak set"
-python ${working_dir}/generateIntersectionWindowsExtended.py ${filter} ${window} ${geneBody} > ${prefix}_gene_windows.temp 
+python ${working_dir}/generateIntersectionWindows.py ${filter} ${window} ${geneBody} > ${prefix}_gene_windows.temp 
 bedtools intersect -b ${prefix}_gene_windows.temp -a ${filteredRegions}_sorted.bed -u > ${filteredRegions}_temp.bed
 mv ${filteredRegions}_temp.bed ${filteredRegions}_sorted.bed
 #rm ${prefix}_gene_windows.temp 
@@ -218,9 +218,9 @@ then
 	echo "Generating gene scores"
 	if [ -n "$dnase" ] ||  [ -n "$column" ];
 	then
-		python ${working_dir}/annotateTSSExtended.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity "--geneBody" ${geneBody}
+		python ${working_dir}/annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity "--geneBody" ${geneBody}
 	else
-		python ${working_dir}/annotateTSSExtended.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--geneBody" $geneBody "--sparseRep" $sparsity "--geneBody" ${geneBody}
+		python ${working_dir}/annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--geneBody" $geneBody "--sparseRep" $sparsity "--geneBody" ${geneBody}
 	fi
 
 	#Creating files containing only genes for which TF predictions are available

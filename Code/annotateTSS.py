@@ -287,7 +287,7 @@ def main():
 
 	scaledAffinities={}
 	if (args.signalScale != ""):
-		scaledAffinities=extractTF_Affinity(usedRegions,genesInOpenChromatin,args.signalScale,tss,oC,decay)
+		scaledAffinities=extractTF_Affinity(usedRegions,genesInOpenChromatin,args.signalScale,tss,oC,decay,geneBody)
 		if (decay):
 			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss)
 			if (args.sparseRep != 0):

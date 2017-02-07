@@ -33,8 +33,8 @@ To start TEPIC, run the script *TEPIC.sh*
 
 The following parameters are required to run TEPIC:
 
-* -g The reference genome. This must be in RefSeq format (without "chr" prefix).
-* -b Regions the user want to be annotated.
+* -g The reference genome in plain (uncompressed) FASTA format with Ensembl-style chromosome names (i.e., without "chr" prefix).
+* -b Regions the user wants to be annotated; chromosome naming compatible to the reference genome file.
 * -o Prefix of the output files.
 * -p File containing position weight matrices (PWMs).
 
@@ -47,6 +47,7 @@ The optional parameters are:
 * -n Indicates that the file in -b contains the average signal in the peaks in the specified column. In this case the -d option is not required to obtain scaled TF affinities.
 * -c Number of cores used within TRAP.
 * -f A gtf file containing genes of interest. Only regions contained in the file specified by the -b option that are within the window specified by the -w option around these genes will be annotated.
+* -y Flag indicating whether the entire gene body should be annotated with TF affinities. A window of half the size of the -w option will be additionaly considered upstream of the genes TSS.
 
 Depending on the used arguments, TEPIC produces files containing:
 

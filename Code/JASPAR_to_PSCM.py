@@ -37,6 +37,7 @@ def main():
 			scores=[]
 		else:
 			scores+=l.split()
+	storePreviousFactor(PSCMFormat,scores)
 	PSCMFormat.close()
 	jasparFormat.close()
 

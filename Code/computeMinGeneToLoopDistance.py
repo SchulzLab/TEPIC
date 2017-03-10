@@ -56,7 +56,7 @@ def run(tss, intraLoops, usemiddle, resolution):
 	return geneToLoopDistances
 	
 
-def postProcessing(geneToLoopDistances, tss, intraLoops, usemiddle, resolution):
+def postProcessing(geneToLoopDistances, usemiddle, resolution):
 	header = 'geneID	distance	resolution'
 	
 	output = ''
@@ -91,14 +91,14 @@ def computeMinGeneToLoopDistance(annotationFile, loopsFile, resolution, usemiddl
 	print 'Using middle: ' + str(usemiddle)
 	results = run(tss, intraLoops, usemiddle, resolution)
 	
-	postProcessing(results, tss, intraLoops, usemiddle, resolution)
+	postProcessing(results, usemiddle, resolution)
 	
 	return 0
 
 
 ######
 ##
-##	Required arguments: 1) annotation File (.gtf), 2) loop file in Hi-C loop format
+##	Required arguments: 1) annotation File (.gtf), 2) loop file in Hi-C loop format 3) Hi-C resolution in bp
 ##
 ######
 

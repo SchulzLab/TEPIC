@@ -44,3 +44,4 @@ build/*
 
 # PyCharm IDE .idea folder
 .idea/
+cmake-build-debug/

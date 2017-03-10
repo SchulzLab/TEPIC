@@ -37,7 +37,7 @@ def readIntraLoops(loopsFile):
 	return loops
 
 # Reads a loop file and returns a dictionary containg all intrachromosomal loops accessable by an unique ID:
-# {key : value} -> {loopID : (loopID, start X, end X, start Y, end Y, observations count, resolution)}
+# {key : value} -> {loopID : (loopID, start X, end X, start Y, end Y, observations count, resolution, chromosome)}
 # we keep the loop format for consistent programming and accessing tupel fields
 def readIntraLoopsLookupTable(loopsFile):
 	lf = open(loopsFile, 'r')
@@ -45,15 +45,43 @@ def readIntraLoopsLookupTable(loopsFile):
 	
 	loopID = 0
 	for l in lf:
-		s=l.split()
-		if (len(s) >=8):
-			if(s[0] == s[3]): # check if loop is intra-chromosomal
+		s = l.split()
+		if len(s) >=8:
+			if s[0] == s[3]: # check if loop is intra-chromosomal
 				loopID += 1
 				resolution = int(s[2]) - int(s[1])
-				loops[loopID] = (loopID, int(s[1]), int(s[2]), int(s[4]), int(s[5]), int(s[7]), resolution)
+				loops[loopID] = (loopID, int(s[1]), int(s[2]), int(s[4]), int(s[5]), int(s[7]), resolution, s[0])
 	lf.close()
 	return loops
 
+
+def readEnhancer(enhancerFile):
+	ef = open(enhancerFile, 'r')
+	enhancer = {}
+
+	for l in ef:
+		s = l.split()
+		if len(s) >= 3:
+			s[0] = s[0].replace("chr", "")
+			if s[0] not in enhancer:
+				enhancer[s[0]] = []
+			enhancer[s[0]].append((int(s[1]), int(s[2])))
+	ef.close()
+	return enhancer
+
+
+def detectAllResolutions(loopsFile):
+	lf = open(loopsFile, 'r')
+	resolutions = set()
+	lf.readline()
+
+	for l in lf:
+		s = l.split()
+		if (len(s) >= 8):
+			resolution = int(s[2]) - int(s[1])
+			resolutions.add(resolution)
+	lf.close()
+	return resolutions
 
 # Reads a loop file and returns a dictionary containg all intrachromosomal loops per chromosome in a list:
 #TODO: define format	

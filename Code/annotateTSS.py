@@ -57,7 +57,7 @@ def aggregateAffinity(old,new,factor):
 	return old
 
 
-def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling,countersiteonly,doublefeatures):
+def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling,countersiteonly,doublefeatures,enhancer):
 	geneAffinities={}
 	loopAffinities={}
 	tfpa=readTFPA(filename)
@@ -86,15 +86,19 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 						else:
 							geneAffinities[geneID]=s[1:]
 		if(loopsactivated):
+			chrKey = tss[geneID][0]
 			if(geneloops.has_key(geneID)):
 				loops = geneloops[geneID]
 				for tupel in loops:
 					if(loopOCregions.has_key(tupel[0])):
+						left_side_closer = tupel[1]
 						regions = loopOCregions[tupel[0]]
 						aff = []
 						for region in regions[0]:	# walk through left side of loop
-							if countersiteonly and tupel[1]:
+							if countersiteonly and left_side_closer:
 								break
+							if not left_side_closer and not OCoverlapswithEnhancer(chrKey,region,enhancer):
+								continue
 							loci = tss[geneID][0]+":"+str(region[0])+"-"+str(region[1])
 							if (tfpa.has_key(loci)):
 								s = tfpa[loci]
@@ -108,8 +112,10 @@ def extractTF_Affinity(openChromatinInGenes,filename,tss,expDecay,loopsactivated
 								aff.append((middle, s, loopcount))
 							
 						for region in regions[1]:	#walk through right side of loop
-							if countersiteonly and not tupel[1]:
+							if countersiteonly and not left_side_closer:
 								break
+							if left_side_closer and not OCoverlapswithEnhancer(chrKey,region,enhancer):
+								continue
 							loci = tss[geneID][0]+":"+str(region[0])+"-"+str(region[1])
 							if (tfpa.has_key(loci)):
 								s = tfpa[loci]
@@ -215,6 +221,31 @@ def createGenesWithLoopsFile(geneLoops, filename):
 			body += geneID
 			body += '\n'
 	utils.writeToFile(filename, header, body)
+
+# Returns True if the given OC regions lies within an annotated enhancer region
+# In case of missing enhancer loadings, the methods returns True anyway.
+def OCoverlapswithEnhancer(chrKey, octupel, enhancer):
+	if not enhancer:
+		return True
+
+	if chrKey in enhancer:
+		for e in enhancer[chrKey]:
+			# open chromatin region in...
+			#	[  ----  ]
+			if (octupel[0] >= e[0] and octupel[1] <= e[1]):
+				return True
+			# --[------  ]
+			elif (octupel[0] <= e[0] and octupel[1] <= e[1] and octupel[1] >= e[0]):
+				return True
+			# 	[  ------]--
+			elif (octupel[0] >= e[0] and octupel[0] <= e[1] and octupel[1] >= e[1]):
+				return True
+			# --[--------]--
+			elif (octupel[0] < e[0] and octupel[1] > e[1]):
+				return True
+
+	return False
+
 	
 def intersectRegions(oc, loops):
 	looptable = {}
@@ -268,15 +299,16 @@ def intersectRegions(oc, loops):
 						
 	return looptable
 
-
 def filterLoops(loops, resolution):
 	for chrKey in loops:
 		chrLoops = loops[chrKey]
 		for loop in chrLoops:
 			if((loop[2]-loop[1]) != resolution):
 				chrLoops.remove(loop)
-	
-				
+
+# Find all loops belonging to a gene that are in the range of the given loopwindow around the TSS
+# Return dictionary: key: geneID, value: [(loopID, BOOLEAN)], the boolean value is True if the left side
+# of the loop is closer to the annotated tss, false if the right side is closer.
 def findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle):
 	geneLoops = {}
 	loopwindows = int(loopwindows/2)
@@ -360,6 +392,7 @@ def main():
 	parser.add_argument("--countersiteonly",nargs="?",help="Set True if only the counter loop-site should affect the scores. The loop-site lying near the TSS will be disabled. Default is false.",default="False")
 	parser.add_argument("--doublefeatures",nargs="?",help="Set True if the transcription factor feature space should be doubled in Hi-C mode. The Gene-TF-score will then be generated twice, once for the TSS associated TF score and once for the Hi-C loops. Default is false.",default="False")
 	parser.add_argument("--sparseRep",nargs="?",help="Number of top TFs that should be contained in the sparse representation",default=0,type=int)
+	parser.add_argument("--enhancerfile",nargs="?",help="Intersect Open Chromatin regions inside Hi-C loop regions with enhancer annotations. Only available in Hi-C mode.",default="")
 	args=parser.parse_args()
 
 	# Check arguments
@@ -409,6 +442,7 @@ def main():
 	loopOCregions = {}
 	geneloops = {}
 	looplookuptable = {}
+	enhancer = {}
 	
 	# Extract loops of Hi-C loopfile
 	if(args.loopfile != ""):
@@ -428,10 +462,15 @@ def main():
 			filterLoops(loops, resolution)
 
 		geneloops = findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle)
-		looplookuptable = utils.readIntraLoopsLookupTable(args.loopfile) # maybe use this later on
+		looplookuptable = utils.readIntraLoopsLookupTable(args.loopfile)
+
+		# Read enhancer annotations
+		if(args.enhancerfile != ""):
+			enhancer = utils.readEnhancer(args.enhancerfile)
 		
 		# intersect openchromatin regions with all loopregions in TSS windows
 		loopOCregions = intersectRegions(oC, loops)
+
 	else:
 		print 'Running annotation in original mode'
 		
@@ -486,7 +525,7 @@ def main():
 						openChromatinInGenes[gene]=[loci]
 	
 	# Extract bound transcription factors
-	affinities=extractTF_Affinity(openChromatinInGenes,args.affinity[0],tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling,countersiteonly,doublefeatures)
+	affinities=extractTF_Affinity(openChromatinInGenes,args.affinity[0],tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling,countersiteonly,doublefeatures,enhancer)
 	if (decay):
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss,loopsactivated,doublefeatures)
 		if (args.sparseRep != 0):
@@ -499,7 +538,7 @@ def main():
 
 	scaledAffinities={}
 	if (args.signalScale != ""):
-		scaledAffinities=extractTF_Affinity(openChromatinInGenes,args.signalScale,tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling,countersiteonly,doublefeatures)
+		scaledAffinities=extractTF_Affinity(openChromatinInGenes,args.signalScale,tss,decay,loopsactivated,loopOCregions,geneloops,looplookuptable,loopdecay,loopcountscaling,countersiteonly,doublefeatures,enhancer)
 		if (decay):
 			createAffinityFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss,loopsactivated,doublefeatures)
 			if (args.sparseRep != 0):

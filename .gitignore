@@ -41,3 +41,6 @@
 Code/*.txt
 tools/*.txt
 build/*
+
+# PyCharm IDE .idea folder
+.idea/

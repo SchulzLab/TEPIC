@@ -1,13 +1,13 @@
-#TEPIC
+# TEPIC
 ------
 Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data.
 
-##Introduction
+## Introduction
 *TEPIC* segments the genome into user specified regions and annotates those with TF binding using TRAP (1). 
 These predictions are aggregated to gene scores. 
 Within this aggregation TEPIC offers exponential decay (2) and scaling of TF region scores using the signal of an open chromatin assay.
 
-##Installing TEPIC
+## Installing TEPIC
 To run *TEPIC* the following packages/software must be installed:
 * Python (minimum version 2.7)
 * [bedtools](https://github.com/arq5x/bedtools2)
@@ -16,7 +16,7 @@ To run *TEPIC* the following packages/software must be installed:
 To compile the C++ version of TRAP execute the script
 	[Code/compileTRAP.sh](Code/compileTRAP.sh).
 
-##Position weight matrices
+## Position weight matrices
 The position weight matrices used in the *TEPIC* manuscript are stored in the file
 	[PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt](PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt).
 An extended set of pwms is also available:
@@ -26,7 +26,7 @@ Additional position weight matrices can be transformed to a usable format using
 	[Code/PSCM_to_PSEM.cpp] (Code/PSCM_to_PSEM.cpp).
 This program converts matrices in TRANSFAC format to the energy format used by TRAP.
 
-##Using TEPIC
+## Using TEPIC
 To start TEPIC, run the script *TEPIC.sh*
 
     ./TEPIC.sh
@@ -63,7 +63,7 @@ Together with the provided process xml file, the executed command lines  can be 
 *MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
 
 
-##Example
+## Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Example* folder. You can run it with the command
 
 	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt -a ../Example/example_annotation.gtf -w 3000 -e
@@ -71,7 +71,7 @@ To run a test trial of *TEPIC*, you can use the data provided in the *Example* f
 This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.txt*, and without 
 exponential decay. 
 
-##Citation
+## Citation
 If you are using TEPIC please cite:
 
 **Combining transcription factor binding affinities with open-chromatin data for accurate gene expression prediction**

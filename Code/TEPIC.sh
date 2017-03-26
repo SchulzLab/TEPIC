@@ -161,9 +161,10 @@ numMat=`grep ">" $pwms | wc -l`
 echo "Number of considered pwms	"$numMat >> $metadatafile 
 
 
-echo "Preprocessing region file"
-python ${working_dir}/removeInvalidGenomicPositions.py $regions
-sort -s -V -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions.bed > ${filteredRegions}_sorted.bed
+echo "Preprocessing region file: Removing chr prefix, sorting regions and removing duplicats"
+sed 's/chr//g' $regions >  ${filteredRegions}_Filtered_Regions.bed
+#python ${working_dir}/removeInvalidGenomicPositions.py $regions
+sort -s -V -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions.bed | uniq > ${filteredRegions}_sorted.bed
 rm ${filteredRegions}_Filtered_Regions.bed
 
 if [ -n "$filter" ];

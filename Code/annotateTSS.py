@@ -14,7 +14,7 @@ def readGTF(filename):
 	for l in gtf:
 		s=l.split()
 		if (len(s) >=9):
-			if (s[2]=="gene"):	
+			if ((s[2]=="gene") or (s[2]=="start_codon")):	
 				if (s[6]=="+"):
 					tss[s[9]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
 				else:
@@ -26,12 +26,15 @@ def readGTF(filename):
 #They are returned as a dictionary(key: #chromosom, item:[(start,end)])
 def readOC_Region(filename):
 	tfpa=open(filename,"r")
+	tfpa.readline()
 	oC={}
 	for l in tfpa:
 		s=l.split()[0]
 		ds=s.split(":")
 		if (len(ds)>=2):
 			se=ds[1].split("-")
+			print(ds)
+			print(se)
 			if (not oC.has_key(ds[0].replace("chr",""))):
 				oC[ds[0].replace("chr","")]=[(int(se[0]),int(se[1]))]			
 			else:

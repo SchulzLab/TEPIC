@@ -5,10 +5,10 @@ import os
 #This script converts PWMS in JASPAR format to PWMs in TRANSFAC format, such that they can be converted to the TRAP energy format
 #arg1 File containing the pwms in Jaspar format
 
-def createHeader(outfile,name):
+def createHeader(outfile,name,database):
 	outfile.write("//\n")
 	outfile.write("XX\n")
-	outfile.write("ID V$"+name+"\n")
+	outfile.write("ID "+database+"\t"+name+"\n")
 	outfile.write("XX\n")
 	outfile.write("P0\tA\tC\tG\tT\n")
 
@@ -32,8 +32,9 @@ def main():
 		if (">" in l):
 			if (scores!=[]):
 				storePreviousFactor(PSCMFormat,scores)
+			database=l.split()[0].replace(">","")
 			name=l.split()[1]
-			createHeader(PSCMFormat,name)
+			createHeader(PSCMFormat,name,database)
 			scores=[]
 		else:
 			scores+=l.split()

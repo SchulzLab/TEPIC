@@ -141,7 +141,7 @@ int main(int argc, char *argv[]){
 		if(word[0].substr(0,1) == ">"){ //new matrix reached
 			factors++;
 			motiflength[factors] = 0;
-			factornames[factors] = word[0].substr(2);//1
+			factornames[factors] = word[1];//word[0].substr(2);//1
 			for(int w = 0; w < i; w++){
 				if(word[w] == "lnR0:"){
 					lnR0[factors] = strtod(word[w + 1].c_str(),NULL);
@@ -170,7 +170,7 @@ int main(int argc, char *argv[]){
 	//READ FASTA FILE
 	//----------------------------------------------------------------
 	for(int i = 0; i <= factors; i++){
-		cout << "\t" << factornames[i].substr(1);
+		cout << "\t" << factornames[i];
 	}
 	cout << "\n";
 	ifstream fasta(argv[2]);

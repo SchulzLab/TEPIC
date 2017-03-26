@@ -19,12 +19,18 @@ To compile the C++ version of TRAP execute the script
 ## Position weight matrices
 The position weight matrices used in the *TEPIC* manuscript are stored in the file
 	[PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt](PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt).
-An extended set of pwms is also available:
-	[PWMs/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt](PWMs/pwm_vertebrates_jaspar_uniprobe_hoc_extended.txt)
+
+An extended set of pwms is also available for human, mouse, rat, drosophila melanogaster, and Caenorhabditis elegans.
+We collected motifes from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis Lab ENCODE Motif database* (6).
+* The human set contains 515 *JASPAR Vertebrata* matrices, 81 *Hocomoco human* matrices, and 130 matrices from the *Kellis Lab database*.
+* The mouse set contains 499 *JASPAR Vertebrata* matrices, 67 *Hocomoco mouse* matrices , and 121 matrcies from the *Kellis Lab database*.
+* The rat set contains 489 *JASPAR Vertebrata* matrices, 67 *Hocomoco mouse* matrices, and 121 matrices from the *Kellis Lab database*.
+* The drosophila melanogaster set contains 129 *JASPAR* matrices retrieved from *JASPAR Insecta*.
+* The Caenorhabditis elegans set contains 26 *JASPAR* matrices retrieved from *JASPAR Nematoda*.
 
 Additional position weight matrices can be transformed to a usable format using 
 	[Code/PSCM_to_PSEM.cpp] (Code/PSCM_to_PSEM.cpp).
-This program converts matrices in TRANSFAC format to the energy format used by TRAP.
+This program converts matrices in TRANSFAC format to the energy format used by TRAP. Details on the parameters used for conversion can be found in the header of the provided files.
 
 ## Using TEPIC
 To start TEPIC, run the script *TEPIC.sh*
@@ -83,3 +89,9 @@ Other works that have influenced ours:
 > (2) ChIP-Seq of transcription factors predicts absolute and differential gene expression in embryonic stem cells, Ouyang Z, et al.,  PNAS, 2009.
 
 > (3) A general concept for consistent documentation of computational analyses, Ebert P, et al.,  Database, 2015.
+
+> (4) JASPAR: an ope-access database for eukaryotic transcription factor binding profiles, Sanedlin A., et al., Nucleic Acids Research, 2004.
+ 
+> (5) HOCOMOCO: a comprehensive collection of human transcription factor binding sites models , Kulakovskiy Ivan V., et al., Nucleic Acids Research, 2013.
+
+> (6) Systematic discovery and characterization of regulatory motifs in ENCODE TF binding experiments, Kheradpour P, and Kellis M, Nucleic Acids Research, 2013.

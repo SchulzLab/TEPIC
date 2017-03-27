@@ -91,7 +91,7 @@ Other works that have influenced ours:
 
 > (3) A general concept for consistent documentation of computational analyses, Ebert P, et al.,  Database, 2015.
 
-> (4) JASPAR: an ope-access database for eukaryotic transcription factor binding profiles, Sanedlin A., et al., Nucleic Acids Research, 2004.
+> (4) JASPAR: an open-access database for eukaryotic transcription factor binding profiles, Sandelin A., et al., Nucleic Acids Research, 2004.
  
 > (5) HOCOMOCO: a comprehensive collection of human transcription factor binding sites models , Kulakovskiy Ivan V., et al., Nucleic Acids Research, 2013.
 

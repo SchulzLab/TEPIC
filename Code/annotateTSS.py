@@ -33,8 +33,6 @@ def readOC_Region(filename):
 		ds=s.split(":")
 		if (len(ds)>=2):
 			se=ds[1].split("-")
-			print(ds)
-			print(se)
 			if (not oC.has_key(ds[0].replace("chr",""))):
 				oC[ds[0].replace("chr","")]=[(int(se[0]),int(se[1]))]			
 			else:

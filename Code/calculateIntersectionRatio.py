@@ -9,9 +9,9 @@ def readOC_Region(filename):
     for l in tfpa:
         s = l.split()[0]
         ds = s.split(":")
-        if (len(ds) >= 2):
+        if len(ds) >= 2:
             se = ds[1].split("-")
-            if (not oC.has_key(ds[0].replace("chr", ""))):
+            if ds[0].replace("chr", "") not in oC:
                 oC[ds[0].replace("chr", "")] = [(int(se[0]), int(se[1]))]
             else:
                 oC[ds[0].replace("chr", "")] += [(int(se[0]), int(se[1]))]
@@ -23,49 +23,49 @@ def intersectRegions(oc, loops):
     looptable = {}
     for chrKey in oc:
         for octupel in oc[chrKey]:
-            if (loops.has_key(chrKey)):
+            if chrKey in loops:
                 chrLoops = loops[chrKey]
                 for loop in chrLoops:
                     # open chromatin region in...
-                    #	[  ----  ]
-                    if (octupel[0] >= loop[1] and octupel[1] <= loop[2]):
-                        if (not looptable.has_key(loop[0])):
+                    # [  ----  ]
+                    if octupel[0] >= loop[1] and octupel[1] <= loop[2]:
+                        if loop[0] not in looptable:
                             looptable[loop[0]] = ([], [])
                         looptable[loop[0]][0].append(octupel)
                     # --[------  ]
-                    elif (octupel[0] <= loop[1] and octupel[1] <= loop[2] and octupel[1] >= loop[1]):
-                        if (not looptable.has_key(loop[0])):
+                    elif octupel[0] <= loop[1] <= octupel[1] <= loop[2]:
+                        if loop[0] not in looptable:
                             looptable[loop[0]] = ([], [])
                         looptable[loop[0]][0].append(octupel)
                     # [  ------]--
-                    elif (octupel[0] >= loop[1] and octupel[0] <= loop[2] and octupel[1] >= loop[2]):
-                        if (not looptable.has_key(loop[0])):
+                    elif loop[1] <= octupel[0] <= loop[2] <= octupel[1]:
+                        if loop[0] not in looptable:
                             looptable[loop[0]] = ([], [])
                         looptable[loop[0]][0].append(octupel)
                     # --[--------]--
-                    elif (octupel[0] < loop[1] and octupel[1] > loop[2]):
-                        if (not looptable.has_key(loop[0])):
+                    elif octupel[0] < loop[1] and octupel[1] > loop[2]:
+                        if loop[0] not in looptable:
                             looptable[loop[0]] = ([], [])
                         looptable[loop[0]][0].append(octupel)
                     # same procedure for second, counterpart loop-site
-                    #	[  ----  ]
-                    elif (octupel[0] >= loop[3] and octupel[1] <= loop[4]):
-                        if (not looptable.has_key(loop[0])):
+                    # [  ----  ]
+                    elif octupel[0] >= loop[3] and octupel[1] <= loop[4]:
+                        if loop[0] not in looptable:
                             looptable[loop[0]] = ([], [])
                         looptable[loop[0]][1].append(octupel)
                     # --[------  ]
-                    elif (octupel[0] <= loop[3] and octupel[1] <= loop[4] and octupel[1] >= loop[3]):
-                        if (not looptable.has_key(loop[0])):
+                    elif octupel[0] <= loop[3] <= octupel[1] <= loop[4]:
+                        if loop[0] not in looptable:
                             looptable[loop[0]] = ([], [])
                         looptable[loop[0]][1].append(octupel)
                     # [  ------]--
-                    elif (octupel[0] >= loop[3] and octupel[0] <= loop[4] and octupel[1] >= loop[4]):
-                        if (not looptable.has_key(loop[0])):
+                    elif loop[3] <= octupel[0] <= loop[4] <= octupel[1]:
+                        if loop[0] not in looptable:
                             looptable[loop[0]] = ([], [])
                         looptable[loop[0]][1].append(octupel)
                     # --[--------]--
-                    elif (octupel[0] < loop[3] and octupel[1] > loop[4]):
-                        if (not looptable.has_key(loop[0])):
+                    elif octupel[0] < loop[3] and octupel[1] > loop[4]:
+                        if loop[0] not in looptable:
                             looptable[loop[0]] = ([], [])
                         looptable[loop[0]][1].append(octupel)
 
@@ -75,6 +75,7 @@ def intersectRegions(oc, loops):
 def main():
     parser = argparse.ArgumentParser(prog="calculateIntersectionRatio.py")
     parser.add_argument("affinity", nargs=1, help="TRAP generated TF Affinity file")
+    # noinspection PyPep8
     parser.add_argument("loopfile", nargs=1,
                         help="If the name of the Hi-C loop file is provided, all open chromatin regions will be intersected with loop regions around the TSS of each gene.")
     args = parser.parse_args()

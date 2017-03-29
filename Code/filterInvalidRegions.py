@@ -8,14 +8,14 @@ import sys
 
 def isValidAffinity(lineSplit):
     for i in xrange(1, len(lineSplit)):
-        if (str(lineSplit[i]) != "0.0"):
+        if str(lineSplit[i]) != "0.0":
             return True
     return False
 
 
 def isValidpValue(lineSplit):
     for i in xrange(1, len(lineSplit)):
-        if (str(lineSplit[i]) != "1"):
+        if str(lineSplit[i]) != "1":
             return True
     return False
 
@@ -28,12 +28,12 @@ def main():
     output.write(infile.readline())
     # Check individual lines
     for l in infile:
-        if (isValidAffinity(l.split())):
+        if isValidAffinity(l.split()):
             output.write(l)
     infile.close()
     output.close()
 
-    if (len(sys.argv) > 3):
+    if len(sys.argv) > 3:
         # Checking pValue
         infile = open(sys.argv[3], "r")
         output = open(sys.argv[4], "w")
@@ -41,7 +41,7 @@ def main():
         output.write(infile.readline())
         # Check individual lines
         for l in infile:
-            if (isValidpValue(l.split())):
+            if isValidpValue(l.split()):
                 output.write(l)
         infile.close()
         output.close()

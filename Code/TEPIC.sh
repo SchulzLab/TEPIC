@@ -5,7 +5,7 @@ Optional parameters:\n
 [-c number of cores to use (default 1)]\n
 [-d bedgraph file containing open chromatin signal, e.g. DNase1-seq]\n
 [-a gene annotation file, required to generate the gene view]\n
-[-n column in the -b file containg the average per base signal within a peak. If this option is used, the -d option must not be used.]\n
+[-n column in the -b file containing the average per base signal within a peak. If this option is used, the -d option must not be used.]\n
 [-w size of the window to be considered to generate gene view (default 50000bp)]\n
 [-e flag to be set if exponential decay should not be used]\n
 [-l input Hi-C loopfile]\n
@@ -244,7 +244,7 @@ python convertInvalidCharacterstoN.py $openRegionSequences $prefixP-FilteredSequ
 #Use TRAP to compute transcription factor affinities to the above extracted sequences
 affinity=${prefix}_Affinity.txt
 echo "Starting TRAP"
-R3script TRAP.R3script $prefixP-FilteredSequences.fa ${affinity}_temp $cores $pwms
+R3script TRAP.R $prefixP-FilteredSequences.fa ${affinity}_temp $cores $pwms
 
 
 #Computing DNase Coverage in Peak regions
@@ -271,7 +271,7 @@ then
 fi
 
 
-#If an annotation file is provied, the gene view is generated
+#If an annotation file is provided, the gene view is generated
 if [ -n "$annotation" ]; 
 then
 	echo "Generating gene scores"
@@ -281,7 +281,7 @@ then
 		then
 			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--loopfile" $hicloops "--loopwindows" $loopwindows "--resolution" $resolution "--loopdecay" $loopdecay "--loopcountscaling" $loopcountscaling "--countersiteonly" $countersiteonly "--sparseRep" $sparsity
 		else
-			echo "Configuration: Scaled affinites, no Hi-C data."
+			echo "Configuration: Scaled affinities, no Hi-C data."
 			python annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity
 		fi
 	else

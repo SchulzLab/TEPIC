@@ -5,7 +5,7 @@ import sys
 
 def isValidAffinity(lineSplit):
     for i in xrange(1, len(lineSplit)):
-        if (str(lineSplit[i]) != "0.0"):
+        if str(lineSplit[i]) != "0.0":
             return True
     return False
 
@@ -18,7 +18,7 @@ def main():
     output.write(infile.readline())
     # Check individual lines
     for l in infile:
-        if (isValidAffinity(l.split())):
+        if isValidAffinity(l.split()):
             output.write(l)
     infile.close()
     output.close()

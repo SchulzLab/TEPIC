@@ -4,14 +4,15 @@ import datetime
 import utils
 
 
-# Iterates over all genes and for each gene over all loops of its respective chromsome to find loops within a given radius of the TSS
+# Iterates over all genes and for each gene over all loops of its respective chromosome
+# to find loops within a given radius of the TSS
 # Returns:
 # 	all matched loops
-#		{key : value} -> {gene : [loopID]}
+# 		{key : value} -> {gene : [loopID]}
 # 	the loopset
-#		set of { loopID }
+# 		set of { loopID }
 # 	all loops per chromosome
-#		{key : value} -> {chr : set of {(loopID, start X, end X, start Y, end Y, observations count)}}
+# 		{key : value} -> {chr : set of {(loopID, start X, end X, start Y, end Y, observations count)}}
 def run(genes, loops, radius):
     matchedLoops = {}
     loopSet = set()
@@ -23,34 +24,27 @@ def run(genes, loops, radius):
         posRight = pos + radius
         posLeft = pos - radius
 
-        if not matchedLoops.has_key(geneKey):
+        if geneKey not in matchedLoops:
             matchedLoops[geneKey] = []
 
-        if not loopsPerChromosome.has_key(genes[geneKey][0]):
+        if genes[geneKey][0] not in loopsPerChromosome:
             loopsPerChromosome[genes[geneKey][0]] = set()
 
         for loop in chrLoops:
 
-            if (loop[1] >= posLeft and loop[1] <= posRight or loop[2] >= posLeft and loop[2] <= posRight):
+            if posLeft <= loop[1] <= posRight or posLeft <= loop[2] <= posRight:
 
                 matchedLoops[geneKey].append(loop[0])
                 loopSet.add(loop)
                 loopsPerChromosome[genes[geneKey][0]].add(loop)
 
             else:
-                if (loop[3] >= posLeft and loop[3] <= posRight or loop[4] >= posLeft and loop[4] <= posRight):
+                if posLeft <= loop[3] <= posRight or posLeft <= loop[4] <= posRight:
                     matchedLoops[geneKey].append(loop[0])
                     loopSet.add(loop)
                     loopsPerChromosome[genes[geneKey][0]].add(loop)
 
-    return (matchedLoops, loopSet, loopsPerChromosome)
-
-
-# Filters the 'X' top genes which have the most loops around their TSS	
-def filterTopXGenes(matchedLoops, loopSet, maxl):
-    # TODO: implement this
-    print 'not implemented'
-    return 0
+    return matchedLoops, loopSet, loopsPerChromosome
 
 
 # Aggregates various statistical properties from the results and writes it to file
@@ -81,7 +75,7 @@ def postProcessing(results, tss, intraLoops, radius):
 
     for chrKey in loopsPerChromosome:
         outputKey = chrKey
-        if not output.has_key(outputKey):
+        if outputKey not in output:
             output[outputKey] = 0
         output[outputKey] += len(loopsPerChromosome[chrKey])
 
@@ -90,7 +84,7 @@ def postProcessing(results, tss, intraLoops, radius):
         outstring += str(output[chrKey]) + '	'
         outstring += str(len(intraLoops[chrKey]) - output[chrKey]) + '	'
         outstring += str(len(intraLoops[chrKey])) + '	'
-        if (len(intraLoops[chrKey]) > 0):
+        if len(intraLoops[chrKey]) > 0:
             outstring += str(
                 '%.1f' % round(float(len(loopsPerChromosome[chrKey])) / float(len(intraLoops[chrKey])) * 100, 1))
         else:
@@ -130,18 +124,18 @@ def postProcessing(results, tss, intraLoops, radius):
 
 
 # Main entry point for algorithm, requires:
-#	an annotation-file
-# 	a loop-file
-# 	a radius in 1000 bases, which is >= 100	
+# 	an annotation-file
+#  	a loop-file
+# 	a radius in 1000 bases, which is >= 100
 def collectLoopsAtGenes(annotationFile, loopsFile, radius):
     print 'Indexing TSS'
     tss = utils.readGTF(annotationFile)
     print 'Indexing Loops'
     intraLoops = utils.readIntraLoops(loopsFile)
 
-    if (radius < 100):
+    if radius < 100:
         print 'Radius too small... please use greater values e.g. 100 and above.'
-        return 1;
+        return 1
 
     print 'Running core algorithm'
     results = run(tss, intraLoops, radius)
@@ -153,7 +147,8 @@ def collectLoopsAtGenes(annotationFile, loopsFile, radius):
 
 ######
 ##
-##	Required arguments: 1) annotation File (.gtf), 2) loop file in Hi-C loop format, 3) radius (window radius around TSS in thousand bases)
+# #	Required arguments: 1) annotation File (.gtf), 2) loop file in Hi-C loop format,
+# #  3) radius (window radius around TSS in thousand bases)
 ##
 ######
 

@@ -7,9 +7,9 @@ def filterInclusions(intraLoops, inclusions):
     for chrKey in inclusions:
         chrInclusions = inclusions[chrKey]
         for inclusion in chrInclusions:
-            if (inclusion[0][6] < inclusion[1][6]):
+            if inclusion[0][6] < inclusion[1][6]:
                 intraLoops[chrKey].remove(inclusion[1])
-            elif (inclusion[0][6] > inclusion[1][6]):
+            elif inclusion[0][6] > inclusion[1][6]:
                 intraLoops[chrKey].remove(inclusion[0])
     return
 
@@ -17,17 +17,17 @@ def filterInclusions(intraLoops, inclusions):
 def run(intraLoops):
     inclusions = {}
     for chrKey in intraLoops:
-        if (not inclusions.has_key(chrKey)):
+        if chrKey not in inclusions:
             inclusions[chrKey] = []
         chrLoops = intraLoops[chrKey]
         for loop in chrLoops:
             for otherloop in chrLoops:
-                if (loop[0] == otherloop[0]):  # same loop
+                if loop[0] == otherloop[0]:  # same loop
                     continue
-                if (loop[6] <= otherloop[6]):  # same resolution or lower
+                if loop[6] <= otherloop[6]:  # same resolution or lower
                     continue
-                if (loop[1] <= otherloop[1] and otherloop[2] <= loop[2] and loop[3] <= otherloop[3] and otherloop[4] <=
-                    loop[4]):
+                if loop[1] <= otherloop[1] and otherloop[2] <= loop[2] and loop[3] <= otherloop[3]\
+                        and otherloop[4] <= loop[4]:
                     inclusions[chrKey].append((loop, otherloop))
     return inclusions
 
@@ -38,7 +38,7 @@ def postProcessing(results):
 
     for chrKey in results:
         chrInclusions = results[chrKey]
-        if (len(chrInclusions) == 0):
+        if len(chrInclusions) == 0:
             output += 'No inclusions on Chr.' + str(chrKey) + ' found'
             output += '\n'
         else:
@@ -69,13 +69,14 @@ def detectLoopInclusions(loopsFile):
 
 ######
 ##
-##	Required arguments: 1) loop file in Hi-C loop format
-##
+# #	Required arguments: 1) loop file in Hi-C loop format
+# #
 ######
 def main():
     # preparation-routine
     parser = argparse.ArgumentParser(
-        description='Checks whether there are (Intrachromosomal) loops of different resolutions in a loop file, so that a loop of a lower resolution contains a loop with a higher resolution.')
+        description='Checks whether there are (Intrachromosomal) loops of different resolutions in a loop file,'
+                    'so that a loop of a lower resolution contains a loop with a higher resolution.')
     parser.add_argument('loops', help='Path to a loop file')
 
     args = parser.parse_args()

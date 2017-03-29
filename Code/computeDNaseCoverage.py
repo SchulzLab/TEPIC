@@ -3,17 +3,17 @@ import argparse
 
 def normalize(overlap, length):
     for element in overlap:
-        if (int(length[element]) != int(0)):
+        if int(length[element]) != int(0):
             overlap[element] = overlap[element] / length[element]
     return overlap
 
 
 def compareChr(dchr, cC):
     if (dchr != "X") and (cC != "X") and (dchr != "Y") and (cC != "Y"):
-        return (int(dchr) > int(cC))
-    elif ((dchr == "X") and ((cC != "X") and (cC != "Y"))):
+        return int(dchr) > int(cC)
+    elif (dchr == "X") and ((cC != "X") and (cC != "Y")):
         return True
-    elif ((dchr == "Y") and (cC != "Y")):
+    elif (dchr == "Y") and (cC != "Y"):
         return True
     else:
         return False
@@ -43,30 +43,29 @@ def main():
     regions.close()
 
     cI = int(0)
-    cC = str(overlap[0][0])
-    ld = dnase.readline()
+    dnase.readline()
     for ld in dnase:
-        if ("#" in ld):
+        if "#" in ld:
             continue
         s = ld.split()
         dchr = str(s[0].replace("chr", ""))
-        if (dchr in validChr):
+        if dchr in validChr:
             ds = int(s[1])
             de = int(s[2])
             cC = overlap[cI][0]
-            while (compareChr(dchr, cC)):
-                if (cI == len(overlap) - 1):
+            while compareChr(dchr, cC):
+                if cI == len(overlap) - 1:
                     break
                 cI += 1
                 cC = overlap[cI][0]
 
-            while (int(overlap[cI][1]) < ds) and (int(overlap[cI][2]) < de) and (ds > int(overlap[cI][2])) and (
-                dchr == cC):
-                if (cI == len(overlap) - 1):
+            while (int(overlap[cI][1]) < ds) and (int(overlap[cI][2]) < de) and (ds > int(overlap[cI][2]))\
+                    and (dchr == cC):
+                if cI == len(overlap) - 1:
                     break
                 cI += 1
                 cC = overlap[cI][0]
-            if (dchr == cC):
+            if dchr == cC:
                 if (ds < int(overlap[cI][1])) and (de <= int(overlap[cI][2])) and (de > int(overlap[cI][1])):
                     oD[overlap[cI]] += float(s[3]) * (float(de - int(overlap[cI][1])) / (de - ds))
                     length[overlap[cI]] += (de - int(overlap[cI][1]))

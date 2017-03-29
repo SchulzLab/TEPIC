@@ -14,9 +14,9 @@ def readIntraLoopsWithRes(loopsFile):
     loopID = 0
     for l in lf:
         s = l.split()
-        if (len(s) >= 8):
-            if (s[0] == s[3] and s[0] != 'X' and s[
-                0] != 'Y'):  # check if loop is intra-chromosomal and not on X or Y chromsome
+        if len(s) >= 8:
+            # check if loop is intra-chromosomal and not on X or Y chromosome
+            if s[0] == s[3] and s[0] != 'X' and s[0] != 'Y':
                 loopID += 1
                 resolution = int(s[2]) - int(s[1])
                 loops[s[0]].append((loopID, int(s[1]), int(s[2]), int(s[4]), int(s[5]), int(s[7]), resolution))
@@ -30,7 +30,7 @@ def run(genes, intraLoops, windows):
     for geneKey in genes:
         chrLoops = intraLoops[genes[geneKey][0]]
         pos = genes[geneKey][1]
-        if not matchedLoops.has_key(geneKey):
+        if geneKey not in matchedLoops:
             matchedLoops[geneKey] = {}
 
         for loop in chrLoops:
@@ -40,23 +40,23 @@ def run(genes, intraLoops, windows):
                 posRight = pos + window
                 posLeft = pos - window
 
-                if not matchedLoops[geneKey].has_key(window):
+                if window not in matchedLoops[geneKey]:
                     matchedLoops[geneKey][window] = {}
 
-                if not matchedLoops[geneKey][window].has_key(resolution):
+                if resolution not in matchedLoops[geneKey][window]:
                     matchedLoops[geneKey][window][resolution] = []
 
-                if (loop[1] >= posLeft and loop[1] <= posRight or loop[2] >= posLeft and loop[2] <= posRight):
+                if posLeft <= loop[1] <= posRight or posLeft <= loop[2] <= posRight:
                     matchedLoops[geneKey][window][resolution].append(loop)
 
                 else:
-                    if (loop[3] >= posLeft and loop[3] <= posRight or loop[4] >= posLeft and loop[4] <= posRight):
+                    if posLeft <= loop[3] <= posRight or posLeft <= loop[4] <= posRight:
                         matchedLoops[geneKey][window][resolution].append(loop)
 
-    return (matchedLoops)
+    return matchedLoops
 
 
-def postProcessing(results, tss, intraLoops):
+def postProcessing(results):
     header = 'window	count	resolution'
     output = ''
 
@@ -87,21 +87,22 @@ def collectResolutionsPerWindowToSize(annotationFile, loopsFile, windows):
 
     print 'Preprocessing'
     for window in windows:
-        if (window < 100):
+        if window < 100:
             print 'Window radius too small... please use greater values e.g. 100 and above.'
-            return 1;
+            return 1
 
     print 'Running core algorithm'
     results = run(tss, intraLoops, windows)
 
-    postProcessing(results, tss, intraLoops)
+    postProcessing(results)
 
     return 0
 
 
 ######
 ##
-##	Required arguments: 1) annotation File (.gtf), 2) loop file in Hi-C loop format, 3) a comma seperatated enumeration of window radii (window radii around TSS in thousand bases)
+# #	Required arguments: 1) annotation File (.gtf), 2) loop file in Hi-C loop format,
+# # 3) a comma separated enumeration of window radii (window radii around TSS in thousand bases)
 ##
 ######
 
@@ -113,9 +114,9 @@ parser.add_argument('loops', help='Path to a loop file')
 parser.add_argument('windows', type=str, help='A list of window radii around the genestart which should be scanned')
 
 args = parser.parse_args()
-windows = args.windows.split(',')
-windows = [int(numeric_string) for numeric_string in windows]
+win = args.windows.split(',')
+win = [int(numeric_string) for numeric_string in win]
 
 print 'Starting to collect data...'
-collectResolutionsPerWindowToSize(args.annotation, args.loops, windows)
+collectResolutionsPerWindowToSize(args.annotation, args.loops, win)
 print '\n-> Completed all!'

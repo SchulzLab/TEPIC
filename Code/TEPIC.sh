@@ -163,17 +163,20 @@ echo "Number of considered pwms	"$numMat >> $metadatafile
 
 echo "Preprocessing region file: Removing chr prefix, sorting regions and removing duplicats"
 sed 's/chr//g' $regions >  ${filteredRegions}_Filtered_Regions.bed
-#python ${working_dir}/removeInvalidGenomicPositions.py $regions
 sort -s -V -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions.bed | uniq > ${filteredRegions}_sorted.bed
 rm ${filteredRegions}_Filtered_Regions.bed
 
 if [ -n "$filter" ];
 then
 echo "Filter total peak set"
-python ${working_dir}/generateIntersectionWindows.py ${filter} ${window} ${geneBody} > ${prefix}_gene_windows.temp 
-bedtools intersect -b ${prefix}_gene_windows.temp -a ${filteredRegions}_sorted.bed -u > ${filteredRegions}_temp.bed
+echo ${filter}
+echo ${window} 
+echo ${geneBody}
+echo ${prefix}_gene_windows.temp 
+python ${working_dir}/generateIntersectionWindows.py ${filter} ${window} ${geneBody} > ${prefix}_gene_windows.temp.bed 
+bedtools intersect -b ${prefix}_gene_windows.temp.bed -a ${filteredRegions}_sorted.bed -u > ${filteredRegions}_temp.bed
 mv ${filteredRegions}_temp.bed ${filteredRegions}_sorted.bed
-#rm ${prefix}_gene_windows.temp 
+#rm ${prefix}_gene_windows.temp.bed 
 fi
 
 echo "Runnig bedtools"

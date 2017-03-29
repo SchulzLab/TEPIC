@@ -1,7 +1,8 @@
 import argparse
 import datetime
-import detectLoopInclusions
 import math
+
+import detectLoopInclusions
 import utils
 
 

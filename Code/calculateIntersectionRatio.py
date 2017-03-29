@@ -1,20 +1,22 @@
 import argparse
 import utils
 
+
 def readOC_Region(filename):
-	tfpa=open(filename,"r")
-	oC={}
-	for l in tfpa:
-		s=l.split()[0]
-		ds=s.split(":")
-		if (len(ds)>=2):
-			se=ds[1].split("-")
-			if (not oC.has_key(ds[0].replace("chr",""))):
-				oC[ds[0].replace("chr","")]=[(int(se[0]),int(se[1]))]
-			else:
-				oC[ds[0].replace("chr","")]+=[(int(se[0]),int(se[1]))]
-	tfpa.close()
-	return oC
+    tfpa = open(filename, "r")
+    oC = {}
+    for l in tfpa:
+        s = l.split()[0]
+        ds = s.split(":")
+        if (len(ds) >= 2):
+            se = ds[1].split("-")
+            if (not oC.has_key(ds[0].replace("chr", ""))):
+                oC[ds[0].replace("chr", "")] = [(int(se[0]), int(se[1]))]
+            else:
+                oC[ds[0].replace("chr", "")] += [(int(se[0]), int(se[1]))]
+    tfpa.close()
+    return oC
+
 
 def intersectRegions(oc, loops):
     looptable = {}
@@ -68,13 +70,15 @@ def intersectRegions(oc, loops):
 
     return looptable
 
-def main():
-    parser=argparse.ArgumentParser(prog="calculateIntersectionRatio.py")
-    parser.add_argument("affinity",nargs=1,help="TRAP generated TF Affinity file")
-    parser.add_argument("loopfile",nargs=1,help="If the name of the Hi-C loop file is provided, all open chromatin regions will be intersected with loop regions around the TSS of each gene.")
-    args=parser.parse_args()
 
-    oC=readOC_Region(args.affinity[0])
+def main():
+    parser = argparse.ArgumentParser(prog="calculateIntersectionRatio.py")
+    parser.add_argument("affinity", nargs=1, help="TRAP generated TF Affinity file")
+    parser.add_argument("loopfile", nargs=1,
+                        help="If the name of the Hi-C loop file is provided, all open chromatin regions will be intersected with loop regions around the TSS of each gene.")
+    args = parser.parse_args()
+
+    oC = readOC_Region(args.affinity[0])
 
     loops = utils.readIntraLoops(args.loopfile[0])
 

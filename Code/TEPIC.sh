@@ -123,7 +123,7 @@ then
 fi
 echo "" >> $metadatafile
 echo "[Outputs]" >> $metadatafile
-echo "regions_filtered	"$filteredRegions >> $metadatafile
+echo "regions_filtered	"${filteredRegions}_sorted.bed >> $metadatafile
 echo "affinity_file_peak_view	"$prefix"_Affinity.txt" >> $metadatafile
 echo "affinity_file_gene_view_filtered	"$prefix"_Affinity_Gene_View_Filtered.txt" >> $metadatafile
 if [ -n "$dnase" ];
@@ -169,14 +169,10 @@ rm ${filteredRegions}_Filtered_Regions.bed
 if [ -n "$filter" ];
 then
 echo "Filter total peak set"
-echo ${filter}
-echo ${window} 
-echo ${geneBody}
-echo ${prefix}_gene_windows.temp 
 python ${working_dir}/generateIntersectionWindows.py ${filter} ${window} ${geneBody} > ${prefix}_gene_windows.temp.bed 
 bedtools intersect -b ${prefix}_gene_windows.temp.bed -a ${filteredRegions}_sorted.bed -u > ${filteredRegions}_temp.bed
 mv ${filteredRegions}_temp.bed ${filteredRegions}_sorted.bed
-#rm ${prefix}_gene_windows.temp.bed 
+rm ${prefix}_gene_windows.temp.bed 
 fi
 
 echo "Runnig bedtools"

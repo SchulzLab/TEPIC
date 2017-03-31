@@ -9,18 +9,35 @@ from decimal import Decimal
 
 #Reads a gtf file and generates a dictionary (key:gene, item:(#chromosom,TSS))
 def readGTF(filename):
-	gtf=open(sys.argv[1],"r")
+	gtf=open(filename,"r")
+	identifier="start_codon"
+	for l in gtf:
+		s=l.split()
+		if (len(s) >=9):
+			if (s[2]=="gene"):
+				identifier="gene"
+				break
+	gtf.close()
+	gtf=open(filename,"r")
 	tss={}
 	for l in gtf:
 		s=l.split()
 		if (len(s) >=9):
-			if ((s[2]=="gene") or (s[2]=="start_codon")):	
+			if (s[2]==identifier):	
 				if (s[6]=="+"):
-					tss[s[9]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
+					if (tss.has_key(s[9])):
+						if (int(s[3]) < tss[s[9]][1]):				
+							tss[s[9]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
+					else:
+						tss[s[9]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
 				else:
-					tss[s[9]]=(s[0].replace("chr",""),(int(s[4]),int(s[3])))
+					if (tss.has_key(s[9])):
+						if (int(s[4]) > tss[s[9]][1]):
+							tss[s[9]]=(s[0].replace("chr",""),(int(s[4]),int(s[3])))
+					else:
+						tss[s[9]]=(s[0].replace("chr",""),(int(s[4]),int(s[3])))
 	gtf.close()
-	return tss
+	return tss,identifier
 
 #Reads the txt file containing TF-scores. Extracts the regions of open chromatin.
 #They are returned as a dictionary(key: #chromosom, item:[(start,end)])
@@ -217,7 +234,10 @@ def main():
 	#Check arguments
 	
 	#Extract TSS of GTF files
-	tss=readGTF(args.gtf[0])
+	tss,identifier=readGTF(args.gtf[0])
+	if (identifier=="start_codon"):
+		geneBody=False
+		print("Gene Body option forced to be false, due to incompatible gene annotation")
 	#Load open chromatin positions from TF-Affinity file
 	oC=readOC_Region(args.affinity[0])
 	#Create a TF name index

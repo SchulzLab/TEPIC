@@ -1,18 +1,17 @@
 
 
-# Reads an annotation file and returns a dictionary:
-# {key : value} -> {gene : (chr., starting position)}
-def readGTF(annotationFile):
-    gtf = open(annotationFile, "r")
+# Reads a gtf file and generates a dictionary (key:gene, item:(#chromosom,TSS))
+def readGTF(filename):
+    gtf = open(filename, "r")
     tss = {}
     for l in gtf:
         s = l.split()
         if len(s) >= 9:
-            if s[2] == "gene" and s[0] != 'chrM' and s[0] != 'chrX' and s[0] != 'chrY':
+            if s[2] == "gene":
                 if s[6] == "+":
-                    tss[s[9].replace(";", "")] = (s[0].replace("chr", ""), int(s[3]))
+                    tss[s[9]] = (s[0].replace("chr", ""), int(s[3]))
                 else:
-                    tss[s[9].replace(";", "")] = (s[0].replace("chr", ""), int(s[4]))
+                    tss[s[9]] = (s[0].replace("chr", ""), int(s[4]))
     gtf.close()
     return tss
 

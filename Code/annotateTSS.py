@@ -8,21 +8,6 @@ import utils
 
 # Computing per gene TF affinities
 
-# Reads a gtf file and generates a dictionary (key:gene, item:(#chromosom,TSS))
-def readGTF(filename):
-    gtf = open(filename, "r")
-    tss = {}
-    for l in gtf:
-        s = l.split()
-        if len(s) >= 9:
-            if s[2] == "gene":
-                if s[6] == "+":
-                    tss[s[9]] = (s[0].replace("chr", ""), int(s[3]))
-                else:
-                    tss[s[9]] = (s[0].replace("chr", ""), int(s[4]))
-    gtf.close()
-    return tss
-
 
 # Reads the txt file containing TF-scores. Extracts the regions of open chromatin.
 # They are returned as a dictionary(key: #chromosom, item:[(start,end)])
@@ -474,7 +459,7 @@ def main():
     print 'Start time: ' + now.strftime("%Y-%m-%d-%H-%M-%S")
 
     # Extract TSS of GTF files
-    tss = readGTF(args.gtf[0])
+    tss = utils.readGTF(args.gtf[0])
     # Load open chromatin positions from TF-Affinity file
     oC = readOC_Region(args.affinity[0])
     # Create a TF name index

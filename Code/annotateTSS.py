@@ -59,7 +59,7 @@ def readOC_Region(filename):
 
 
 def aggregateAffinity(old,new,factor):
-	for i in xrange(0,len(old)-1):
+	for i in xrange(0,len(old)):
 		old[i]=float(old[i])+factor*float(new[i])
 	return old
 
@@ -83,7 +83,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 								geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],factor)
 							else:
 								numbers=s[1:]
-								for i in xrange(0,len(numbers)-1):
+								for i in xrange(0,len(numbers)):
 									numbers[i]=float(factor)*float(numbers[i])
 								geneAffinities[geneID]=numbers				
 						else:
@@ -99,7 +99,6 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 			if (genesInOpenChromatin.has_key(s[0])):
 				for geneID in genesInOpenChromatin[s[0]]:
 					if(s[0] in openRegions):
-						#Change this part
 						tss=genePositions[geneID][1][0]
 						tts=genePositions[geneID][1][1]
 						if (tss < tts):
@@ -110,7 +109,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 										geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],factor)
 									else:
 										numbers=s[1:]
-										for i in xrange(0,len(numbers)-1):
+										for i in xrange(0,len(numbers)):
 											numbers[i]=float(factor)*float(numbers[i])
 										geneAffinities[geneID]=numbers				
 								else:
@@ -132,7 +131,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 										geneAffinities[geneID]=aggregateAffinity(geneAffinities[geneID],s[1:],factor)
 									else:
 										numbers=s[1:]
-										for i in xrange(0,len(numbers)-1):
+										for i in xrange(0,len(numbers)):
 											numbers[i]=float(factor)*float(numbers[i])
 										geneAffinities[geneID]=numbers				
 								else:

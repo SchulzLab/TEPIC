@@ -39,7 +39,7 @@ def readTFPA(filename):
 
 
 def aggregateAffinity(old, new, factor):
-    for i in xrange(0, len(old) - 1):
+    for i in xrange(0, len(old)):
         old[i] = float(old[i]) + factor * float(new[i])
     return old
 
@@ -65,7 +65,7 @@ def extractTF_Affinity(openChromatinInGenes, filename, tss, expDecay, loopsactiv
                             geneAffinities[geneID] = aggregateAffinity(geneAffinities[geneID], s[1:], factor)
                         else:
                             numbers = s[1:]
-                            for i in xrange(0, len(numbers) - 1):
+                            for i in xrange(0, len(numbers)):
                                 numbers[i] = float(factor) * float(numbers[i])
                             geneAffinities[geneID] = numbers
                     else:
@@ -131,7 +131,7 @@ def extractTF_Affinity(openChromatinInGenes, filename, tss, expDecay, loopsactiv
                                                                            factor)
                             else:
                                 numbers = afftupel[1][1:]
-                                for i in xrange(0, len(numbers) - 1):
+                                for i in xrange(0, len(numbers)):
                                     numbers[i] = float(factor) * float(numbers[i])
                                 loopAffinities[geneID] = numbers
 
@@ -200,7 +200,7 @@ def createSparseFile(affinities, tfNames, filename, tss, number):
 
 def makeTupels(values, names):
     l = []
-    for i in xrange(0, len(values) - 1):
+    for i in xrange(0, len(values)):
         l += [(names[i], values[i])]
     return l
 

@@ -198,13 +198,6 @@ def createSparseFile(affinities, tfNames, filename, tss, number):
     output.close()
 
 
-def makeTupels(values, names):
-    l = []
-    for i in xrange(0, len(values)):
-        l += [(names[i], values[i])]
-    return l
-
-
 def createGenesWithLoopsFile(geneLoops, filename):
     header = "geneID"
     body = ''

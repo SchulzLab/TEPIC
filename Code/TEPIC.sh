@@ -108,7 +108,10 @@ echo "analysis_id	"$prefix >> $metadatafile
 echo "" >> $metadatafile
 echo "[Inputs]" >> $metadatafile
 echo "region_file	"$regions >> $metadatafile
-echo "gene_filter_file "$filter >> $metadatafile
+if [ -n "$filter" ];
+then 
+	echo "gene_filter_file "$filter >> $metadatafile
+fi
 echo "" >> $metadatafile
 echo "[References]" >> $metadatafile
 echo "genome_reference	"$genome >> $metadatafile
@@ -220,7 +223,7 @@ then
 	then
 		python ${working_dir}/annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity "--geneBody" ${geneBody}
 	else
-		python ${working_dir}/annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--geneBody" $geneBody "--sparseRep" $sparsity "--geneBody" ${geneBody}
+		python ${working_dir}/annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--geneBody" $geneBody "--sparseRep" $sparsity "--geneBody" ${geneBody} "--decay" $decay
 	fi
 
 	#Creating files containing only genes for which TF predictions are available

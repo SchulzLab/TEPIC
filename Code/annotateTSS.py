@@ -211,7 +211,6 @@ def main():
 	parser.add_argument("--signalScale",nargs="?",help="If the name of the scaled affinity file is provied, a Gene view file is computed for those Affinity values.",default="")
 	parser.add_argument("--sparseRep",nargs="?",help="Number of top TFs that should be contained in the sparse representation",default=0,type=int)
 	parser.add_argument("--geneBody",nargs="?",help="True if the entire gene body should be screened for TF binding",default="False")
-
 	args=parser.parse_args() 
 
 	prefixs=args.affinity[0].split(".")
@@ -302,7 +301,6 @@ def main():
 		createAffinityFile(affinities,tfNames,args.geneViewAffinity,tss)
 		if (args.sparseRep != 0):
 			createSparseFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Sparse_Affinity_Gene_View.txt"),tss,args.sparseRep)
-
 
 
 	scaledAffinities={}

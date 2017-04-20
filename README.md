@@ -18,7 +18,7 @@ To compile the C++ version of TRAP execute the script
 
 ## Position weight matrices
 The position weight matrices used in the *TEPIC* manuscript are stored in the file
-	[PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt](PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt).
+	[PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM](PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM).
 
 An extended set of pwms is also available for human, mouse, rat, drosophila melanogaster, and Caenorhabditis elegans.
 We collected motifes from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis Lab ENCODE Motif database* (6).
@@ -73,7 +73,7 @@ Note that the input files **have to** have unix file endings.
 ## Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Example* folder. You can run it with the command
 
-	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt -a ../Example/example_annotation.gtf -w 3000 -e
+	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM -a ../Example/example_annotation.gtf -w 3000 -e
 
 This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.txt*, and without 
 exponential decay. 

@@ -68,7 +68,8 @@ Each run of TEPIC generates an *analysis meta datafile (amd)* containing all par
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
 *MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
 
-Note that the input files **have to** have unix file endings.
+Note that the input files **have to** have unix file endings. Using the scaled features is currently only supported for homo sapiens, mus musculus, and
+rattus norvegicus.
 
 ## Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Example* folder. You can run it with the command

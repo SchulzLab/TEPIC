@@ -249,8 +249,11 @@ def computeDNaseFeatures(gene_regions, peakcoverage_collection, gene_to_chromoso
 
 def writeGeneFeatureMatrix(filename, feature_matrix):
     with open(filename, "w") as outputfile:
+        outputfile.write("geneID    region_count    total_length    total_signal")
+        outputfile.write('\n')
         for annotation, features in feature_matrix.iteritems():
-            outputfile.write(annotation[0])
+            gene_id = annotation[0].split(".")[0].replace('"', '')
+            outputfile.write(gene_id)
             for feature in features:
                 outputfile.write('\t')
                 outputfile.write(str(feature))
@@ -258,7 +261,7 @@ def writeGeneFeatureMatrix(filename, feature_matrix):
 
 
 def main():
-    parser = argparse.ArgumentParser(prog="computeDNaseFeatures.py")
+    parser = argparse.ArgumentParser(prog="computeRegionFeatures.py")
     parser.add_argument("gtf", help="Genome annotation file")
     parser.add_argument("regions", help="Region file")
     parser.add_argument("peakcoverage", help="Region coverage file.")
@@ -331,7 +334,7 @@ def main():
         print "Total number of assigned regions: " + str(count)
 
     feature_matrix = computeDNaseFeatures(gene_regions, peakcoverage_collection, gene_to_chromosome, args.decay)
-    writeGeneFeatureMatrix(args.outputprefix + "_DNaseFeatures.txt", feature_matrix)
+    writeGeneFeatureMatrix(args.outputprefix + "RegionFeatures.txt", feature_matrix)
 
     print "Finished annotation!"
 

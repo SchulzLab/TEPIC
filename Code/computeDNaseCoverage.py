@@ -34,7 +34,7 @@ def main():
     regions = open(args.Regions[0], "r")
     for lr in regions:
         slr = lr.split()
-        rchr = slr[0]
+        rchr = slr[0].replace("chr", "")
         rstart = int(slr[1])
         rend = int(slr[2])
         overlap += [(rchr, rstart, rend)]

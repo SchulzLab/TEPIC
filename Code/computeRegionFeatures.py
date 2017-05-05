@@ -222,7 +222,7 @@ def filterGeneRegions(gene_regions, gene_functions):
     return filtered_gene_regions
 
 
-def computeDNaseFeatures(gene_regions, peakcoverage_collection, gene_to_chromosome, decay):
+def computeRegionFeatures(gene_regions, peakcoverage_collection, gene_to_chromosome, decay):
     gene_feature_matrix = {}
     weight_factor = 1.0
     for annotation, regions in gene_regions.iteritems():
@@ -274,7 +274,7 @@ def main():
     parser.set_defaults(decay=True)
     args = parser.parse_args()
 
-    print "Loading files for DNaseFeatures..."
+    print "Loading files ..."
     # Extract TSS of GTF file
     annotations = read_GTF(args.gtf)
     annotations_collection = read_GTF_Collection(args.gtf)
@@ -333,7 +333,7 @@ def main():
             count += len(regs)
         print "Total number of assigned regions: " + str(count)
 
-    feature_matrix = computeDNaseFeatures(gene_regions, peakcoverage_collection, gene_to_chromosome, args.decay)
+    feature_matrix = computeRegionFeatures(gene_regions, peakcoverage_collection, gene_to_chromosome, args.decay)
     writeGeneFeatureMatrix(args.outputprefix + "RegionFeatures.txt", feature_matrix)
 
     print "Finished annotation!"

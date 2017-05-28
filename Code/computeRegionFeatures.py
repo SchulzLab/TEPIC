@@ -263,7 +263,10 @@ def get_intersecting_regions(a_regions, b_collection):
         if curr_index < len(b_collection) and b_collection[curr_index][1] <= a_region[2]:
             intersection_a.insert_right(a_region)
             while curr_index < len(b_collection) and b_collection[curr_index][1] <= a_region[2]:
-                intersection_b.insert_right(b_collection[curr_index])
+                try:
+                    intersection_b.find(b_collection[curr_index][SORTING_KEY])
+                except ValueError:
+                    intersection_b.insert_right(b_collection[curr_index])
                 curr_index += 1
     return intersection_a, intersection_b
 

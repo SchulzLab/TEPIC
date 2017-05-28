@@ -354,7 +354,7 @@ def main():
     parser.set_defaults(decay=True)
     parser.add_argument("--hi_c_regions", nargs="?", default=None, help="If the name of the Hi-C loop file is provided, all regions will be intersected with annotated Hi-C (intrachromosomal) loop regions around the TSS of each annotated gene.")
     parser.add_argument("--loopwindows", nargs="?", default=25000, type=int, help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.")
-    parser.add_argument("--resolution", nargs="?", default=5000, help="Defines the Hi-C resolution of the loops which should be considered.")
+    parser.add_argument("--resolution", nargs="?", default=None, help="Defines the Hi-C resolution of the loops which should be considered.")
     args = parser.parse_args()
 
     print "Loading files ..."
@@ -384,18 +384,13 @@ def main():
 
     if args.window_size is not None:
         gene_regions = getRegionsInWindow(annotations, regions_collection, args.window_size/2)
-        print "Assigned regions to " + str(len(gene_regions)) + " genes"
-        count = 0
-        for _, regs in gene_regions.iteritems():
-            count += len(regs)
-        print "Total number of assigned regions: " + str(count)
     else:
         gene_regions = getNearestNeighbors(annotations_collection, regions)
-        print "Assigned regions to " + str(len(gene_regions)) + " genes"
-        count = 0
-        for _, regs in gene_regions.iteritems():
-            count += len(regs)
-        print "Total number of assigned regions: " + str(count)
+    print "Assigned regions to " + str(len(gene_regions)) + " genes"
+    count = 0
+    for _, regs in gene_regions.iteritems():
+        count += len(regs)
+    print "Total number of assigned regions: " + str(count)
 
     if args.functional_regions is not None and args.hi_c_regions is None:
         print "Loading functional regions..."
@@ -423,6 +418,7 @@ def main():
         resolution = None
         if args.resolution is not None:
             resolution = int(args.resolution)
+        print "Using loop resolution " + str(resolution)
         (regions_left_collection, regions_right_collection) = read_Intra_Loop_Regions_Collection(args.hi_c_regions, resolution)
         sanityCheck(regions_left_collection, annotations)
         sanityCheck(regions_right_collection, annotations)

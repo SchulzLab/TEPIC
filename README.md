@@ -21,7 +21,7 @@ While computing gene TF scores, TEPIC can perform normalisation for peak length 
 and produces seperate features for peak length, peak count and/or peak signal. These can be used in downstream applications to, e.g. to determine
 the influence of chromatin accessiblity on gene expression, without considering detailed information on TF binding. 
 
-Further details on TEPIC can be found in the provided description [TEPIC-INVOKE.pdf](TEPIC-INVOKE.pdf).
+Further details on TEPIC can be found in the provided description [docs/TEPIC-INVOKE.pdf](docs/TEPIC-INVOKE.pdf).
 
 ## Installing TEPIC
 To run *TEPIC* the following packages/software must be installed:

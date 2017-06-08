@@ -2,20 +2,26 @@
 -------
 Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data.
 
-##News
+## News
 08.06.2017: Version 2.0 of TEPIC is available.
+With version 2 of TEPIC, we introduced new features:
+* We extended the set of PSEMs.
+* TF affinities are now computed using a C++ implementation of TRAP.
+* Affinities can now be normalised for peak length during TF-gene score computation.
+* The length of the PSEMs can be considered in the normalisation.
+* We introduced features for peak length and peak counts.
+* Scaling can now be performed in two ways: The original way as proposed in the TEPIC manuscript by directly multiplying
+peak signal and TF affinities or by generating a separate signal feature.
 
 ## Introduction
 *TEPIC* segments the genome into user specified regions and annotates those with TF binding using TRAP (1). 
 These predictions are aggregated to gene scores. 
 Within this aggregation TEPIC offers exponential decay (2) and scaling of TF region scores using the signal of an open chromatin assay.
+While computing gene TF scores, TEPIC can perform normalisation for peak length (optionally correcting for the length of the binding motifs as well)
+and produces seperate features for peak length, peak count and/or peak signal. These can be used in downstream applications to, e.g. to determine
+the influence of chromatin accessiblity on gene expression, without considering detailed information on TF binding. 
 
-With version 2 of TEPIC, we introduced new features:
-* Affinities can now be normalised for peak length during TF-gene score computation.
-* The length of the PSEMs can be considered in the normalisation.
-* We introduced features for peak length and peak counts.
-* Scaling can now be performed in two ways: The traditional way as proposed in the TEPIC manuscript by directly multiplying
-peak signal and TF affinities or by generating a separate signal feature.
+Further details on TEPIC can be found in the provided description [TEPIC-INVOKE.pdf](TEPIC-INVOKE.pdf).
 
 ## Installing TEPIC
 To run *TEPIC* the following packages/software must be installed:
@@ -36,6 +42,7 @@ We collected motifs from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis Lab ENCOD
 * The rat set contains 489 *JASPAR Vertebrata* matrices, 67 *Hocomoco mouse* matrices, and 121 matrices from the *Kellis Lab database*.
 * The drosophila melanogaster set contains 129 *JASPAR* matrices retrieved from *JASPAR Insecta*.
 * The Caenorhabditis elegans set contains 26 *JASPAR* matrices retrieved from *JASPAR Nematoda*.
+Files holding the length of the provided PSEMs are provided too. 
 
 Additional position weight matrices can be transformed to a usable format using 
 	[Code/PSCM_to_PSEM.cpp](Code/PSCM_to_PSEM.cpp).
@@ -77,13 +84,13 @@ Depending on the used arguments, TEPIC produces files containing:
 * TF affinities for all genes contained in the annotation file.
 * Scaled TF affinities for all genes contained in the annotation file.
 * A file containing the factors used to scale the original TF affinities.
-* Peak length, peak counts as well as the average signal within a peak. 
+* TF affinities along with feature for peak length, peak counts and/or the average signal within a peak. 
 
 Each run of TEPIC generates an *analysis meta datafile (amd)* containing all parameters, files, and outputs associated with the last run of TEPIC.
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
 *MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
 
-Note that the input files **have to** have unix file endings. Using the scaled features is currently only supported for homo sapiens, mus musculus, and
+Note that the input files **have to** have unix file endings. Using bed graph files to compute the signal in peaks is currently only supported for homo sapiens, mus musculus, and
 rattus norvegicus.
 
 ## Example
@@ -98,7 +105,7 @@ Additionally, we provide a script to test several annotation versions of TEPIC. 
 
 	bash runTestCases.sh
 
-to compute the trial cases. 
+to compute the trial cases.
 
 ## Citation
 If you are using TEPIC please cite:

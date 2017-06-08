@@ -4,6 +4,9 @@ import sys
 
 def isValidAffinity(lineSplit):
 	for i in xrange(1,len(lineSplit)):
+		if ("ENSG" in lineSplit[i]):
+			return False
+	for i in xrange(1,len(lineSplit)):
 		if (float(lineSplit[i]) != 0.0):
 			return True	
 	return False

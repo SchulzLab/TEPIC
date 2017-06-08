@@ -1,17 +1,22 @@
 #!/bin/bash -e
 
-help="Usage: ./TEPIC.sh [-g input fasta file (in RefSeq format, without \"chr\" prefix] [-b bed file containing open chromatin regions] [-o prefix of outputfiles] [-p pwms] \n
+help="TEPIC version 2.0\n
+Usage: ./TEPIC.sh [-g input fasta file (in RefSeq format, without \"chr\" prefix] [-b bed file containing open chromatin regions] [-o prefix of outputfiles] [-p psems] \n
 Optional parameters:\n
 [-c number of cores to use (default 1)]\n
 [-d bedgraph file containing open chromatin signal, e.g. DNase1-seq]\n
+[-n column in the -b file containg the average per base signal within a peak. If this option is used, the -d option must not be used]\n
 [-a gene annotation file, required to generate the gene view]\n
-[-n column in the -b file containg the average per base signal within a peak. If this option is used, the -d option must not be used.]\n
 [-w size of the window to be considered to generate gene view (default 50000bp)]\n
 [-f annotate only DNase peaks that are within a window specified by the -w option around all genes contained in the gene annotation file specified by this option]\n
 [-e flag to be set if exponential decay should not be used]\n
-[-s sparse matrix representation]
-[-y use the entire gene body to screen for TF binding. The search window is extended by a region half of the size that is specified by the -w option.]\n"
-
+[-l flag to be set if affinities should not be normalised by peak length]\n
+[-u flag to be set if peak features for peak length and peak counts should not be generated]\n 
+[-x If -d or -n is used together with this flag, the original (Decay-)Scaling formulation of TEPIC is used to compute gene-TF scores]\n
+[-m path to a tab delimited file containing the length of the used PSEMs]\n
+[-s flag to be set if a sparse matrix representation should be used]\n
+[-y flag to be set if the entire gene body should be screened for TF binding. The search window is extended by a region half of the size that is specified by the -w option upstream of the genes 5' TSS]\n
+[-z flag indicating that the output of TEPIC should be zipped]\n"
 #Initialising parameters
 genome=""
 regions=""
@@ -25,10 +30,14 @@ window=50000
 decay="TRUE"
 sparsity=0
 geneBody="FALSE"
+lengthNorm="TRUE"
+peakFeatures="TRUE"
+motifLength=""
 working_dir=$(cd $(dirname "$0") && pwd -P)/
-
+originalScaling="FALSE"
+zip="FALSE"
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:s:f:y:eh" o;
+while getopts "g:b:o:c:p:d:n:a:w:f:m:syeluhxz" o;
 do
                     case $o in
                     g)                  genome=$OPTARG;;
@@ -40,16 +49,20 @@ do
                     n)                  column=$OPTARG;;
                     a)                  annotation=$OPTARG;;
                     w)                  window=$OPTARG;;
-                   	s)				sparsity=$OPTARG;;
 				f)				filter=$OPTARG;;
-				y)				geneBody=$OPTARG;;
+				m)				motifLength=$OPTARG;;
+                   	s)				sparsity="TRUE";;
+				y)				geneBody="TRUE";;
 				e)                  decay="FALSE";;
-
-	h)	echo -e $help
-		exit1;;
-                    [?])                echo -e $help
-                                        exit 1;;
-                    esac
+				l)				lengthNorm="FALSE";;
+				u)				peakFeatures="FALSE";;
+				x)				originalScaling="TRUE";;
+				z)				zip="TRUE";;
+				h)				echo -e $help
+								exit1;;
+                    [?])				echo -e $help
+								exit 1;;
+				esac
 done
 
 if [ $OPTIND -eq 1 ] ;
@@ -100,7 +113,7 @@ metadatafile=${prefix}.amd.tsv
 #Create metadata file
 touch $metadatafile
 echo "[Description]" >> $metadatafile
-echo "process	TEPICv1" >> $metadatafile
+echo "process	TEPICv2" >> $metadatafile
 echo "run_by_user	"$USER >> $metadatafile
 echo "date	"$d >> $metadatafile
 echo "time	"$t >> $metadatafile
@@ -108,12 +121,16 @@ echo "analysis_id	"$prefix >> $metadatafile
 echo "" >> $metadatafile
 echo "[Inputs]" >> $metadatafile
 echo "region_file	"$regions >> $metadatafile
-echo "gene_filter_file "$filter >> $metadatafile
+if [ -n "$filter" ];
+then
+	echo "gene_filter_file "$filter >> $metadatafile
+fi
+echo "original_scaling	"$originalScaling >> $metadatafile
 echo "" >> $metadatafile
 echo "[References]" >> $metadatafile
 echo "genome_reference	"$genome >> $metadatafile
 echo "pwms	"$pwms >> $metadatafile
-if [ -n "$genome_annotation" ];
+if [ -n "$annotation" ];
 then
 echo "genome_annotation	"$annotation>> $metadatafile
 fi
@@ -121,37 +138,50 @@ if [ -n "$dnase" ];
 then 
 	echo "signale_file	"$dnase >> $metadatafile
 fi
+if [ -n "$column" ];
+then 
+	echo "signale_column	"$column >> $metadatafile
+fi
 echo "" >> $metadatafile
 echo "[Outputs]" >> $metadatafile
-echo "regions_filtered	"$filteredRegions >> $metadatafile
 echo "affinity_file_peak_view	"$prefix"_Affinity.txt" >> $metadatafile
 echo "affinity_file_gene_view_filtered	"$prefix"_Affinity_Gene_View_Filtered.txt" >> $metadatafile
 if [ -n "$dnase" ];
 then 
 	echo "signal_scaling_factors	"$prefix"_Peak_Coverage.txt" >> $metadatafile
-	echo "scaled affinity_peak_view	"$prefix"_Scaled_Affinity.txt" >> $metadatafile
-	echo "scaled_affinity_gene_view_filtered	"$prefix"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+	echo "affinity_gene_view_peak_features_signal "$prefix"_Three_Peak_Based_Features_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+	if [ "$peakFeatures" == "FALSE" ];
+	then
+		echo "scaled affinity_peak_view	"$prefix"_Scaled_Affinity.txt" >> $metadatafile
+		echo "scaled_affinity_gene_view_filtered	"$prefix"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+	fi
 fi
 if [ -n "$column" ];
 then
-	echo "scaled affinity_peak_view	"$prefix"_Scaled_Affinity.txt" >> $metadatafile
-	echo "scaled_affinity_gene_view_filtered	"$prefix"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+	echo "signal_scaling_factors	"$prefix"_Peak_Coverage.txt" >> $metadatafile
+	echo "affinity_gene_view_peak_features_signal "$prefix"_Three_Peak_Based_Features_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+	if [ "$peakFeatures" == "FALSE" ];
+	then
+		echo "scaled affinity_peak_view	"$prefix"_Scaled_Affinity.txt" >> $metadatafile
+		echo "scaled_affinity_gene_view_filtered	"$prefix"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+	fi
 fi
-
 echo "" >> $metadatafile
 echo "[Parameters]" >> $metadatafile
 echo "SampleID:	"$prefixP >> $metadatafile
 echo "cores	"$cores >> $metadatafile
-if [ -n "$column" ];
-then
-	echo "scaling_factors_column	"$column >> $metadatafile
-fi
 if [ -n "$annotation" ];
 then
 echo "window	"$window >> $metadatafile
 echo "decay	"$decay >> $metadatafile
 echo "sparsity	"$sparsity >> $metadatafile
-echo "genebody "$geneBody >> $metadatafile
+echo "genebody	"$geneBody >> $metadatafile
+echo "length normalisation	"$lengthNorm >> $metadatafile
+echo "peak features	"$peakFeatures >> $metadatafile
+if [ -n "$motifLength" ];
+then
+	echo "motif length	"$motifLength >> $metadatafile
+fi
 fi
 echo "" >> $metadatafile
 echo "[Metrics]" >> $metadatafile
@@ -169,30 +199,27 @@ rm ${filteredRegions}_Filtered_Regions.bed
 if [ -n "$filter" ];
 then
 echo "Filter total peak set"
-echo ${filter}
-echo ${window} 
-echo ${geneBody}
-echo ${prefix}_gene_windows.temp 
 python ${working_dir}/generateIntersectionWindows.py ${filter} ${window} ${geneBody} > ${prefix}_gene_windows.temp.bed 
 bedtools intersect -b ${prefix}_gene_windows.temp.bed -a ${filteredRegions}_sorted.bed -u > ${filteredRegions}_temp.bed
 mv ${filteredRegions}_temp.bed ${filteredRegions}_sorted.bed
-#rm ${prefix}_gene_windows.temp.bed 
+rm ${prefix}_gene_windows.temp.bed 
 fi
 
 echo "Runnig bedtools"
 #Run bedtools to get a fasta file containing the sequence data for predicted open chromatin regions contained in the bedfile
 bedtools getfasta -fi $genome -bed ${filteredRegions}_sorted.bed -fo $openRegionSequences
 
-
 echo "Converting invalid characters"
 #Remove R and Y from the sequence
 python ${working_dir}/convertInvalidCharacterstoN.py $openRegionSequences $prefixP-FilteredSequences.fa
+rm $openRegionSequences
 
 #Use TRAP to compute transcription factor affinities to the above extracted sequences
 affinity=${prefix}_Affinity.txt
 
 echo "Starting TRAP"
 ${working_dir}/TRAPmulti $pwms ${prefixP}-FilteredSequences.fa $cores > ${affinity}_temp 
+rm ${prefixP}-FilteredSequences.fa
 
 #Computing DNase Coverage in Peak regions
 if [ -n "$dnase" ];
@@ -200,20 +227,36 @@ then
 	sort -s -V -k1,1 -k2,2 -k3,3 $dnase > ${dnase}_sorted
 	python ${working_dir}/computeDNaseCoverage.py ${dnase}_sorted ${filteredRegions}_sorted.bed > ${prefix}_Peak_Coverage.txt
 	rm ${dnase}_sorted
-	python ${working_dir}/scaleAffinity.py --is-sorted -s ${prefix}_Peak_Coverage.txt -a ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
+	if [ "$originalScaling" == "TRUE" ];
+	then
+		python ${working_dir}/scaleAffinity.py --is-sorted -s ${prefix}_Peak_Coverage.txt -a ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
+	fi
 fi
 
 if [ -n "${column}" ] ;
 then
-	python ${working_dir}/scaleAffinity.py --is-sorted --scale-col ${column} -s ${filteredRegions}_sorted.bed -a ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
+	if [ "$originalScaling" == "TRUE" ];
+	then
+		python ${working_dir}/scaleAffinity.py --is-sorted --scale-col ${column} -s ${filteredRegions}_sorted.bed -a ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
+	else
+		cut -f 1,2,3,${column} ${filteredRegions}_sorted.bed > ${prefix}_Peak_Coverage.txt
+	fi
 fi	
 
+rm ${filteredRegions}_sorted.bed
+
+#Removing regions that could not be annotated
 echo "Filter regions that could not be annotated."
 python ${working_dir}/filterInvalidRegions.py ${affinity}_temp $affinity
+rm ${affinity}_temp
+
 if [ -n "$dnase" ] ||  [ -n "$column" ];
 then
-	python ${working_dir}/filterInvalidRegions.py ${prefix}_Scaled_Affinity_temp.txt ${prefix}_Scaled_Affinity.txt
-	rm ${prefix}_Scaled_Affinity_temp.txt
+	if [ "$originalScaling" == "TRUE" ];
+	then
+		python ${working_dir}/filterInvalidRegions.py ${prefix}_Scaled_Affinity_temp.txt ${prefix}_Scaled_Affinity.txt
+		rm ${prefix}_Scaled_Affinity_temp.txt
+	fi
 fi
 
 #If an annotation file is provied, the gene view is generated
@@ -222,36 +265,104 @@ then
 	echo "Generating gene scores"
 	if [ -n "$dnase" ] ||  [ -n "$column" ];
 	then
-		python ${working_dir}/annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--signalScale" ${prefix}_Scaled_Affinity.txt "--sparseRep" $sparsity "--geneBody" ${geneBody}
+		if [ "$originalScaling" == "FALSE" ]; 
+		then
+			python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--peakCoverage" ${prefix}_Peak_Coverage.txt "--sparseRep" $sparsity "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}
+		else
+			python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--sparseRep" $sparsity "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--signalScale" ${prefix}_Scaled_Affinity.txt "--additionalPeakFeatures" ${peakFeatures}
+		fi
 	else
-		python ${working_dir}/annotateTSS.py ${annotation} ${affinity}  "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--geneBody" $geneBody "--sparseRep" $sparsity "--geneBody" ${geneBody}
+		python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--geneBody" $geneBody "--sparseRep" $sparsity "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}
 	fi
 
 	#Creating files containing only genes for which TF predictions are available
-	echo "Filter genes for which no information is available."
+	echo "Filter genes that could not be annotated."
 	if [ "$decay" == "TRUE" ];
 	then
 		if [ -n "$dnase" ] || [ -n "$column" ];
 		then
-			python ${working_dir}/filterGeneView.py ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
-			rm ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
+			if [ "$peakFeatures"  == "TRUE" ];
+			then
+				if [ "$originalScaling" == "FALSE" ];
+				then
+					python ${working_dir}/filterGeneView.py ${prefix}_Decay_Three_Peak_Based_Features_Affinity_Gene_View.txt
+					rm ${prefix}_Decay_Three_Peak_Based_Features_Affinity_Gene_View.txt
+				else
+					python ${working_dir}/filterGeneView.py ${prefix}_Decay_Scaled_Peak_Features_Affinity_Gene_View.txt
+					rm ${prefix}_Decay_Scaled_Peak_Features_Affinity_Gene_View.txt
+				fi
+			else
+				if [ "$originalScaling" == "TRUE" ];
+				then
+					python ${working_dir}/filterGeneView.py ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
+					rm ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
+				else
+					python ${working_dir}/filterGeneView.py ${prefix}_Decay_Signal_Feature_Affinity_Gene_View.txt
+					rm ${prefix}_Decay_Signal_Feature_Affinity_Gene_View.txt
+				fi
+			fi
 		fi
-			python ${working_dir}/filterGeneView.py ${prefix}_Decay_Affinity_Gene_View.txt
-			rm ${prefix}_Decay_Affinity_Gene_View.txt
-		
+			if [ "$peakFeatures" == "TRUE" ];
+			then
+				python ${working_dir}/filterGeneView.py ${prefix}_Decay_Peak_Features_Affinity_Gene_View.txt
+				rm ${prefix}_Decay_Peak_Features_Affinity_Gene_View.txt
+			else
+				python ${working_dir}/filterGeneView.py ${prefix}_Decay_Affinity_Gene_View.txt
+				rm ${prefix}_Decay_Affinity_Gene_View.txt
+			fi		
 	else
-		if [ -n "$dnase" ] ||  [ -n "$column" ];
+		if [ -n "$dnase" ] || [ -n "$column" ];
 		then
-			python ${working_dir}/filterGeneView.py ${prefix}_Scaled_Affinity_Gene_View.txt
-			rm ${prefix}_Scaled_Affinity_Gene_View.txt
+			if [ "$peakFeatures" == "TRUE" ];
+			then
+				if [ "$originalScaling" == "FALSE" ];
+				then
+					python ${working_dir}/filterGeneView.py ${prefix}_Three_Peak_Based_Features_Affinity_Gene_View.txt
+					rm ${prefix}_Three_Peak_Based_Features_Affinity_Gene_View.txt
+				else
+					python ${working_dir}/filterGeneView.py ${prefix}_Scaled_Peak_Features_Affinity_Gene_View.txt
+					rm ${prefix}_Scaled_Peak_Features_Affinity_Gene_View.txt
+				fi
+			else
+				if [ "$originalScaling" == "TRUE" ];
+				then
+					python ${working_dir}/filterGeneView.py ${prefix}_Scaled_Affinity_Gene_View.txt
+					rm ${prefix}_Scaled_Affinity_Gene_View.txt
+				else
+					python ${working_dir}/filterGeneView.py ${prefix}_Signal_Feature_Affinity_Gene_View.txt
+					rm ${prefix}_Signal_Feature_Affinity_Gene_View.txt
+				fi
+			fi
 		fi
-		python ${working_dir}/filterGeneView.py ${prefix}_Affinity_Gene_View.txt
-		rm ${prefix}_Affinity_Gene_View.txt
+			if [ "$peakFeatures" == "TRUE" ]
+			then
+				python ${working_dir}/filterGeneView.py ${prefix}_Peak_Features_Affinity_Gene_View.txt
+				rm ${prefix}_Peak_Features_Affinity_Gene_View.txt
+			else
+				python ${working_dir}/filterGeneView.py ${prefix}_Affinity_Gene_View.txt
+				rm ${prefix}_Affinity_Gene_View.txt
+			fi
+	fi
+	if [ "$zip" == "TRUE" ];
+	then
+		gzip ${prefix}*Affinity_Gene_View_Filtered.txt
+		if [ "$sparsity" == "TRUE" ];
+		then
+			gzip ${prefix}*Affinity_Gene_View.txt
+		fi
+		gzip ${affinity}
+		if [ -n "$dnase" ] || [ -n "$column" ];
+		then
+			if [ "$originalScaling" == "TRUE" ];
+			then
+				gzip ${prefix}_Scaled_Affinity.txt
+				if [ -z "$column" ];
+				then
+					gzip ${prefix}_Peak_Coverage.txt
+				fi
+			else
+				gzip ${prefix}_Peak_Coverage.txt
+			fi
+		fi
 	fi
 fi
-
-
-#Delete temporary files generated for TRAP
-rm $openRegionSequences
-rm ${prefixP}-FilteredSequences.fa
-rm ${affinity}_temp

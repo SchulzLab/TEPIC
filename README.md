@@ -1,11 +1,21 @@
-# TEPIC
-------
+# TEPIC (version 2.0)
+-------
 Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data.
+
+##News
+08.06.2017: Version 2.0 of TEPIC is available.
 
 ## Introduction
 *TEPIC* segments the genome into user specified regions and annotates those with TF binding using TRAP (1). 
 These predictions are aggregated to gene scores. 
 Within this aggregation TEPIC offers exponential decay (2) and scaling of TF region scores using the signal of an open chromatin assay.
+
+With version 2 of TEPIC, we introduced new features:
+* Affinities can now be normalised for peak length during TF-gene score computation.
+* The length of the PSEMs can be considered in the normalisation.
+* We introduced features for peak length and peak counts.
+* Scaling can now be performed in two ways: The traditional way as proposed in the TEPIC manuscript by directly multiplying
+peak signal and TF affinities or by generating a separate signal feature.
 
 ## Installing TEPIC
 To run *TEPIC* the following packages/software must be installed:
@@ -16,12 +26,12 @@ To run *TEPIC* the following packages/software must be installed:
 To compile the C++ version of TRAP execute the script
 	[Code/compileTRAP.sh](Code/compileTRAP.sh).
 
-## Position weight matrices
+## Position specific energy matrices
 The position weight matrices used in the *TEPIC* manuscript are stored in the file
-	[PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt](PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt).
+	[PWMs/pwm_vertebrates_jaspar_uniprobe_converted.PSEM](PWMs/pwm_vertebrates_jaspar_uniprobe_converted.PSEM).
 
 An extended set of pwms is also available for human, mouse, rat, drosophila melanogaster, and Caenorhabditis elegans.
-We collected motifes from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis Lab ENCODE Motif database* (6).
+We collected motifs from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis Lab ENCODE Motif database* (6).
 * The human set contains 515 *JASPAR Vertebrata* matrices, 81 *Hocomoco human* matrices, and 130 matrices from the *Kellis Lab database*.
 * The mouse set contains 499 *JASPAR Vertebrata* matrices, 67 *Hocomoco mouse* matrices , and 121 matrcies from the *Kellis Lab database*.
 * The rat set contains 489 *JASPAR Vertebrata* matrices, 67 *Hocomoco mouse* matrices, and 121 matrices from the *Kellis Lab database*.
@@ -29,8 +39,9 @@ We collected motifes from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis Lab ENCO
 * The Caenorhabditis elegans set contains 26 *JASPAR* matrices retrieved from *JASPAR Nematoda*.
 
 Additional position weight matrices can be transformed to a usable format using 
-	[Code/PSCM_to_PSEM.cpp] (Code/PSCM_to_PSEM.cpp).
-This program converts matrices in TRANSFAC format to the energy format used by TRAP. Details on the parameters used for conversion can be found in the header of the provided files.
+	[Code/PSCM_to_PSEM.cpp](Code/PSCM_to_PSEM.cpp).
+This program converts matrices in TRANSFAC format to the energy format used by TRAP. 
+Details on the parameters used for conversion can be found in the header of the provided files.
 
 ## Using TEPIC
 To start TEPIC, run the script *TEPIC.sh*
@@ -42,7 +53,7 @@ The following parameters are required to run TEPIC:
 * -g The reference genome in plain (uncompressed) FASTA format with Ensembl-style chromosome names (i.e., without "chr" prefix).
 * -b Regions the user wants to be annotated; chromosome naming compatible to the reference genome file.
 * -o Prefix of the output files.
-* -p File containing position weight matrices (PWMs).
+* -p File containing position specific energy matrices (PSEM).
 
 The optional parameters are:
 
@@ -54,15 +65,20 @@ The optional parameters are:
 * -c Number of cores used within TRAP.
 * -f A gtf file containing genes of interest. Only regions contained in the file specified by the -b option that are within the window specified by the -w option around these genes will be annotated.
 * -y Flag indicating whether the entire gene body should be annotated with TF affinities. A window of half the size of the -w option will be additionaly considered upstream of the genes TSS.
+* -l Flag to be set if affinities should not be normalised by peak length.
+* -u Flag to be set if peak features for peak length and peak counts should not be generated.
+* -x If -d or -n is used together with this flag, the original (Decay-)Scaling formulation of TEPIC is used to compute gene-TF scores.
+* -m Path to a tab delimited file containing the length of the used PSEMs. This is incorporated in normalising peak length.
+* -s Flag to be set if a sparse matrix representation should be used.
+* -z Flag indicating that the output of TEPIC should be zipped.
 
 Depending on the used arguments, TEPIC produces files containing:
-
 * TF affinities for all user specified regions.
 * Scaled TF affinities for all user specified regions.
 * TF affinities for all genes contained in the annotation file.
 * Scaled TF affinities for all genes contained in the annotation file.
-* A file holding all regions which were annotated.
 * A file containing the factors used to scale the original TF affinities.
+* Peak length, peak counts as well as the average signal within a peak. 
 
 Each run of TEPIC generates an *analysis meta datafile (amd)* containing all parameters, files, and outputs associated with the last run of TEPIC.
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
@@ -71,12 +87,18 @@ Together with the provided process xml file, the executed command lines  can be 
 Note that the input files **have to** have unix file endings.
 
 ## Example
-To run a test trial of *TEPIC*, you can use the data provided in the *Example* folder. You can run it with the command
+To run a test trial of *TEPIC*, you can use the data provided in the *Test* folder. You can run it with the command
 
-	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_original.txt -a ../Example/example_annotation.gtf -w 3000 -e
+	./TEPIC.sh -g ../Test/example_sequence.fa -b ../Test/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_converted.PSEM -a ../Test/example_annotation.gtf -w 3000 -e
 
-This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.txt*, and without 
+This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.PSEM*, and without 
 exponential decay. 
+
+Additionally, we provide a script to test several annotation versions of TEPIC. Execute the script
+
+	bash runTestCases.sh
+
+to compute the trial cases. 
 
 ## Citation
 If you are using TEPIC please cite:

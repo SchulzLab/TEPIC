@@ -28,8 +28,7 @@ To compile the C++ version of TRAP execute the script
 
 ## Position specific energy matrices
 The position weight matrices used in the *TEPIC* manuscript are stored in the file
-	[PWMs/pwm_vertebrates_jaspar_uniprobe_converted.PSEM](PWMs/pwm_vertebrates_jaspar_uniprobe_converted.PSEM).
-
+	[PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM](PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM).
 An extended set of pwms is also available for human, mouse, rat, drosophila melanogaster, and Caenorhabditis elegans.
 We collected motifs from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis Lab ENCODE Motif database* (6).
 * The human set contains 515 *JASPAR Vertebrata* matrices, 81 *Hocomoco human* matrices, and 130 matrices from the *Kellis Lab database*.
@@ -84,12 +83,13 @@ Each run of TEPIC generates an *analysis meta datafile (amd)* containing all par
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
 *MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
 
-Note that the input files **have to** have unix file endings.
+Note that the input files **have to** have unix file endings. Using the scaled features is currently only supported for homo sapiens, mus musculus, and
+rattus norvegicus.
 
 ## Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Test* folder. You can run it with the command
 
-	./TEPIC.sh -g ../Test/example_sequence.fa -b ../Test/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_converted.PSEM -a ../Test/example_annotation.gtf -w 3000 -e
+	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM -a ../Example/example_annotation.gtf -w 3000 -e
 
 This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.PSEM*, and without 
 exponential decay. 

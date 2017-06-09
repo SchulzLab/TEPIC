@@ -14,7 +14,7 @@ With version 2 of TEPIC, we introduced new features:
 peak signal and TF affinities or by generating a separate signal feature.
 
 Further, the repository now includes the code required to learn linear models from TF gene scores to predict gene expression.
-For further details, please see [MachineLearningPipelines/INVOKE](INVOKE).
+For further details, please see the INVOKE section..
 
 ## Introduction
 *TEPIC* segments the genome into user specified regions and annotates those with TF binding using TRAP (1). 
@@ -99,7 +99,7 @@ rattus norvegicus.
 ## Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Test* folder. You can run it with the command
 
-	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM -a ../Example/example_annotation.gtf -w 3000 -e
+	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM -a ../Example/example_annotation.gtf -w 3000 -e FALSE
 
 This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.PSEM*, and without 
 exponential decay. 

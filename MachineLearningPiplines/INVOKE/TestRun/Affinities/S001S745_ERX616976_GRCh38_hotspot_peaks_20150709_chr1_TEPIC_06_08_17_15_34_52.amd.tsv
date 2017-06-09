@@ -1,0 +1,33 @@
+[Description]
+process	TEPICv2
+run_by_user	fschmidt
+date	06_08_17
+time	15_34_52
+analysis_id	TestRun/Affinities/S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1_TEPIC_06_08_17_15_34_52
+
+[Inputs]
+region_file	ExampleData/S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1.bed
+original_scaling	FALSE
+
+[References]
+genome_reference	/MMCI/MS/DEEP-liver/work/Preprocessing/references/Reference_Genomes/hg38.noPrefix.masked.fa
+pwms	..//PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM
+genome_annotation	/MMCI/MS/EpiregDeep2/nobackup/References/gencode.v26.annotation.gtf
+
+[Outputs]
+affinity_file_peak_view	TestRun/Affinities/S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1_TEPIC_06_08_17_15_34_52_Affinity.txt
+affinity_file_gene_view_filtered	TestRun/Affinities/S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1_TEPIC_06_08_17_15_34_52_Affinity_Gene_View_Filtered.txt
+
+[Parameters]
+SampleID:	TestRun/Affinities/S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1
+cores	20
+window	10000
+decay	TRUE
+sparsity	0
+genebody	FALSE
+length normalisation	TRUE
+peak features	FALSE
+
+[Metrics]
+Number of analysed regions	23463
+Number of considered pwms	459

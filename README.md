@@ -3,15 +3,18 @@
 Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data.
 
 ## News
-08.06.2017: Version 2.0 of TEPIC is available.
+09.06.2017: Version 2.0 of TEPIC is available.
 With version 2 of TEPIC, we introduced new features:
 * We extended the set of PSEMs.
-* TF affinities are now computed using a C++ implementation of TRAP.
-* Affinities can now be normalised for peak length during TF-gene score computation.
+* TF affinities are computed using a C++ implementation of TRAP.
+* Affinities can be normalised by peak length during TF-gene score computation.
 * The length of the PSEMs can be considered in the normalisation.
 * We introduced features for peak length and peak counts.
-* Scaling can now be performed in two ways: The original way as proposed in the TEPIC manuscript by directly multiplying
+* Scaling can be performed in two ways: The original way as proposed in the TEPIC manuscript by directly multiplying
 peak signal and TF affinities or by generating a separate signal feature.
+
+Further, the repository now includes the code required to learn linear models from TF gene scores to predict gene expression.
+For further details, please see [MachineLearningPipelines/INVOKE](INVOKE).
 
 ## Introduction
 *TEPIC* segments the genome into user specified regions and annotates those with TF binding using TRAP (1). 
@@ -65,8 +68,8 @@ The optional parameters are:
 
 * -a Genome annotation file (gtf). All genes contained in this file will be annotated. The file must have the original format provided by gencode. 
 * -w Size of the window around the TSS of genes.
-* -d Signal of the open chromatin assay in bg format. Used to compute the average per peak coverage within the regions specified in -b
-* -e Deactivates the exponential decay
+* -d Signal of the open chromatin assay in bg format. Used to compute the average per peak coverage within the regions specified in -b.
+* -e Boolean controlling exponential decay (default TRUE).
 * -n Indicates that the file in -b contains the average signal in the peaks in the specified column. In this case the -d option is not required to obtain scaled TF affinities.
 * -c Number of cores used within TRAP.
 * -f A gtf file containing genes of interest. Only regions contained in the file specified by the -b option that are within the window specified by the -w option around these genes will be annotated.
@@ -84,7 +87,7 @@ Depending on the used arguments, TEPIC produces files containing:
 * TF affinities for all genes contained in the annotation file.
 * Scaled TF affinities for all genes contained in the annotation file.
 * A file containing the factors used to scale the original TF affinities.
-* TF affinities along with feature for peak length, peak counts and/or the average signal within a peak. 
+* TF affinities along with features for peak length, peak counts and/or the average signal within a peak. 
 
 Each run of TEPIC generates an *analysis meta datafile (amd)* containing all parameters, files, and outputs associated with the last run of TEPIC.
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder

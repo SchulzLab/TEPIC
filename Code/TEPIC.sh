@@ -9,7 +9,7 @@ Optional parameters:\n
 [-a gene annotation file, required to generate the gene view]\n
 [-w size of the window to be considered to generate gene view (default 50000bp)]\n
 [-f annotate only DNase peaks that are within a window specified by the -w option around all genes contained in the gene annotation file specified by this option]\n
-[-e flag to be set if exponential decay should not be used]\n
+[-e Indicating whether exponential decay should be used (default TRUE)]\n
 [-l flag to be set if affinities should not be normalised by peak length]\n
 [-u flag to be set if peak features for peak length and peak counts should not be generated]\n 
 [-x If -d or -n is used together with this flag, the original (Decay-)Scaling formulation of TEPIC is used to compute gene-TF scores]\n
@@ -33,11 +33,11 @@ geneBody="FALSE"
 lengthNorm="TRUE"
 peakFeatures="TRUE"
 motifLength=""
-working_dir=$(cd $(dirname "$0") && pwd -P)/
+working_dir=$(cd $(dirname "$0") && pwd -P)
 originalScaling="FALSE"
 zip="FALSE"
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:f:m:syeluhxz" o;
+while getopts "g:b:o:c:p:d:n:a:w:f:m:e:syluhxz" o;
 do
                     case $o in
                     g)                  genome=$OPTARG;;
@@ -53,7 +53,7 @@ do
 				m)				motifLength=$OPTARG;;
                    	s)				sparsity="TRUE";;
 				y)				geneBody="TRUE";;
-				e)                  decay="FALSE";;
+				e)                  decay=$OPTARG;;
 				l)				lengthNorm="FALSE";;
 				u)				peakFeatures="FALSE";;
 				x)				originalScaling="TRUE";;
@@ -246,7 +246,7 @@ fi
 rm ${filteredRegions}_sorted.bed
 
 #Removing regions that could not be annotated
-echo "Filter regions that could not be annotated."
+echo "Filter regions that could not be annotated"
 python ${working_dir}/filterInvalidRegions.py ${affinity}_temp $affinity
 rm ${affinity}_temp
 
@@ -276,7 +276,7 @@ then
 	fi
 
 	#Creating files containing only genes for which TF predictions are available
-	echo "Filter genes that could not be annotated."
+	echo "Filter genes that could not be annotated"
 	if [ "$decay" == "TRUE" ];
 	then
 		if [ -n "$dnase" ] || [ -n "$column" ];

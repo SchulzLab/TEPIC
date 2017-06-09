@@ -5,31 +5,31 @@ echo TestV2: Windows 3kb - Annotation - Decay - Length Normalised - Peak Feature
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V2 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000
 echo ""
 echo TestV3: Windows 3kb - Annotation - No Decay - Length Normalised - Peak Features
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V3 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e
+bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V3 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e FALSE
 echo ""
 echo TestV4: Windows 3kb - Annotation - Decay - Not Length Normalised - No Peak Features 
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V4 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -l -u
 echo ""
 echo TestV5: Windows 3kb - Annotation - No Decay - Not Length Normalised - No Peak Features 
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V5 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e -l -u
+bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V5 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e FALSE -l -u
 echo ""
 echo TestV6: Windows 3kb - Annotation - No Decay - Not Length Normalised - No Peak Features - Scaling original
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V6 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e -l -u -n 4 -x
+bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V6 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e FALSE -l -u -n 4 -x
 echo ""
 echo TestV7: Windows 3kb - Annotation - Decay - Not Length Normalised - No Peak Features - Scaling original
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V7 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -l -u -n 4 -x
 echo ""
 echo TestV8: Windows 3kb - Annotation - No Decay - Length Normalised - Peak Features - Scaling original
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V8 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e -n 4 -x
+bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V8 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e FALSE -n 4 -x
 echo ""
 echo TestV9: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - Scaling original
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V9 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -n 4 -x
 echo ""
 echo TestV10: Windows 3kb - Annotation - No Decay - Not Length Normalised - No Peak Features - Signal Feature
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V10 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e -l -u -n 4
+bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V10 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e FALSE -l -u -n 4
 echo ""
 echo TestV11: Windows 3kb - Annotation - No Decay - Length Normalised - Peak Features - Signal Feature
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V11 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e -n 4
+bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V11 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e FALSE -n 4
 echo ""
 echo TestV12: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - Signal Feature
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V12 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -n 4

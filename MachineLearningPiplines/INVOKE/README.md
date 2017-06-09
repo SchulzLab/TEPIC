@@ -9,7 +9,7 @@ Identification of key transcriptional regulators using epigenetics data
 *INVOKE* offers linear regression with various regularisation techniques (Lasso, Ridge, Elastic net) to infer
 potentially important transcriptional regulators by predicting gene expression from *TEPIC* TF-gene scores. 
 
-Further details on INVOKE can be found in the provided description [TEPIC-INVOKE.pdf](/TEPIC/docs/TEPIC-INVOKE.pdf).
+Further details on INVOKE can be found in the provided description [TEPIC-INVOKE.pdf](/docs/TEPIC-INVOKE.pdf).
 
 ## Installing TEPIC
 To run *INVOKE* the following packages/software must be installed additionally to TEPIC:

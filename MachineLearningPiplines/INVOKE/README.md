@@ -9,7 +9,7 @@ Identification of key transcriptional regulators using epigenetics data
 *INVOKE* offers linear regression with various regularisation techniques (Lasso, Ridge, Elastic net) to infer
 potentially important transcriptional regulators by predicting gene expression from *TEPIC* TF-gene scores. 
 
-Further details on INVOKE can be found in the provided description [TEPIC/docs/TEPIC-INVOKE.pdf](TEPIC-INVOKE.pdf).
+Further details on INVOKE can be found in the provided description [TEPIC-INVOKE.pdf](/TEPIC/docs/TEPIC-INVOKE.pdf).
 
 ## Installing TEPIC
 To run *INVOKE* the following packages/software must be installed additionally to TEPIC:
@@ -23,7 +23,7 @@ To run *INVOKE* the following packages/software must be installed additionally t
 ##Required Input:
 *INVOKE* can be applied to several samples at once. For each sample, one tab-delimited file has to be provided
 containing TF-gene scores and gene expression values per gene. We provide a script to combine TF-gene scores computed
-by TEPIC with gene expression data to generate the correct input [Scripts/integrateData.py](integrateData.py).
+by TEPIC with gene expression data to generate the correct input [integrateData.py](Scripts/integrateData.py).
 
 The gene expression data file is a two column, tab delimited file, including a header, with EnsembleGeneIDs in the the first column and
 gene expression values in the second column. An example gene expression file is provided as well: 
@@ -74,12 +74,12 @@ For reasons of simplicity and ease of use this mode does not offer all options t
 Running an *INVOKE* analysis manually allows full access to all options of *TEPIC* and *INVOKE*. 
 There are three main steps the user needs to carry out:
 (1) Running *TEPIC*: For details on how to run *TEPIC*, see the *TEPIC* README.
-(2) Combine TF gene-scores with gene expression data. We provide a script for this task [Scripts/integrateData.py](integrateData.py).
+(2) Combine TF gene-scores with gene expression data. We provide a script for this task [integrateData.py](Scripts/integrateData.py).
 It can be used with the command
 
 	python Scripts/integrateData.py <TF gene scores> <Gene expression data> <Combined data>
 
-(3) Run the actual model using the script [Scripts/INVOKE.R](INVOKE.R). The basic command is
+(3) Run the actual model using the script [Scripts/INVOKE.R](Scripts/INVOKE.R). The basic command is
 
 	Rscript Scripts/INVOKE.R --dataDir=<Data Path> --outDir=<Output Path> --response=Expression --regularisation=<E,L,R> --performance=<TRUE,FALSE>
 

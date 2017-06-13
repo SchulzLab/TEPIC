@@ -18,7 +18,7 @@ To run *DYNAMITE* the following packages/software must be installed additionally
 * doMC
 * optional: ggplot2
 
-##Required Input:
+## Required Input:
 *DYNAMITE* can be applied to several samples at once. For each sample, one tab-delimited file has to be provided
 containing TF-gene scores and log2 gene expression ratios per gene. We provide  scripts to combine TF-gene scores computed
 by TEPIC with log2 gene expression ratios to generate the correct input [integrateData.py](Scripts/integrateData.py) and [prepareForClassificiation.R](Scripts/prepareForClassificiation.R).
@@ -30,7 +30,7 @@ log2 gene expression ratios in the second column. An example gene expression fil
 ## Using DYNAMITE
 DYNAMITE can be used in two different ways:
 
-###Combined pipeline with TEPIC
+### Combined pipeline with TEPIC
 We offer an automated pipeline that includes the computation of TF-gene scores. To run this pipeline, execute the command
 
     bash runDYNAMITE.sh
@@ -74,7 +74,7 @@ For reasons of simplicity and ease of use this mode does not offer all options t
 Note that the pipeline does support multiple samples per group. However, it is not possible to compare more than two groups at once. 
 This can be done if the *DYNAMITE* Rscript is ran manually. 
 
-###Running DYNAMITE manually
+### Running DYNAMITE manually
 Running an *DYNAMITE* analysis manually allows full access to all options of *TEPIC* and *DYNAMITE*. 
 There are three main steps the user needs to carry out:
 (1) Running *TEPIC*: For details on how to run *TEPIC*, see the *TEPIC* README.
@@ -91,13 +91,13 @@ It can be used with the command
 
 	Rscript Scripts/DYNAMITE.R --dataDir=<Data Path> --outDir=<Output Path> --response=Expression --regularisation=<E,L,R> --performance=<TRUE,FALSE>
 
-##Outputs
+## Outputs
 *DYNAMITE* always produces the following output:
 * A *txt* file with the regression coefficients learned on the entire data set.
-* If ggplot2 is available, a bar plot is generated that shows all coefficients with a mean absolute value > 0.025.
+* If ggplot2 is available, a bar plot is generated that shows all nonzero regression coefficients.
 
 If the performance of the model is assessed, *DYNAMITE* additionally generates:
-* A file *Performance_Overview.txt* that holds information on model performance: Pearson correlation, Spearman correlation, and MSE.
+* A file *Performance_Overview.txt* that holds information on model performance: Accuracy on Training and Test data, F1 measures.
 * A boxplot showing model performance.
 * Confusion matrices per sample and outer cross validation run. 
 

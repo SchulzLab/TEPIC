@@ -4,6 +4,7 @@ Annotation of genomic regions using Transcription factor (TF) binding sites and 
 
 ## News
 13.06.2017: DYNAMITE is now included in the repository.
+
 09.06.2017: Version 2.0 of TEPIC is available.
 With version 2 of TEPIC, we introduced new features:
 * We extended the set of PSEMs.

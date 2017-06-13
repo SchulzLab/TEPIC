@@ -20,7 +20,7 @@ To run *INVOKE* the following packages/software must be installed additionally t
 * optional: gplots
 * optional: ggplot2
 
-##Required Input:
+## Required Input:
 *INVOKE* can be applied to several samples at once. For each sample, one tab-delimited file has to be provided
 containing TF-gene scores and gene expression values per gene. We provide a script to combine TF-gene scores computed
 by TEPIC with gene expression data to generate the correct input [integrateData.py](Scripts/integrateData.py).
@@ -32,7 +32,7 @@ gene expression values in the second column. An example gene expression file is 
 ## Using INVOKE
 INVOKE can be used in two different ways:
 
-###Combined pipeline with TEPIC
+### Combined pipeline with TEPIC
 We offer an automated pipeline that includes the computation of TF-gene scores. To run this pipeline, execute the command
 
     bash runInvokeAnalysis.sh
@@ -70,7 +70,7 @@ General parameters:
 * randomise = TRUE if a model on randomised data should be learned, FALSE otherwise. 
 For reasons of simplicity and ease of use this mode does not offer all options that are supported by TEPIC and INVOKE.
 
-###Running INVOKE manually
+### Running INVOKE manually
 Running an *INVOKE* analysis manually allows full access to all options of *TEPIC* and *INVOKE*. 
 There are three main steps the user needs to carry out:
 (1) Running *TEPIC*: For details on how to run *TEPIC*, see the *TEPIC* README.
@@ -100,7 +100,7 @@ Overall, the following parameters can be specified:
 * asRData = Flag indicating whether feature coefficients should be stored as RData files. 
 * randomise = TRUE if a model on randomised data should be learned, FALSE otherwise. 
 
-##Outputs
+## Outputs
 *INVOKE* always produces the following output:
 * A *txt* file with the regression coefficients learned on the entire data set.
 * If ggplot2 is available, a bar plot is generated that shows all coefficients with a mean absolute value > 0.025.

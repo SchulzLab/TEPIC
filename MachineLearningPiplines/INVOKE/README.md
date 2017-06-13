@@ -9,7 +9,7 @@ Identification of key transcriptional regulators using epigenetics data
 *INVOKE* offers linear regression with various regularisation techniques (Lasso, Ridge, Elastic net) to infer
 potentially important transcriptional regulators by predicting gene expression from *TEPIC* TF-gene scores. 
 
-Further details on INVOKE can be found in the provided description [TEPIC-INVOKE.pdf](/docs/TEPIC-INVOKE.pdf).
+Further details on INVOKE can be found in the provided [description](/docs/Description.pdf).
 
 ## Installing TEPIC
 To run *INVOKE* the following packages/software must be installed additionally to TEPIC:
@@ -67,7 +67,7 @@ General parameters:
 * outerCV = Number of outer cross validation folds
 * testsize = Size of the test set
 * performance = TRUE if model performance should be assessed using an outer cross validation, FALSE otherwise.
-
+* randomise = TRUE if a model on randomised data should be learned, FALSE otherwise. 
 For reasons of simplicity and ease of use this mode does not offer all options that are supported by TEPIC and INVOKE.
 
 ###Running INVOKE manually
@@ -98,7 +98,7 @@ Overall, the following parameters can be specified:
 * seed = Specify a random SEED to allow reproducability (can be only used if 1 core is used).
 * leaveOneOutCV = Flag indicating whether the models should be learned using leave one out cross validation
 * asRData = Flag indicating whether feature coefficients should be stored as RData files. 
-
+* randomise = TRUE if a model on randomised data should be learned, FALSE otherwise. 
 
 ##Outputs
 *INVOKE* always produces the following output:
@@ -112,13 +112,13 @@ If the performance of the model is assessed, *INVOKE* additionally generates:
 * Scatter Plots per sample and outer cross validation run showing the predicted versus the measured gene expression on test data.
 
 ## Example
-To run a test trial of *INVOKE*, you can run the script runInvokeAnalysis.sh. You can run it with the command
+To run a test trial of *INVOKE*, execute the script runInvokeAnalysis.sh. You can run it with the command
 
 	bash runInvokeAnalysis.sh
 
 We provide precomputed TEPIC results to run the example. If a reference genome and a gene annotation file are provided by the user,
 the first step of the pipeline, the run of TEPIC, can be computed as well. Sample open chromatin regions as well as gene expresssion data
-are already contained in the folder [ExampleData](ExampleData).
+are already contained in the folder [ExampleData](ExampleData). Note that the genome version used in this example is hg38.
 
 ## Citation
 If you are using INVOKE please cite:

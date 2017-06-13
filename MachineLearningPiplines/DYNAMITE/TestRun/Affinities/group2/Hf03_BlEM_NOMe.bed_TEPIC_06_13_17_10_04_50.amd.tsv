@@ -1,0 +1,34 @@
+[Description]
+process	TEPICv2
+run_by_user	fschmidt
+date	06_13_17
+time	10_04_50
+analysis_id	TestRun/Affinities/group2/Hf03_BlEM_NOMe.bed_TEPIC_06_13_17_10_04_50
+
+[Inputs]
+region_file	ExampleData/Hf03_BlEM_NOMe.bed
+gene_filter_file /MMCI/MS/DEEP-liver/work/Preprocessing/references/Annotation/gencode.v19.annotation.gtf
+original_scaling	FALSE
+
+[References]
+genome_reference	/MMCI/MS/DEEP-liver/work/Preprocessing/references/Reference_Genomes/hs37d5.fa
+pwms	/MMCI/MS/DEEP-liver/work/Tools/TEPIC/PWMs/T-Cell-Example.PSEM
+genome_annotation	/MMCI/MS/DEEP-liver/work/Preprocessing/references/Annotation/gencode.v19.annotation.gtf
+
+[Outputs]
+affinity_file_peak_view	TestRun/Affinities/group2/Hf03_BlEM_NOMe.bed_TEPIC_06_13_17_10_04_50_Affinity.txt
+affinity_file_gene_view_filtered	TestRun/Affinities/group2/Hf03_BlEM_NOMe.bed_TEPIC_06_13_17_10_04_50_Affinity_Gene_View_Filtered.txt
+
+[Parameters]
+SampleID:	TestRun/Affinities/group2/Hf03_BlEM_NOMe.bed
+cores	4
+window	50000
+decay	TRUE
+sparsity	0
+genebody	FALSE
+length normalisation	TRUE
+peak features	TRUE
+
+[Metrics]
+Number of analysed regions	82000
+Number of considered pwms	50

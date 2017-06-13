@@ -3,6 +3,7 @@
 Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data.
 
 ## News
+13.06.2017: DYNAMITE is now included in the repository.
 09.06.2017: Version 2.0 of TEPIC is available.
 With version 2 of TEPIC, we introduced new features:
 * We extended the set of PSEMs.
@@ -14,7 +15,7 @@ With version 2 of TEPIC, we introduced new features:
 peak signal and TF affinities or by generating a separate signal feature.
 
 Further, the repository now includes the code required to learn linear models from TF gene scores to predict gene expression.
-For further details, please see the INVOKE section..
+For further details, please see the INVOKE section.
 
 ## Introduction
 *TEPIC* segments the genome into user specified regions and annotates those with TF binding using TRAP (1). 
@@ -24,7 +25,7 @@ While computing gene TF scores, TEPIC can perform normalisation for peak length 
 and produces seperate features for peak length, peak count and/or peak signal. These can be used in downstream applications to, e.g. to determine
 the influence of chromatin accessiblity on gene expression, without considering detailed information on TF binding. 
 
-Further details on TEPIC can be found in the provided description [docs/TEPIC-INVOKE.pdf](docs/TEPIC-INVOKE.pdf).
+Further details on TEPIC can be found in the provided [description](docs/Description.pdf).
 
 ## Installing TEPIC
 To run *TEPIC* the following packages/software must be installed:
@@ -99,7 +100,7 @@ rattus norvegicus.
 ## Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Test* folder. You can run it with the command
 
-	./TEPIC.sh -g ../Example/example_sequence.fa -b ../Example/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM -a ../Example/example_annotation.gtf -w 3000 -e FALSE
+	./TEPIC.sh -g ../Test/example_sequence.fa -b ../Test/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM -a ../Test/example_annotation.gtf -w 3000 -e FALSE
 
 This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.PSEM*, and without 
 exponential decay. 
@@ -108,7 +109,7 @@ Additionally, we provide a script to test several annotation versions of TEPIC. 
 
 	bash runTestCases.sh
 
-to compute the trial cases.
+to compute multiple trial cases.
 
 ## Citation
 If you are using TEPIC please cite:

@@ -81,20 +81,20 @@ do
 	then
 		if [ "$peakFeatures" == "TRUE"] ;
 		then
-			echo python Scripts/integrateData.py ${outputDirectory}/Affinities/${prefix}*Peak_Features_Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
-			python Scripts/integrateData.py ${outputDirectory}/Affinities/${prefix}*Peak_Features_Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
+			echo python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*Peak_Features_Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
+			python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*Peak_Features_Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
 		else
-			echo python Scripts/integrateData.py ${outputDirectory}/Affinities/${prefix}*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
-			python Scripts/integrateData.py ${outputDirectory}/Affinities/${prefix}*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
+			echo python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
+			python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
 		fi
 	else
  		if [ "$peakFeatures" == "TRUE"] ;
 		then
-			echo python Scripts/integrateData.py ${outputDirectory}/Affinities/${prefix}*Three_Peak_Based_Features_*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
-			python Scripts/integrateData.py ${outputDirectory}/Affinities/${prefix}*_Three_Peak_Based_Features_*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
+			echo python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*Three_Peak_Based_Features_*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
+			python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*_Three_Peak_Based_Features_*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
 		else
-			echo python Scripts/integrateData.py ${outputDirectory}/Affinities/${prefix}*Signal_Feature_*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
-			python Scripts/integrateData.py ${outputDirectory}/Affinities/${prefix}*_Signal_Feature_*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
+			echo python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*Signal_Feature_*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
+			python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*_Signal_Feature_*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
 		fi
 	fi
 done
@@ -104,13 +104,22 @@ do
 	prefix=$(basename -s .txt $file)
 	exp=${gene_Expression_Data[${counter}]}
 	((counter++))
-	echo python Scripts/integrateData.py ${file} ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
-	python Scripts/integrateData.py ${file} ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
+	echo python ${scriptPath}/integrateData.py ${file} ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
+	python ${scriptPath}/integrateData.py ${file} ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
 
 done
 fi
 
 echo "Starting linear regression"
-mkdir ${outputDirectory}"/LearningResults"
-echo Rscript $rpath/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/LearningResults/ --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance}
-Rscript $rpath/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/LearningResults/ --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance}
+mkdir ${outputDirectory}"/Learning_Results"
+echo Rscript ${scriptPath}/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/Learning_Results/ --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance}
+Rscript ${scriptPath}/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/Learning_Results/ --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance}
+
+if [ "$randomise" == "TRUE" ];
+then
+	mkdir ${outputDirectory}"/Learning_Results_Random"
+	echo Rscript ${scriptPath}/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/Learning_Results_Random --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance} --randomise=${randomise}
+	Rscript ${scriptPath}/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/Learning_Results_Random --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance} --randomise=${randomise}
+fi
+
+

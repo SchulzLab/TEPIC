@@ -26,7 +26,8 @@ if("--help" %in% args) {
 	--performance Flag indiciating whether the performance of the model should be assessed (default TRUE)
 	--seed Random seed used for random number generation (default random)
 	--leaveOneOutCV Flag indicating whether a leave one out cross-validation should be used (default FALSE)
-	--asRData store feature coefficients as RData files (default FALSE)
+	--asRData Store feature coefficients as RData files (default FALSE)
+	--randomise Randomise the feature matrix (default FALSE) 
 	--help=print this text
 ")
 	q(save="no")
@@ -115,7 +116,18 @@ if (is.null(argsL$asRData)){
 	argsL$asRData <- FALSE
 }
 
+if (is.null(argsL$randomise)){
+	argsL$randomise <- FALSE
+}
+
 registerDoMC(cores = argsL$cores)
+
+permute<-function(x,resPos){
+s<-sample(length(x))
+s<-s[which(s != resPos)]
+c(x[s],x[resPos])
+}
+
 #Check output directory, create it if necessary
 dir.create(argsL$outDir,showWarning=FALSE)
 
@@ -188,7 +200,13 @@ for(Sample in FileList){
 
 	name<-unlist(unlist(strsplit(Sample, ".txt")))
 	Response_Variable_location<- grep(argsL$response,FeatureNames)
-
+	#Randomise the data
+	if (argsL$randomise == TRUE){
+		MP<-t(apply(M,1,permute,Response_Variable_location))
+		colnames(MP)<-colnames(M)
+		M<-data.frame(scale(MP,center=TRUE, scale=TRUE))  
+	}
+	print(head(M))
 	if (argsL$performance == TRUE){
 		if (argsL$leaveOneOutCV==FALSE){
 		#Looping through the outer folds

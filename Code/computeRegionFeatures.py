@@ -1,6 +1,6 @@
 import argparse
 import math
-from operator import itemgetter
+from operator import itemgetter, add
 
 from SortedCollection import SortedCollection
 
@@ -316,13 +316,14 @@ def computeRegionFeatures(gene_regions, peakcoverage_collection, gene_to_chromos
     for annotation, regions in gene_regions.iteritems():
         chromosome = gene_to_chromosome[annotation[0]]
         collection = peakcoverage_collection[chromosome]
-        region_count = len(regions)
+        region_count = 0.0
         total_length = 0.0
         total_signal = 0.0
         for region in regions:
             if decay:
                 region_mid = int(((float(region[2]) - float(region[1])) / 2) + float(region[1]))
                 weight_factor = math.exp(-(float(float(abs(annotation[1] - region_mid)) / WEIGHT_DECAY)))
+            region_count += weight_factor
             total_length += float(abs(region[2] - region[1])) * weight_factor
             try:
                 cov_region = collection.find((region[1], region[2]))
@@ -333,6 +334,14 @@ def computeRegionFeatures(gene_regions, peakcoverage_collection, gene_to_chromos
         gene_feature_matrix[annotation] = [region_count, total_length, total_signal]
 
     return gene_feature_matrix
+
+
+def mergeGeneFeatureMatrices(matrix_a, matrix_b):
+    for annotation in matrix_b:
+        if annotation in matrix_a:
+            matrix_a[annotation] = map(add, matrix_a[annotation], matrix_b[annotation])
+        else:
+            matrix_a[annotation] = matrix_b[annotation]
 
 
 def writeGeneFeatureMatrix(filename, feature_matrix):
@@ -359,10 +368,14 @@ def main():
     decay_parser = parser.add_mutually_exclusive_group(required=True)
     decay_parser.add_argument('--decay', dest='decay', action='store_true', help="Flag option. If set an exponential decay function is used to weight the features. Default behavior is False.")
     decay_parser.add_argument('--no-decay', dest='decay', action='store_false')
-    parser.set_defaults(decay=True)
+    parser.set_defaults(decay=False)
     parser.add_argument("--hi_c_regions", nargs="?", default=None, help="If the name of the Hi-C loop file is provided, all regions will be intersected with annotated Hi-C (intrachromosomal) loop regions around the TSS of each annotated gene.")
     parser.add_argument("--loopwindows", nargs="?", default=25000, type=int, help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.")
     parser.add_argument("--resolution", nargs="?", default=None, help="Defines the Hi-C resolution of the loops which should be considered.")
+    hic_decay_parser = parser.add_mutually_exclusive_group(required=True)
+    hic_decay_parser.add_argument('--hi_c-decay', dest='hic_decay', action='store_true', help="Flag option. If set an exponential decay function is used to weight the Hi-C features. Default behavior is False.")
+    hic_decay_parser.add_argument('--no_hi_c-decay', dest='hic_decay', action='store_false')
+    parser.set_defaults(hic_decay=False)
     args = parser.parse_args()
 
     print "Loading files ..."
@@ -389,6 +402,7 @@ def main():
     print "Starting annotation..."
     print "Using window size: " + str(args.window_size/2)
     print "Decay set to: " + str(args.decay)
+    print "Hi-C Decay set to: " + str(args.hic_decay)
 
     if args.window_size is not None:
         gene_regions = getRegionsInWindow(annotations, regions_collection, args.window_size/2)
@@ -400,6 +414,7 @@ def main():
         count += len(regs)
     print "Total number of assigned regions: " + str(count)
 
+    gene_hic_feature_matrix = None
     if args.functional_regions is not None and args.hi_c_regions is None:
         print "Loading functional regions..."
         if args.window_size is not None:
@@ -447,14 +462,19 @@ def main():
             (_, gene_regions_right) = filterGeneRegions(functional_regions_collection, gene_regions_right, gene_to_chromosome)
         # OR: !just use regions in tss window and those in hi-c regions!
         # add remaining regions to the gene-regions
-        gene_regions = merge_gene_regions(merge_gene_regions(gene_regions, gene_regions_left), gene_regions_right)
+        gene_hic_regions = merge_gene_regions(gene_regions_left, gene_regions_right)
         print "Assigned regions to " + str(len(gene_regions)) + " genes"
         count = 0
         for _, regs in gene_regions.iteritems():
             count += len(regs)
         print "Total number of assigned regions: " + str(count)
-    feature_matrix = computeRegionFeatures(gene_regions, peakcoverage_collection, gene_to_chromosome, args.decay)
-    writeGeneFeatureMatrix(args.outputprefix + "RegionFeatures.txt", feature_matrix)
+        gene_hic_feature_matrix = computeRegionFeatures(gene_hic_regions, peakcoverage_collection, gene_to_chromosome, args.hic_decay)
+
+    gene_feature_matrix = computeRegionFeatures(gene_regions, peakcoverage_collection, gene_to_chromosome, args.decay)
+    if gene_hic_feature_matrix is not None:
+        mergeGeneFeatureMatrices(gene_feature_matrix, gene_hic_feature_matrix)
+
+    writeGeneFeatureMatrix(args.outputprefix + "RegionFeatures.txt", gene_feature_matrix)
 
     print "Finished annotation!"
 

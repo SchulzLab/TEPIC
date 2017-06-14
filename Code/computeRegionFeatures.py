@@ -295,9 +295,20 @@ def merge_gene_regions(gene_regions, add_gene_regions):
             try:
                 gene_regions[annotation].find(region[SORTING_KEY])
             except ValueError:
-                pass
-            else:
                 gene_regions[annotation].insert_right(region)
+    return gene_regions
+
+
+def remove_gene_regions(gene_regions, subs_gene_regions):
+    for annotation, regions in subs_gene_regions.iteritems():
+        if annotation in gene_regions:
+            for region in regions:
+                try:
+                    gene_regions[annotation].find(region[SORTING_KEY])
+                except ValueError:
+                    pass
+                else:
+                    gene_regions[annotation].remove(region)
     return gene_regions
 
 
@@ -372,7 +383,7 @@ def main():
     parser.add_argument("--hi_c_regions", nargs="?", default=None, help="If the name of the Hi-C loop file is provided, all regions will be intersected with annotated Hi-C (intrachromosomal) loop regions around the TSS of each annotated gene.")
     parser.add_argument("--loopwindows", nargs="?", default=25000, type=int, help="Defines the window-size around the TSS in which all loops are considered for intersecting with openChromatin regions.")
     parser.add_argument("--resolution", nargs="?", default=None, help="Defines the Hi-C resolution of the loops which should be considered.")
-    hic_decay_parser = parser.add_mutually_exclusive_group(required=True)
+    hic_decay_parser = parser.add_mutually_exclusive_group(required=False)
     hic_decay_parser.add_argument('--hi_c-decay', dest='hic_decay', action='store_true', help="Flag option. If set an exponential decay function is used to weight the Hi-C features. Default behavior is False.")
     hic_decay_parser.add_argument('--no_hi_c-decay', dest='hic_decay', action='store_false')
     parser.set_defaults(hic_decay=False)
@@ -408,6 +419,7 @@ def main():
         gene_regions = getRegionsInWindow(annotations, regions_collection, args.window_size/2)
     else:
         gene_regions = getNearestNeighbors(annotations_collection, regions)
+
     print "Assigned regions to " + str(len(gene_regions)) + " genes"
     count = 0
     for _, regs in gene_regions.iteritems():
@@ -428,6 +440,7 @@ def main():
         sanityCheck(gene_regions, gene_functions)
         print "Filtering regions using functional annotations..."
         (gene_regions, _) = filterGeneRegions(gene_regions, gene_functions)
+
         print "Assigned regions to " + str(len(gene_regions)) + " genes"
         count = 0
         for _, regs in gene_regions.iteritems():
@@ -461,11 +474,14 @@ def main():
             (_, gene_regions_left) = filterGeneRegions(functional_regions_collection, gene_regions_left, gene_to_chromosome)
             (_, gene_regions_right) = filterGeneRegions(functional_regions_collection, gene_regions_right, gene_to_chromosome)
         # OR: !just use regions in tss window and those in hi-c regions!
-        # add remaining regions to the gene-regions
+        # merge gene regions from left and right Hi-C regions
         gene_hic_regions = merge_gene_regions(gene_regions_left, gene_regions_right)
-        print "Assigned regions to " + str(len(gene_regions)) + " genes"
+        # Filter duplicated regions resulting from multiple region searches
+        gene_hic_regions = remove_gene_regions(gene_hic_regions, gene_regions)
+
+        print "Assigned regions to " + str(len(gene_hic_regions)) + " genes"
         count = 0
-        for _, regs in gene_regions.iteritems():
+        for _, regs in gene_hic_regions.iteritems():
             count += len(regs)
         print "Total number of assigned regions: " + str(count)
         gene_hic_feature_matrix = computeRegionFeatures(gene_hic_regions, peakcoverage_collection, gene_to_chromosome, args.hic_decay)

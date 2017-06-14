@@ -45,6 +45,12 @@ temp$resolution <- "All"
 cdata <- rbind(dt, temp)
 cdata$distance <- factor(cdata$distance, levels=xlabelsreduced)
 
+# Define text sizes
+ts <- 20
+texs <- 18
+titles <- 22
+ltexs <- 16
+
 # only barplot
 ggplot(cdata, aes(distance), ordered=TRUE) +
   geom_bar(aes(y=cdata$V1, fill=factor(resolution)), colour="black", position = "dodge", stat="identity") +
@@ -59,10 +65,11 @@ ggplot(cdata, aes(distance, y=cdata$cumsum), ordered=TRUE) +
   geom_line(aes(group=factor(resolution, levels=c("5000","10000","25000","All")), colour=factor(resolution,levels=c("5000","10000","25000","All"))),size=1.5) + 
   geom_point(colour="darkgrey") +
   scale_colour_discrete(name = "Hi-C Resolution") +
-  ggtitle('Binned minimum window size around TSS containing nearest loop-edge in K562 cell-line\nCumulative histogram') +
+  #ggtitle('Cumulative histogram for K562 on number of genes \n containing a loop inside loop-window') +
   xlab('Loop-window') +
   ylab('Number of genes') +
-  theme_bw()
+  theme_bw() +
+  theme(axis.title = element_text(size=ts), plot.title = element_text(size=titles), axis.text = element_text(size=texs), legend.title=element_text(size=texs), legend.text=element_text(size=ltexs), legend.position="bottom")
 
 # combined plot
 ggplot(cdata, aes(distance, y=cdata$cumsum), ordered=TRUE) +
@@ -74,4 +81,5 @@ ggplot(cdata, aes(distance, y=cdata$cumsum), ordered=TRUE) +
   ggtitle('Binned minimum window size around TSS containing nearest loop-edge in K562 cell-line\nCombined histogram') +
   xlab('Loop-window') +
   ylab('Number of genes') +
-  theme_bw()
+  theme_bw() +
+  theme(axis.title = element_text(size=ts), plot.title = element_text(size=titles), axis.text = element_text(size=texs), legend.title=element_text(size=ts), legend.text=element_text(size=ltexs))

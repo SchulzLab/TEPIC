@@ -490,7 +490,14 @@ def main():
     if gene_hic_feature_matrix is not None:
         mergeGeneFeatureMatrices(gene_feature_matrix, gene_hic_feature_matrix)
 
-    writeGeneFeatureMatrix(args.outputprefix + "RegionFeatures.txt", gene_feature_matrix)
+    output_filename = "RegionFeatures"
+    if args.outputprefix:
+        output_split = args.outputprefix.rsplit("/", 1)
+        output_filename = args.outputprefix
+        if len(output_split) > 1 and not output_split[1]:
+            output_filename = args.outputprefix + "RegionFeatures"
+
+    writeGeneFeatureMatrix(output_filename + ".txt", gene_feature_matrix)
 
     print "Finished annotation!"
 

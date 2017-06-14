@@ -300,7 +300,8 @@ def tfIndex(filename):
 	tfpa.close()
 	return l.split()
 
-def createAffinityFile0(affinities,tfNames,filename,tss):
+#Creates an affinity file that contains only TF affinities, no additional features
+def createAffinityFileAffintiesOnly(affinities,tfNames,filename,tss):
 	output=open(filename,"w")
 	header="geneID"
 	for element in tfNames:
@@ -319,7 +320,8 @@ def createAffinityFile0(affinities,tfNames,filename,tss):
 		output.write(line+'\n')
 	output.close()
 
-def createAffinityFile1(affinities,peakCounts,peakLength,tfNames,filename,tss):
+#Creates an affinity file that contains affinities, peak counts and peak length information
+def createAffinityFileAffinitiesPeakCountsLength(affinities,peakCounts,peakLength,tfNames,filename,tss):
 	output=open(filename,"w")
 	header="geneID"
 	for element in tfNames:
@@ -347,8 +349,8 @@ def createAffinityFile1(affinities,peakCounts,peakLength,tfNames,filename,tss):
 		output.write(line+'\n')
 	output.close()
 
-
-def createAffinityFile2(affinities,peakCounts,peakLength,peakSignal,tfNames,filename,tss):
+#Creates an affinity file that contains affinities, peak counts, peak length, and peak signal information
+def createAffinityFileAffinitiesPeakCountsLengthSignal(affinities,peakCounts,peakLength,peakSignal,tfNames,filename,tss):
 	output=open(filename,"w")
 	header="geneID"
 	for element in tfNames:
@@ -380,7 +382,8 @@ def createAffinityFile2(affinities,peakCounts,peakLength,peakSignal,tfNames,file
 		output.write(line+'\n')
 	output.close()
 
-def createAffinityFile3(affinities,peakSignal,tfNames,filename,tss):
+#Creates an affinity file that contains affinities, and peak signal information
+def createAffinityFileAffinitiesSignal(affinities,peakSignal,tfNames,filename,tss):
 	output=open(filename,"w")
 	header="geneID"
 	for element in tfNames:
@@ -569,16 +572,16 @@ def main():
 	#Generate Output
 	if (decay):
 		if (addPeakF):
-			createAffinityFile1(affinities,numberOfPeaks,peakLength,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Peak_Features_Affinity_Gene_View.txt"),tss)	
+			createAffinityFileAffinitiesPeakCountsLength(affinities,numberOfPeaks,peakLength,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Peak_Features_Affinity_Gene_View.txt"),tss)	
 		else:
-			createAffinityFile0(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss)		
+			createAffinityFileAffintiesOnly(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss)		
 		if (sparseRep):
 			createSparseFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Sparse_Affinity_Gene_View.txt"),tss)
 	else:
 		if (addPeakF):
-			createAffinityFile1(affinities,numberOfPeaks,peakLength,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Peak_Features_Affinity_Gene_View.txt"),tss)
+			createAffinityFileAffinitiesPeakCountsLength(affinities,numberOfPeaks,peakLength,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Peak_Features_Affinity_Gene_View.txt"),tss)
 		else:
-			createAffinityFile0(affinities,tfNames,args.geneViewAffinity,tss)
+			createAffinityFileAffintiesOnly(affinities,tfNames,args.geneViewAffinity,tss)
 		if (sparseRep):
 			createSparseFile(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Sparse_Affinity_Gene_View.txt"),tss)
 
@@ -587,29 +590,29 @@ def main():
 		scaledAffinities,numberOfPeaks,peakLength=extractTF_Affinity(usedRegions,genesInOpenChromatin,args.signalScale,tss,oC,decay,geneBody,addPeakF,normaliseLength,motifLengths)
 		if (decay):
 			if (addPeakF):
-				createAffinityFile1(scaledAffinities,numberOfPeaks,peakLength,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Peak_Features_Affinity_Gene_View.txt"),tss)
+				createAffinityFileAffinitiesPeakCountsLength(scaledAffinities,numberOfPeaks,peakLength,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Peak_Features_Affinity_Gene_View.txt"),tss)
 			else:
-				createAffinityFile0(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss)
+				createAffinityFileAffintiesOnly(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Affinity_Gene_View.txt"),tss)
 			if (sparseRep):
 				createSparseFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Scaled_Sparse_Affinity_Gene_View.txt"),tss)
 		else:
 			if (addPeakF):
-				createAffinityFile1(scaledAffinities,numberOfPeaks,peakLength,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Scaled_Peak_Features_Affinity_Gene_View.txt"),tss)	
+				createAffinityFileAffinitiesPeakCountsLength(scaledAffinities,numberOfPeaks,peakLength,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Scaled_Peak_Features_Affinity_Gene_View.txt"),tss)	
 			else:
-				createAffinityFile0(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Scaled_Affinity_Gene_View.txt"),tss)	
+				createAffinityFileAffintiesOnly(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Scaled_Affinity_Gene_View.txt"),tss)	
 			if (sparseRep):
 				createSparseFile(scaledAffinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Sparse_Scaled_Affinity_Gene_View.txt"),tss)
 	
 	if (args.peakCoverage != None):
 		if (decay):
 			if (addPeakF):
-				createAffinityFile2(affinities,numberOfPeaks,peakLength,perBaseCoverage,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Three_Peak_Based_Features_Affinity_Gene_View.txt"),tss)	
+				createAffinityFileAffinitiesPeakCountsLengthSignal(affinities,numberOfPeaks,peakLength,perBaseCoverage,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Three_Peak_Based_Features_Affinity_Gene_View.txt"),tss)	
 			else:
-				createAffinityFile3(affinities,perBaseCoverage,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Signal_Feature_Affinity_Gene_View.txt"),tss)	
+				createAffinityFileAffinitiesSignal(affinities,perBaseCoverage,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Signal_Feature_Affinity_Gene_View.txt"),tss)	
 		else:
 			if (addPeakF):
-				createAffinityFile2(affinities,numberOfPeaks,peakLength,perBaseCoverage,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Three_Peak_Based_Features_Affinity_Gene_View.txt"),tss)
+				createAffinityFileAffinitiesPeakCountsLengthSignal(affinities,numberOfPeaks,peakLength,perBaseCoverage,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Three_Peak_Based_Features_Affinity_Gene_View.txt"),tss)
 			else:
-				createAffinityFile3(affinities,perBaseCoverage,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Signal_Feature_Affinity_Gene_View.txt"),tss)
+				createAffinityFileAffinitiesSignal(affinities,perBaseCoverage,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Signal_Feature_Affinity_Gene_View.txt"),tss)
 
 main()

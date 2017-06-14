@@ -177,16 +177,24 @@ def getNearestNeighbors(annotations_collection, regions):
     for chromosome, chr_regions in regions.iteritems():
         collection = annotations_collection[chromosome]
         for region in chr_regions:
-            minima = None
-            position = region[1]
-            minima = getNextMinima(collection, minima, position, True)
-            minima = getNextMinima(collection, minima, position, False)
-            position = region[2]
-            minima = getNextMinima(collection, minima, position, True)
-            minima = getNextMinima(collection, minima, position, False)
+            left_minima = getNextMinima(collection, None, region[1], True)
+            left_minima = getNextMinima(collection, left_minima, region[1], False)
 
-            if minima is not None:
-                closest_gene = collection[minima]
+            right_minima = getNextMinima(collection, None, region[2], True)
+            right_minima = getNextMinima(collection, right_minima, region[2], False)
+
+            closest_gene = None
+            if left_minima is not None and right_minima is not None:
+                if abs(collection[left_minima][SORTING_KEY] - region[1]) > abs(collection[right_minima][SORTING_KEY] - region[2]):
+                    closest_gene = collection[right_minima]
+                else:
+                    closest_gene = collection[left_minima]
+            elif left_minima is not None:
+                closest_gene = collection[left_minima]
+            elif right_minima is not None:
+                closest_gene = collection[right_minima]
+
+            if closest_gene is not None:
                 if closest_gene not in gene_regions:
                     gene_regions[closest_gene] = SortedCollection(key=itemgetter(SORTING_KEY))
                 gene_regions[closest_gene].insert_right(region)
@@ -298,7 +306,7 @@ def get_complement_gene_loop_regions(gene_loops):
     for annotation, regions in gene_loops.iteritems:
         complement_gene_loops[annotation] = SortedCollection(key=itemgetter(SORTING_KEY))
         for region in regions:
-            complement_gene_loops.insert_right(region[0], region[3], region[4], region[1], region[2])
+            complement_gene_loops[annotation].insert_right(region[0], region[3], region[4], region[1], region[2])
     return complement_gene_loops
 
 

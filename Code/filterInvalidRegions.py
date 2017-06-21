@@ -7,13 +7,13 @@ import sys
 
 def isValidAffinity(lineSplit):
 	for i in xrange(1,len(lineSplit)):
-		if (str(lineSplit[i]) != "0.0"):
+		if (float(lineSplit[i]) != 0):
 			return True	
 	return False
 
 def isValidpValue(lineSplit):
 	for i in xrange(1,len(lineSplit)):
-		if (str(lineSplit[i]) != "1"):
+		if (float(lineSplit[i]) != 1):
 			return True	
 	return False
 

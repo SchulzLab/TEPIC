@@ -79,4 +79,3 @@ echo ""
 echo TestV27: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - Considering motif length
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V27 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -m ../PWMs/human_jaspar_hoc_kellis_Length.txt
 echo ""
-

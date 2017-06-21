@@ -3,6 +3,9 @@
 Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data.
 
 ## News
+21.06.2017: TEPIC TF-gene scores can be binarisied using a TF and tissue specific affinity cut off. 
+Further details on this new feature are available in the [description](docs/Description.pdf).
+
 13.06.2017: DYNAMITE is now included in the repository.
 
 09.06.2017: Version 2.0 of TEPIC is available.
@@ -25,6 +28,8 @@ Within this aggregation TEPIC offers exponential decay (2) and scaling of TF reg
 While computing gene TF scores, TEPIC can perform normalisation for peak length (optionally correcting for the length of the binding motifs as well)
 and produces seperate features for peak length, peak count and/or peak signal. These can be used in downstream applications to, e.g. to determine
 the influence of chromatin accessiblity on gene expression, without considering detailed information on TF binding. 
+In case a binary assignment of TF binding is required, TEPIC allows to apply a TF specific affinity threshold derived from random genomic sequences that
+show similar characteristica (GC content, length) then the provided regions. 
 
 Further details on TEPIC can be found in the provided [description](docs/Description.pdf).
 
@@ -36,6 +41,12 @@ To run *TEPIC* the following packages/software must be installed:
 
 To compile the C++ version of TRAP execute the script
 	[Code/compileTRAP.sh](Code/compileTRAP.sh).
+
+To use the script [findBackground](Code/findBackground.py), which is necessary to compute TF specific affinity thresholds, the following python libraries are required:
+* numpy
+* scipy
+* twobitreader
+
 
 ## Position specific energy matrices
 The position weight matrices used in the *TEPIC* manuscript are stored in the file
@@ -80,8 +91,10 @@ The optional parameters are:
 * -u Flag to be set if peak features for peak length and peak counts should not be generated.
 * -x If -d or -n is used together with this flag, the original (Decay-)Scaling formulation of TEPIC is used to compute gene-TF scores.
 * -m Path to a tab delimited file containing the length of the used PSEMs. This is incorporated in normalising peak length.
-* -s Flag to be set if a sparse matrix representation should be used.
 * -z Flag indicating that the output of TEPIC should be zipped.
+* -r Path to a 2bit representation of the reference genome. This is required to compute a TF specific affinity threshold as well as a binary and sparse TF-gene interaction list.
+* -v p-value cut off used to determine a cut off to derive a binary score for TF binding (default 0.05).
+* -i minutes that should be spend at most per chromosome to find matching random regions (default 3).
 
 Depending on the used arguments, TEPIC produces files containing:
 * TF affinities for all user specified regions.
@@ -90,6 +103,8 @@ Depending on the used arguments, TEPIC produces files containing:
 * Scaled TF affinities for all genes contained in the annotation file.
 * A file containing the factors used to scale the original TF affinities.
 * TF affinities along with features for peak length, peak counts and/or the average signal within a peak. 
+* Thresholded TF affinities and TF-gene scores.
+* A sparse representation that contains only those TF-gene interactions with affinities above a affinity threshold derived from random genomic sequences.
 
 Each run of TEPIC generates an *analysis meta datafile (amd)* containing all parameters, files, and outputs associated with the last run of TEPIC.
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder

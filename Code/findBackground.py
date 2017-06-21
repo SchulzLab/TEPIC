@@ -105,6 +105,8 @@ def load_chromosome_sequence(chrom, fpath):
     :return:
     """
     tbf = tbr.TwoBitFile(fpath)
+    for key in tbf.keys():
+        tbf[key.replace("chr","")]=tbf[key]
     assert chrom in tbf, 'Chromosome {} not in reference file {}'.format(chrom, fpath)
     chrom_seq = tbf[chrom]
     return str(chrom_seq).upper()
@@ -292,7 +294,6 @@ def run_background_match(args):
     :param args:
     :return:
     """
-    print(ti.ctime())
     foreground = read_input_file(args.inputfile)
     params = vars(args)
     foreground = [(chrom, params, regions) for chrom, regions in foreground.items()]
@@ -321,7 +322,6 @@ def run_background_match(args):
         pool.close()
         pool.terminate()
         raise
-    print(ti.ctime())
     return 0
 
 

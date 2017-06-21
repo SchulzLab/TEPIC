@@ -3,6 +3,7 @@
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage[table,xcdraw]{xcolor}
+\usepackage{hyperref}
 
 \begin{document}
 \section*{Computing transcription factor scores using TEPIC}
@@ -208,7 +209,8 @@ To compute TF gene scores a user needs to specify:
 \end{itemize}
 Note that the chromosome identifiers in the BED file must match the identifiers used in the reference genomes, neglecting the \textit{chr} prefix. 
 Otherwise they can not be considered. 
-Special care should be taken for \textit{caenorhabditis elegans}, as Roman digits are used for enumeration.
+Special care should be taken for \textit{caenorhabditis elegans}, as Roman digits are used for enumeration of chromosomes.
+
 \subsection*{Output}
 This step generates the following output:
 \begin{enumerate}
@@ -218,6 +220,42 @@ This step generates the following output:
 \item Optionally a seperate file containing the signal information in peaks. 
 \end{enumerate}
 
+\subsection*{Thresholded TF affinities}
+In some applications it is required to make a binary decision whether a factor is binding or not. 
+To infer this information from TF affinities, \textit{TEPIC} allows the computation of a TF specific affinity threshold by calculating TF affinities on a randomly selected set of genomic regions.
+These regions show similar characteristics compared to the provided regions (GC content and length). 
+By applying a user defined p-value on the distribution of affinities computed on the random regions, a threshold is chosen. 
+Per TF, all affinities that are smaller than the selected threshold, are set to zero, thus a sparse matrix with TF-gene interactions can be generated. 
+Such a matrix can, for example, be used as input in the \textit{DREM} \cite{pmid17224918} software to identify key regulators in time series data. 
+In Figure \ref{epicdrem}, we illustrate how TF affinities can be discretised and illustrate their usage in \textit{DREM}. Note that \textit{DREM}
+is not included in the \textit{TEPIC} repository. It is available \href{http://www.sb.cs.cmu.edu/drem/}{online}.
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=\textwidth]{epicdrem.pdf}
+\end{center}
+\caption{Overview on the EPIC-DREM approach: Note that in this Figure, different time points are indicated by different colours. First, epigenetic data, e.g. DNase1 experiments, are conducted for different points (a).
+Next, putative TF binding sites are identified by peak and/or footprint calling (b,c) and annotated with TF affinities (d). 
+From the putative binding sites, a random set of genomic regions is chosen (e) and annotated with TF affinities as well (f). By applying a p-value cut-off on the distribution of TF affinities calculated on the random regions (g),
+a suitable, TF specific affinitiy threshold is choosen to discretise the original TF affinities (h). Using the default TEPIC TF-gene score formulation (i), a TF-gene interaction matrix (j) is computed. Together with gene expression data (k),
+the sparse matrix (j) can be used as input for DREM (l) to identify potential key regulators of expression changes in time series data.}
+\label{epicdrem}
+\end{figure}
+
+
+\subsubsection*{Required input}
+In addition to the input mentioned above, a reference genome in 2bit format is required. 
+
+\subsubsection*{Output}
+The following output files are generated in addition:
+\begin{enumerate}
+\item TF affinities for all selected \textit{PSEMs} in the regions provided by the user that passed the filtering step, where all affinities below the TF specific thresholds are set to 0.
+\item (Length normalised) TF gene scores for all selected \textit{PSEMs} calculated as described above (optionally including peak features) using the thresholded affinities.
+\item A sparse representation of TF gene interactions.
+\end{enumerate}
+
+\newpage
+\mbox{}
+\newpage
 \section*{Identification of key transcriptional regulators using epigenetics data (INVOKE)}
 Epigenetics data contains a wealth of information on gene regulation. It was shown that especially
 data on open-chromatin is well suited to build predictive models of gene-expression \cite{pmid27899623,pmid22955983,pmid25231769,pmid22954627}.

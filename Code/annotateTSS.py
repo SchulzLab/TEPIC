@@ -418,7 +418,7 @@ def createSparseFile(affinities,tfNames,filename,tss):
 			temp=affinities[Gene]
 			for i in xrange(0,len(tfNames)):
 				if (float(temp[i]) > 0):
-					output.write(str(geneID)+"\t"+str(tfNames[i])+"\t"+str(temp[i])+"\n")
+					output.write(str(geneID)+"\t"+str(tfNames[i])+"\t1\n")
 	output.close()
 
 
@@ -455,7 +455,7 @@ def main():
 	parser.add_argument("--windows",nargs="?",help="Size of the considered window around the TSS. Default is 3000.",default=3000,type=int)
 	parser.add_argument("--decay",nargs="?",help="True if exponential decay should be used, False otherwise. Default is True",default="True")
 	parser.add_argument("--signalScale",nargs="?",help="If the name of the scaled affinity file is provied, a Gene view file is computed for those Affinity values.",default=None)
-	parser.add_argument("--sparseRep",nargs="?",help="Number of top TFs that should be contained in the sparse representation",default="False")
+	parser.add_argument("--sparseRep",nargs="?",help="Flag to be set if a sparse representation should be generated. This should only be used with a filtered set of TF affinities",default="False")
 	parser.add_argument("--geneBody",nargs="?",help="True if the entire gene body should be screened for TF binding",default="False")
 	parser.add_argument("--peakCoverage",nargs="?",help="File containing the per base DNase1 signal in the peaks",default=None)
 	parser.add_argument("--additionalPeakFeatures",nargs="?",help="True if additional features based on peak count and peak length should be computed, Default is False",default="False")	

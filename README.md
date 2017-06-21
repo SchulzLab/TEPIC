@@ -3,8 +3,7 @@
 Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data. Learning of key regulatory TFs in  individual cell types or learning of discriminatory TFs that show a difference in regulation between two cell types.
 
 ## News
-21.06.2017: TEPIC TF-gene scores can be binarisied using a TF and tissue specific affinity cut off. 
-Further details on this new feature are available in the [description](docs/Description.pdf).
+21.06.2017: TEPIC TF-gene scores can be binarisied using a TF and tissue specific affinity cut off. This can be combined with the dynamic networks learner [DREM](http://www.sb.cs.cmu.edu/drem/) to build gene regulatory networks that make appropriate use of time-specific epigenetics data. Further details on this new feature are available in the [description](docs/Description.pdf).
 
 13.06.2017: [DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPiplines/DYNAMITE) our workflow for learning differential TF regulation is now included in the repository.
 

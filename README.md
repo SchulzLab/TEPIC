@@ -1,12 +1,12 @@
 # TEPIC (version 2.0)
 -------
-Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data.
+Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data. Learning of key regulatory TFs in  individual cell types or learning of discriminatory TFs that show a difference in regulation between two cell types.
 
 ## News
 21.06.2017: TEPIC TF-gene scores can be binarisied using a TF and tissue specific affinity cut off. 
 Further details on this new feature are available in the [description](docs/Description.pdf).
 
-13.06.2017: DYNAMITE is now included in the repository.
+13.06.2017: [DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPiplines/DYNAMITE) our workflow for learning differential TF regulation is now included in the repository.
 
 09.06.2017: Version 2.0 of TEPIC is available.
 With version 2 of TEPIC, we introduced new features:
@@ -19,14 +19,14 @@ With version 2 of TEPIC, we introduced new features:
 peak signal and TF affinities or by generating a separate signal feature.
 
 Further, the repository now includes the code required to learn linear models from TF gene scores to predict gene expression.
-For further details, please see the INVOKE section.
+For further details, please see the [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPiplines/INVOKE) section.
 
 ## Introduction
 *TEPIC* segments the genome into user specified regions and annotates those with TF binding using TRAP (1). 
 These predictions are aggregated to gene scores. 
 Within this aggregation TEPIC offers exponential decay (2) and scaling of TF region scores using the signal of an open chromatin assay.
 While computing gene TF scores, TEPIC can perform normalisation for peak length (optionally correcting for the length of the binding motifs as well)
-and produces seperate features for peak length, peak count and/or peak signal. These can be used in downstream applications to, e.g. to determine
+and produces separate features for peak length, peak count and/or peak signal. These can be used in downstream applications, e.g. to determine
 the influence of chromatin accessiblity on gene expression, without considering detailed information on TF binding. 
 In case a binary assignment of TF binding is required, TEPIC allows to apply a TF specific affinity threshold derived from random genomic sequences that
 show similar characteristica (GC content, length) then the provided regions. 
@@ -128,10 +128,16 @@ Additionally, we provide a script to test several annotation versions of TEPIC. 
 to compute multiple trial cases.
 
 ## Citation
-If you are using TEPIC please cite:
+If you are using TEPIC and/or [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPiplines/INVOKE) please cite:
 
 **Combining transcription factor binding affinities with open-chromatin data for accurate gene expression prediction**
 Schmidt et al., Nucleic Acids Research 2016; doi: 10.1093/nar/gkw1061 [full text](http://nar.oxfordjournals.org/content/early/2016/11/29/nar.gkw1061.full) 
+
+If you are using [DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPiplines/DYNAMITE) please also cite:
+
+**Epigenomic Profiling of Human CD4+ T Cells Supports a Linear Differentiation Model and Highlights Molecular Regulators of Memory Development**
+Durek et al. Cell Immunity, Volume 45, Issue 5, 15 November 2016, [full text](http://www.cell.com/immunity/fulltext/S1074-7613(16)30433-2)
+
 
 Other works that have influenced ours:
 > (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.

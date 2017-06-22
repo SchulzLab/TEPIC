@@ -1,6 +1,6 @@
 #! /bin/bash
 #Loading arguments from configFile differentialAnalysis.cfg
-echo Loading arguments from configFile differentialAnalysis.cfg
+echo Loading arguments from configFile DYNAMITE.cfg
 source DYNAMITE.cfg
 
 #This part runs the necessary scripts to perform a differential analysis using TEPIC affinity ratios

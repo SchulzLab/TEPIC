@@ -5,7 +5,7 @@ Annotation of genomic regions using Transcription factor (TF) binding sites and 
 ## News
 21.06.2017: TEPIC TF-gene scores can be binarisied using a TF and tissue specific affinity cut off. This can be combined with the dynamic networks learner [DREM](http://www.sb.cs.cmu.edu/drem/) to build gene regulatory networks that make appropriate use of time-specific epigenetics data. Further details on this new feature are available in the [description](docs/Description.pdf).
 
-13.06.2017: [DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPiplines/DYNAMITE) our workflow for learning differential TF regulation is now included in the repository.
+13.06.2017: [DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/DYNAMITE) our workflow for learning differential TF regulation is now included in the repository.
 
 09.06.2017: Version 2.0 of TEPIC is available.
 With version 2 of TEPIC, we introduced new features:
@@ -18,7 +18,7 @@ With version 2 of TEPIC, we introduced new features:
 peak signal and TF affinities or by generating a separate signal feature.
 
 Further, the repository now includes the code required to learn linear models from TF gene scores to predict gene expression.
-For further details, please see the [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPiplines/INVOKE) section.
+For further details, please see the [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/INVOKE) section.
 
 ## Introduction
 *TEPIC* segments the genome into user specified regions and annotates those with TF binding using TRAP (1). 
@@ -127,12 +127,12 @@ Additionally, we provide a script to test several annotation versions of TEPIC. 
 to compute multiple trial cases.
 
 ## Citation
-If you are using TEPIC and/or [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPiplines/INVOKE) please cite:
+If you are using TEPIC and/or [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/INVOKE) please cite:
 
 **Combining transcription factor binding affinities with open-chromatin data for accurate gene expression prediction**
 Schmidt et al., Nucleic Acids Research 2016; doi: 10.1093/nar/gkw1061 [full text](http://nar.oxfordjournals.org/content/early/2016/11/29/nar.gkw1061.full) 
 
-If you are using [DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPiplines/DYNAMITE) please also cite:
+If you are using [DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/DYNAMITE) please also cite:
 
 **Epigenomic Profiling of Human CD4+ T Cells Supports a Linear Differentiation Model and Highlights Molecular Regulators of Memory Development**
 Durek et al. Cell Immunity, Volume 45, Issue 5, 15 November 2016, [full text](http://www.cell.com/immunity/fulltext/S1074-7613(16)30433-2)

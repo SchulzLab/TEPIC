@@ -114,7 +114,7 @@ If the performance of the model is assessed, *INVOKE* additionally generates:
 ## Example
 To run a test trial of *INVOKE*, execute the script runInvokeAnalysis.sh. You can run it with the command
 
-	bash runInvokeAnalysis.sh
+	bash runInvokeAnalysis.sh ./invokeAnalysis.cfg
 
 We provide precomputed TEPIC results to run the example. If a reference genome and a gene annotation file are provided by the user,
 the first step of the pipeline, the run of TEPIC, can be computed as well. Sample open chromatin regions as well as gene expresssion data

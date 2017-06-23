@@ -104,7 +104,7 @@ If the performance of the model is assessed, *DYNAMITE* additionally generates:
 ## Example
 To run a test trial of *DYNAMITE*, execute the script runDYNAMITE.sh. You can run it with the command
 
-	bash runDYNAMITE.sh
+	bash runDYNAMITE.sh ./DYNAMITE.cfg
 
 We provide precomputed TEPIC results to run the example. If a reference genome and a gene annotation file are provided by the user,
 the first step of the pipeline, the run of TEPIC, can be carried out as well. Sample open chromatin regions, log2 gene expresssion ratios, and a reduced set of PSEMs (in the interest of runtime)

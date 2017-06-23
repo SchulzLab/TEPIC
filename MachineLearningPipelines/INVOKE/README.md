@@ -35,7 +35,7 @@ INVOKE can be used in two different ways:
 ### Combined pipeline with TEPIC
 We offer an automated pipeline that includes the computation of TF-gene scores. To run this pipeline, execute the command
 
-    bash runInvokeAnalysis.sh
+    bash runInvokeAnalysis.sh ./invokeAnalysis.cfg
 
 The setting for this pipeline can be changed in [invokeAnalysis.cfg](invokeAnalysis.cfg).
 

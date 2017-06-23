@@ -33,7 +33,7 @@ DYNAMITE can be used in two different ways:
 ### Combined pipeline with TEPIC
 We offer an automated pipeline that includes the computation of TF-gene scores. To run this pipeline, execute the command
 
-    bash runDYNAMITE.sh
+    bash runDYNAMITE.sh ./DYNAMITE.cfg
 
 The setting for this pipeline can be changed in [DYNAMITE.cfg](DYNAMITE.cfg).
 

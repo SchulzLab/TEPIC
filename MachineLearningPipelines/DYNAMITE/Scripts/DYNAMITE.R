@@ -1,6 +1,8 @@
 args <- commandArgs(TRUE)
 library('methods')
 ggplotAvailable<-require("ggplot2")
+gplotsAvailable<-require("gplots") 
+fontSize=1.3
 
 if(length(args) < 1) {
   args <- c("--help")
@@ -120,6 +122,8 @@ elaMultinomial<-function(a,x,y,i){
 	min(elasticnet$cvm)
 	}
 
+coefficients<-vector("list",length(FileList))
+
 # Data Preprocessing 
 for(Sample in FileList){
 	# Process file names for plot title
@@ -144,7 +148,7 @@ for(Sample in FileList){
 	F1_1<-c(1:argsL$Ofolds)
 	F1_2<-c(1:argsL$Ofolds)
 	alphas=seq(0.0,1.0,as.numeric(argsL$alpha))
-
+	coefficients[[i]]<-vector("list",as.numeric(argsL$Ofolds))
 	#Normalising the data matrix
 	M[,-Response_Variable_location]<-log2(M[,-Response_Variable_location]+1)
 	M[,-Response_Variable_location]<-scale(M[,-Response_Variable_location],center=TRUE, scale=TRUE)
@@ -160,15 +164,15 @@ for(Sample in FileList){
 		subM<-list(list())
 		bM<-c()
 		index=0
-		for (i in unique(M[,Response_Variable_location])){
+		for (j in unique(M[,Response_Variable_location])){
 			index<-index+1
-			subM[[index]]<-M[which(M[,Response_Variable_location]==i),]
+			subM[[index]]<-M[which(M[,Response_Variable_location]==j),]
 		}
 		mSize=min(sapply(subM,dim)[1,])
-		for (i in 1:length(subM)){
-			rndselect=sample(x=nrow(subM[[i]]),size=mSize)
-			subM[[i]]=subM[[i]][rndselect,]
-			bM<-rbind(bM,subM[[i]])
+		for (l in 1:length(subM)){
+			rndselect=sample(x=nrow(subM[[l]]),size=mSize)
+			subM[[l]]=subM[[l]][rndselect,]
+			bM<-rbind(bM,subM[[l]])
 		}
 	}
 	test_size<-1/as.numeric(argsL$testsize)
@@ -181,10 +185,10 @@ for(Sample in FileList){
 			#Balanced selection of test and training data
 			Test_Data<-c()
 			Train_Data<-c()
-			for (i in 1:length(subM)){
-				rndselect=sample(x=nrow(subM[[i]]), size=mSize/test_size)
-				Test_Data<-rbind(Test_Data,subM[[i]][rndselect,])
-				Train_Data<-rbind(Train_Data,subM[[i]][-rndselect,])
+			for (j in 1:length(subM)){
+				rndselect=sample(x=nrow(subM[[j]]), size=mSize/test_size)
+				Test_Data<-rbind(Test_Data,subM[[j]][rndselect,])
+				Train_Data<-rbind(Train_Data,subM[[j]][-rndselect,])
 			}
 		}else{
 			rndselect=sample(x=nrow(M),size=as.numeric(argsL$testsize)*nrow(M))
@@ -227,6 +231,13 @@ for(Sample in FileList){
 		tTest<-table(y_test,predict_test)
 		write.table(tTest,file=paste(argsL$outDir,"/Confusion-Matrix_",k,"_",name,".txt",sep=""),quote=FALSE,sep="\t",row.names=FALSE)
 		tTrain<-table(y_train,predict_train)
+
+		#Storing Feature values
+		if (length(unique(M[,Response_Variable_location]))==2){
+			coefficients[[i]][[k]]<-coef(elasticnet, s = "lambda.min")
+		}else{
+			coefficients[[i]][[k]]<-c()
+		}
 
 		#Calculating Accuracy measures
 		TestAcc[k]<-0
@@ -273,8 +284,8 @@ for(Sample in FileList){
 	#Store the feature values
 	if (length(unique(M[,Response_Variable_location]))>2){
 		coefO<-coef(elasticnet,s="lambda.min")
-		for (i in names(coefO)){
-			nf<-(coefO[i][[1]][,1])[-1]
+		for (j in names(coefO)){
+			nf<-(coefO[j][[1]][,1])[-1]
 			nf2<-nf/max(abs(nf))
 			nf3<-t(nf2)
 			nf3<-as.data.frame(nf3)
@@ -283,7 +294,7 @@ for(Sample in FileList){
 			nf4[,2]<-as.numeric(as.character(nf4[,2]))
 			nf4<-as.data.frame(nf4)
 			nf4[,2]<-as.numeric(as.character(nf4[,2]))
-			write.table(nf4,file=paste(argsL$outDir,paste("Class",i,"Features.txt",sep="-"),sep='/'),quote=FALSE,sep="\t",row.names=FALSE)
+			write.table(nf4,file=paste(argsL$outDir,paste("Class",j,"Features.txt",sep="-"),sep='/'),quote=FALSE,sep="\t",row.names=FALSE)
 			nf4<-nf4[which(nf4$value >0.025),]
 			np<-c(1:length((nf4[,2])))
 			np[which(nf4[,2]>0)]<-1
@@ -295,7 +306,7 @@ for(Sample in FileList){
 				theme(axis.text.x=element_text(angle=45,hjust=1))+
 				theme(strip.background  = element_blank())+
 				theme(legend.position="none")
-				ggsave(paste0(argsL$outDir,"regression_coeffcients_class",i,"_",name,".png"),width=40,height=10,units=c("cm"))
+				ggsave(paste0(argsL$outDir,"Regression_Coeffcients_Entire_Data_Set_Class",j,"_",name,".png"),width=40,height=10,units=c("cm"))
 			}
 		}
 	}else{
@@ -308,7 +319,7 @@ for(Sample in FileList){
 			nf4[,2]<-as.numeric(as.character(nf4[,2]))
 			nf4<-as.data.frame(nf4)
 			nf4[,2]<-as.numeric(as.character(nf4[,2]))
-			write.table(nf4,file=paste(argsL$outDir,paste(name,"Features.txt",sep="-"),sep='/'),quote=FALSE,sep="\t",row.names=FALSE)
+			write.table(nf4,file=paste(argsL$outDir,paste(name,"Entire_Data_Set_Features.txt",sep="-"),sep='/'),quote=FALSE,sep="\t",row.names=FALSE)
 			nf4<-nf4[which(nf4$value !=0.0),]
 			np<-c(1:length((nf4[,2])))
 			np[which(nf4[,2]>0)]<-1
@@ -320,7 +331,7 @@ for(Sample in FileList){
 				theme(axis.text.x=element_text(angle=45,hjust=1))+
 				theme(strip.background  = element_blank())+
 				theme(legend.position="none")
-				ggsave(paste0(argsL$outDir,"regression_coeffcients_",name,".png"),width=40,height=10,units=c("cm"))
+				ggsave(paste0(argsL$outDir,"Regression_Coeffcients_Entire_Data_Set",name,".png"),width=40,height=10,units=c("cm"))
 		}
 	}	
 }
@@ -330,8 +341,62 @@ if (argsL$performance){
 	print(paste("Mean Test Accuracy",mean(TestAcc),sep=" "))
 	print(paste("Mean Training Accuracy",mean(TrainAcc),sep=" "))
 	print(paste("Mean F1_1",mean(F1_1),sep=" "))
-	print(paste("Mean F1_2",mean(F1_2),sep=" "))
-	
+	print(paste("Mean F1_2",mean(F1_2),sep=" "))	
+	featureMatrix<-c()
+
+	for (i in 1:length(FileList)){
+		for (j in 1:length(coefficients[[i]])){
+			if (length(coefficients[[i]][[j]]>1)){
+				featureMatrix<-rbind(featureMatrix,coefficients[[i]][[j]][,1])
+			}
+		}
+		if (length(featureMatrix > 1)){
+			write.table(featureMatrix,paste(argsL$outDir,"Regression_Coefficients_Cross_Validation_",FileList[i],sep=""),quote=F,sep="\t",col.names=NA)
+            meanFeature<-apply(featureMatrix,2,mean)
+            featureMatrix<-featureMatrix[,-1]
+            meanFeature<-meanFeature[-1]
+            featureMatrix<-featureMatrix[,-which(meanFeature==0)]
+            meanFeature<-meanFeature[-which(meanFeature==0)]
+
+			if(length(meanFeature) > 0){
+				allFeatures<-featureMatrix[,order(meanFeature,decreasing=TRUE)]
+				meanFeatures<-meanFeature[order(meanFeature,decreasing=TRUE)]
+				all<-rbind(allFeatures,meanFeatures)
+				all<-all[,order(all[dim(all)[1],],decreasing=TRUE)]
+				row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Mean")
+				if (gplotsAvailable){
+					library("gplots")
+					png(paste(argsL$outDir,"Coefficients_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),width=800,height=800)
+					if(any(meanFeatures < 0)){
+						limitP<-min(8,length(meanFeature)/2)
+						limitN<-min(8,length(which(meanFeatures<0)))
+						allFeatures<-cbind(featureMatrix[,order(meanFeature,decreasing=TRUE)[1:limitP]],(featureMatrix[,order(meanFeature,decreasing=FALSE)[1:limitN]]))
+						meanFeatures<-c(meanFeature[order(meanFeature,decreasing=TRUE)[1:limitP]],(meanFeature[order(meanFeature,decreasing=FALSE)[1:limitN]]))
+						all<-rbind(allFeatures,meanFeatures)
+						all<-all[,order(all[dim(all)[1],],decreasing=TRUE)]
+						row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Mean")
+						heatmap.2(all,trace="none",col=bluered(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(8,12),Colv=FALSE,Rowv=FALSE) 
+					}else{
+						limit<-min(8,length(meanFeature)/2)
+						allFeatures<-featureMatrix[,order(meanFeature,decreasing=TRUE)[1:limit]]
+						meanFeatures<-meanFeature[order(meanFeature,decreasing=TRUE)[1:limit]]
+						all<-rbind(allFeatures,meanFeatures)
+						all<-all[,order(all[dim(all)[1],],decreasing=TRUE)]
+						row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Mean")
+						heatmap.2(all,trace="none",col=heat.colors(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(8,12),Colv=FALSE,Rowv=FALSE) 
+					}
+					dev.off()
+				}
+			}else{
+				if (ggplotAvailable){
+					library("ggplot2")
+					text<-"Mean regression coefficients are to small, a heatmap can not be shown."
+					ggplot()+annotate("text",x=4,y=25,size=8,label=text)+theme_void() 
+					ggsave(filename=paste(argsL$outDir,"Coefficients_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),width=11,height=4)
+				}
+			}
+		}
+	}
 	#Generating summary output table
 	colnames(SampleOverview)<-SampleOverview[1,]
 	SampleOverview<-SampleOverview[-1,]

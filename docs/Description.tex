@@ -420,7 +420,8 @@ same learning paradigm that is described for the \textit{INVOKE} analysis (Figur
 TFs that correspond to features with a non-zero regression coefficient can be seen as being essential to explain the observed expression differences and should be further investigated.
 
 \section*{Output}
-Model performance is reported in a \textit{txt} file and visually in a bar plot using mean test and training accuracy as well as the F1 measure. 
+Model performance is reported in a \textit{txt} file and visually in a bar plot using mean test and training accuracy as well as the F1 measure.
+A heatmap shows the top regression coefficients in the outer cross validation folds. 
 Additionaly, we report confusion matrices for the outer cross validation folds.
 We generate a bar-plot with the regression coefficients of all TFs selected in the final model.
 A positive coeffcient is used by the model to predict genes as upregulated, a negative coefficient is related to genes that are predicted as downregulated. The interpretation

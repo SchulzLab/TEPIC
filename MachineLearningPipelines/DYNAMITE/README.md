@@ -77,7 +77,9 @@ This can be done if the *DYNAMITE* Rscript is ran manually.
 ### Running DYNAMITE manually
 Running an *DYNAMITE* analysis manually allows full access to all options of *TEPIC* and *DYNAMITE*. 
 There are three main steps the user needs to carry out:
+
 (1) Running *TEPIC*: For details on how to run *TEPIC*, see the *TEPIC* README.
+
 (2) Combine TF gene-scores with gene expression data. We provide a script for this task [integrateData.py](Scripts/integrateData.py).
 It can be used with the command
 

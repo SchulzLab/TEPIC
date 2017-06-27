@@ -575,7 +575,7 @@ if (argsL$performance == TRUE){
 		}
 		if (length(featureMatrix > 1)){
 			write.table(featureMatrix,paste(argsL$outDir,"Regression_Coefficients_",FileList[i],sep=""),quote=F,sep="\t",col.names=NA)
-			meanFeature<-apply(featureMatrix,2,mean)
+			meanFeature<-apply(featureMatrix,2,median)
 			featureMatrix<-featureMatrix[,-which(meanFeature==0)]
 			meanFeature<-meanFeature[-which(meanFeature==0)]
 			if(length(meanFeature) > 0){
@@ -584,7 +584,7 @@ if (argsL$performance == TRUE){
 				meanFeatures<-c(meanFeature[order(meanFeature,decreasing=TRUE)[1:limit]],(meanFeature[order(meanFeature,decreasing=FALSE)[1:limit]]))
 				all<-rbind(allFeatures,meanFeatures)
 				all<-all[,order(all[dim(all)[1],],decreasing=TRUE)]
-				row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Mean")
+				row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Median")
 				if (gplotsAvailable){
 					library("gplots")
 					png(paste(argsL$outDir,"Coefficients_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),width=800,height=800)
@@ -594,7 +594,7 @@ if (argsL$performance == TRUE){
 			}else{
 				if (ggplotAvailable){
 					library("ggplot2")
-					text<-"Mean regression coefficients are to small, a heatmap can not be shown."
+					text<-"Median regression coefficients are to small, a heatmap can not be shown."
 					ggplot()+annotate("text",x=4,y=25,size=8,label=text)+theme_void()	
 					ggsave(filename=paste(argsL$outDir,"Coefficients_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),width=11,height=4)
 				}

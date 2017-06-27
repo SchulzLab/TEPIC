@@ -103,7 +103,7 @@ If the performance of the model is assessed, *DYNAMITE* additionally generates:
 * A file *Performance_Overview.txt* that holds information on model performance: Accuracy on Training and Test data, F1 measures.
 * A boxplot showing model performance.
 * Confusion matrices per sample and outer cross validation run. 
-* A heatmap showing at the top positive and negative features sorted by the median.
+* A heatmap showing the top positive and negative features sorted by the median.
 
 ## Example
 To run a test trial of *DYNAMITE*, execute the script runDYNAMITE.sh. You can run it with the command

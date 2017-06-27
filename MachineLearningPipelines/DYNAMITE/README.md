@@ -16,6 +16,7 @@ To run *DYNAMITE* the following packages/software must be installed additionally
 * R (minimum version 2.7.4)
 * glmnet
 * doMC
+* optional: gplots
 * optional: ggplot2
 
 ## Required Input:

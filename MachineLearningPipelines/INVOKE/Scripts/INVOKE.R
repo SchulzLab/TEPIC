@@ -588,7 +588,7 @@ if (argsL$performance == TRUE){
 				if (gplotsAvailable){
 					library("gplots")
 					png(paste(argsL$outDir,"Coefficients_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),width=800,height=800)
-					heatmap.2(all,trace="none",col=bluered(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(8,12),Colv=FALSE,Rowv=FALSE)
+					heatmap.2(all,trace="none",col=bluered(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(8,12),Colv=FALSE,Rowv=FALSE,key.xlab="Regression coefficient")
 					dev.off()
 				}
 			}else{

@@ -374,7 +374,7 @@ if (argsL$performance){
 						all<-rbind(allFeatures,meanFeatures)
 						all<-all[,order(all[dim(all)[1],],decreasing=TRUE)]
 						row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Median")
-						heatmap.2(all,trace="none",col=bluered(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(8,12),Colv=FALSE,Rowv=FALSE) 
+						heatmap.2(all,trace="none",col=bluered(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(8,12),Colv=FALSE,Rowv=FALSE,key.xlab="Regression coefficient") 
 					}else{
 						limit<-min(8,length(meanFeature)/2)
 						allFeatures<-featureMatrix[,order(meanFeature,decreasing=TRUE)[1:limit]]
@@ -382,7 +382,7 @@ if (argsL$performance){
 						all<-rbind(allFeatures,meanFeatures)
 						all<-all[,order(all[dim(all)[1],],decreasing=TRUE)]
 						row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Median")
-						heatmap.2(all,trace="none",col=heat.colors(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(8,12),Colv=FALSE,Rowv=FALSE) 
+						heatmap.2(all,trace="none",col=heat.colors(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(8,12),Colv=FALSE,Rowv=FALSE,key.xlab="Regression coefficient") 
 					}
 					dev.off()
 				}

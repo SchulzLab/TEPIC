@@ -2,7 +2,7 @@ args <- commandArgs(TRUE)
 library('methods')
 ggplotAvailable<-require("ggplot2")
 gplotsAvailable<-require("gplots") 
-fontSize=1.3
+fontSize=.9
 
 if(length(args) < 1) {
   args <- c("--help")
@@ -219,7 +219,7 @@ for(Sample in FileList){
 		}
 
 		#Generating a plot visualising the model selection
-		png(paste(paste(paste(argsL$outDir,name,sep="/"),k,sep="-"),"png",sep="."))
+		svg(paste(paste(paste(argsL$outDir,name,sep="/"),k,sep="-"),"svg",sep="."))
 		plot(elasticnet)
 		dev.off()
 
@@ -342,9 +342,9 @@ if (argsL$performance){
 	print(paste("Mean Training Accuracy",mean(TrainAcc),sep=" "))
 	print(paste("Mean F1_1",mean(F1_1),sep=" "))
 	print(paste("Mean F1_2",mean(F1_2),sep=" "))	
-	featureMatrix<-c()
 
 	for (i in 1:length(FileList)){
+		featureMatrix<-c()
 		for (j in 1:length(coefficients[[i]])){
 			if (length(coefficients[[i]][[j]]>1)){
 				featureMatrix<-rbind(featureMatrix,coefficients[[i]][[j]][,1])
@@ -365,24 +365,27 @@ if (argsL$performance){
 				row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Median")
 				if (gplotsAvailable){
 					library("gplots")
-					png(paste(argsL$outDir,"Coefficients_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),width=800,height=800)
+					svg(paste(argsL$outDir,"Coefficients_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".svg",sep=""),width=min(55,7+(.3*length(meanFeature))),height=min(55,5+(.5*as.numeric(argsL$Ofolds))))
 					if(any(meanFeatures < 0)){
-						limitP<-min(8,length(which(meanFeatures>0)))
-						limitN<-min(8,length(which(meanFeatures<0)))
-						allFeatures<-cbind(featureMatrix[,order(meanFeature,decreasing=TRUE)[1:limitP]],(featureMatrix[,order(meanFeature,decreasing=FALSE)[1:limitN]]))
-						meanFeatures<-c(meanFeature[order(meanFeature,decreasing=TRUE)[1:limitP]],(meanFeature[order(meanFeature,decreasing=FALSE)[1:limitN]]))
+	#					limitP<-min(8,length(which(meanFeatures>0)))
+	#					limitN<-min(8,length(which(meanFeatures<0)))
+	#					allFeatures<-cbind(featureMatrix[,order(meanFeature,decreasing=TRUE)[1:limitP]],(featureMatrix[,order(meanFeature,decreasing=FALSE)[1:limitN]]))
+	#					meanFeatures<-c(meanFeature[order(meanFeature,decreasing=TRUE)[1:limitP]],(meanFeature[order(meanFeature,decreasing=FALSE)[1:limitN]]))
+						allFeatures<-featureMatrix[,order(meanFeature,decreasing=TRUE)]
+						meanFeature<-meanFeature[order(meanFeature,decreasing=TRUE)]							
 						all<-rbind(allFeatures,meanFeatures)
 						all<-all[,order(all[dim(all)[1],],decreasing=TRUE)]
 						row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Median")
-						heatmap.2(all,trace="none",col=bluered(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(8,12),Colv=FALSE,Rowv=FALSE,key.xlab="Regression coefficient") 
+						save(all,file="PlotData.RData")
+						heatmap.2(all,trace="none",col=bluered(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(6,6),Colv=FALSE,Rowv=FALSE,key.xlab="Regression coefficient",keysize=0.9) 
 					}else{
-						limit<-min(8,length(meanFeature)/2)
-						allFeatures<-featureMatrix[,order(meanFeature,decreasing=TRUE)[1:limit]]
-						meanFeatures<-meanFeature[order(meanFeature,decreasing=TRUE)[1:limit]]
+#						limit<-min(8,length(meanFeature)/2)
+						allFeatures<-featureMatrix[,order(meanFeature,decreasing=TRUE)]
+						meanFeatures<-meanFeature[order(meanFeature,decreasing=TRUE)]
 						all<-rbind(allFeatures,meanFeatures)
 						all<-all[,order(all[dim(all)[1],],decreasing=TRUE)]
 						row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Median")
-						heatmap.2(all,trace="none",col=heat.colors(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(8,12),Colv=FALSE,Rowv=FALSE,key.xlab="Regression coefficient") 
+						heatmap.2(all,trace="none",col=heat.colors(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(6,6),Colv=FALSE,Rowv=FALSE,key.xlab="Regression coefficient",keysize=0.9) 
 					}
 					dev.off()
 				}

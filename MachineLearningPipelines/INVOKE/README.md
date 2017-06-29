@@ -57,6 +57,7 @@ General parameters:
 * decay = TRUE if exponential decay should be used, FALSE otherwise.
 * coverageFile = Filename(s) of bed graph files used to comput the signal in open regions.
 * coverageColumn = Number of the column in the file specified by the open_regions option, containing the average signal within the open region.
+* chrPrefix = TRUE if the reference genome contains a chr prefix, FALSE otherwise. 
 
 *INVOKE* parameters:
 * rpath = Path to the *INVOKE* script.

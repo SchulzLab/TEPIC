@@ -18,7 +18,8 @@ Optional parameters:\n
 [-z flag indicating that the output of TEPIC should be zipped]\n
 [-r path to a 2bit representation of the reference genome, required to generate a binary score for TF binding. The binary score is generated in addition to the standard affinity values]\n
 [-v p-value cut off used to determine a cut off to derive a binary score for TF binding (default 0.05)]\n
-[-i minutes that should be spend at most per chromosome to find matching random regions (default 3)]\n"
+[-i minutes that should be spend at most per chromosome to find matching random regions (default 3)]\n
+[-j flag indicating that the reference genome contains a chr prefix]\n"
 
 #Initialising parameters
 genome=""
@@ -42,8 +43,9 @@ originalScaling="FALSE"
 zip="FALSE"
 pvalue="0.05"
 minutes=3
+chrPrefix="FALSE"
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:f:m:e:r:v:i:yluhxz" o;
+while getopts "g:b:o:c:p:d:n:a:w:f:m:e:r:v:i:yluhxzj" o;
 do
 case $o in
 	g)	genome=$OPTARG;;
@@ -66,6 +68,7 @@ case $o in
 	z)	zip="TRUE";;
 	v)	pvalue=$OPTARG;;
 	i)	minutes=$OPTARG;;
+	j)	chrPrefix="TRUE";;
 	h)	echo -e $help
 	exit 1;;
 	[?])	echo -e $help
@@ -186,7 +189,8 @@ fi
 echo "" >> $metadatafile
 echo "[Parameters]" >> $metadatafile
 echo "SampleID:	"$prefixP >> $metadatafile
-echo "cores	"$cores >> $metadatafile
+echo "cores:	"$cores >> $metadatafile
+echo "Chr prefix: "$chrPrefix >> $metadatafile
 if [ -n "$annotation" ];
 then
 	echo "window	"$window >> $metadatafile
@@ -234,13 +238,36 @@ echo "Generating random genomic regions"
 python ${working_dir}/findBackground.py -i ${filteredRegions}_sorted.bed -g ${randomGenome} -o ${prefix}_Random_Regions.bed -w ${cores} --time-out ${minutes}
 fi
 
+if [ ${chrPrefix} == "TRUE" ];
+then
+	echo "Adapting chr prefix in bed files for intersection with the reference genome"
+	awk '{print "chr"$1"\t"$2"\t"$3}' ${filteredRegions}_sorted.bed > tempFasta.bed
+	getFastaRegion=tempFasta.bed
+	if [ -n "$randomGenome" ];
+		then
+		awk '{print "chr"$1"\t"$2"\t"$3}' ${prefix}_Random_Regions.bed > tempFastaRandom.bed
+		getFastaRegionRandom=tempFastaRandom.bed
+		fi
+else
+	getFastaRegion=${filteredRegions}_sorted.bed
+	getFastaRegionRandom=${prefix}_Random_Regions.bed
+fi
+
 echo "Runnig bedtools"
 #Run bedtools to get a fasta file containing the sequence data for predicted open chromatin regions contained in the bedfile
-bedtools getfasta -fi $genome -bed ${filteredRegions}_sorted.bed -fo $openRegionSequences
+bedtools getfasta -fi $genome -bed ${getFastaRegion} -fo $openRegionSequences
 if [ -n "$randomGenome" ];
 then
-bedtools getfasta -fi $genome -bed ${prefix}_Random_Regions.bed -fo Random_$openRegionSequences
+bedtools getfasta -fi $genome -bed ${getFastaRegionRandom} -fo Random_$openRegionSequences
 rm ${prefix}_Random_Regions.bed
+fi
+if [ ${chrPrefix} == "TRUE" ];
+then
+	rm tempFasta.bed
+	if [ -n "$randomGenome" ];
+	then
+		rm tempFastaRandom.bed	
+	fi
 fi
 
 echo "Converting invalid characters"
@@ -265,6 +292,17 @@ then
 ${working_dir}/TRAPmulti $pwms ${prefixP}-Random-FilteredSequences.fa $cores > ${affinity}_Random 
 rm ${prefixP}-Random-FilteredSequences.fa
 fi
+
+if [ ${chrPrefix} == "TRUE" ];
+then
+	sed -i 's/chr//g' ${affinity}_temp
+	if [ -n "$randomGenome" ];
+	then
+		sed -i 's/chr//g' ${affinity}_Random
+	fi
+fi
+
+
 
 if [ -n "$randomGenome" ] ;
 then

@@ -57,6 +57,7 @@ General parameters:
 * window = Size of the window centered around the TSS of genes.
 * peakFeatures = TRUE if peak features (peak length, peak count) should be computed, FALSE otherwise.
 * decay = TRUE if exponential decay should be used, FALSE otherwise.
+* chrPrefix = TRUE if the reference genome contains a chr prefix, FALSE otherwise.
 * coverage_Files_Group1 = bg files containing the signal of the open chromatin assays of group 1 (Note that the order must be the same as in open_regions_Group1).
 * coverage_Files_Group2 = bg files containing the signal of the open chromatin assays of group 2 (Note that the order must be the same as in open_regions_Group2).
 * coverage_Columns_Group1 = Column containing the signal of the assay in the open region stored in the files listed in open_regions_Group1.
@@ -103,7 +104,7 @@ If the performance of the model is assessed, *DYNAMITE* additionally generates:
 * A file *Performance_Overview.txt* that holds information on model performance: Accuracy on Training and Test data, F1 measures.
 * A boxplot showing model performance.
 * Confusion matrices per sample and outer cross validation run. 
-* A heatmap showing the top positive and negative features sorted by the median.
+* A heatmap showing the regression coefficients sorted by the median computed on the regression coefficient values of the outer cross validation folds.
 
 ## Example
 To run a test trial of *DYNAMITE*, execute the script runDYNAMITE.sh. You can run it with the command

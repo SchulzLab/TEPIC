@@ -71,7 +71,7 @@ To start TEPIC, run the script *TEPIC.sh*
 
 The following parameters are required to run TEPIC:
 
-* -g The reference genome in plain (uncompressed) FASTA format with Ensembl-style chromosome names (i.e., without "chr" prefix).
+* -g The reference genome in plain (uncompressed) FASTA format with Ensembl-style chromosome names (i.e., without "chr" prefix). If a "chr" prefix is present, use the -j option. 
 * -b Regions the user wants to be annotated; chromosome naming compatible to the reference genome file.
 * -o Prefix of the output files.
 * -p File containing position specific energy matrices (PSEM).
@@ -94,6 +94,7 @@ The optional parameters are:
 * -r Path to a 2bit representation of the reference genome. This is required to compute a TF specific affinity threshold as well as a binary and sparse TF-gene interaction list.
 * -v p-value cut off used to determine a cut off to derive a binary score for TF binding (default 0.05).
 * -i minutes that should be spend at most per chromosome to find matching random regions (default 3).
+* -j Flag indicating that the reference genome contains a chr prefix. 
 
 Depending on the used arguments, TEPIC produces files containing:
 * TF affinities for all user specified regions.

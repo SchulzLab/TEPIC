@@ -27,46 +27,92 @@ counter=0
 for file in $open_regions_Group1
 do
 	prefix=$(basename $file)
-	if [ "$peakFeatures" == "TRUE" ];
+	if [ "$chrPrefix" == "TRUE" ];
 	then
-		if [ -z "$coverage_Files_Group1" ] && [ -z "$coverage_Column_Group1" ] ;
+		if [ "$peakFeatures" == "TRUE" ];
 		then
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay
-		fi
-		if [ -n "$coverage_Files_Group1" ] ;
-		then
-			cfile=${coverage_Files_Group1[${counter}]}
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile  -f $geneAnnotation -e $decay
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile  -f $geneAnnotation -e $decay
-			((counter++))
-		fi
-		if [ -n "$coverage_Column_Group1" ] ;
-		then
-			cCol=${coverage_Column_Group1[${counter}]}
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay
-			((counter++))
+			if [ -z "$coverage_Files_Group1" ] && [ -z "$coverage_Column_Group1" ] ;
+			then
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -j
+			fi
+			if [ -n "$coverage_Files_Group1" ] ;
+			then
+				cfile=${coverage_Files_Group1[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile  -f $geneAnnotation -e $decay -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile  -f $geneAnnotation -e $decay -j
+				((counter++))
+			fi
+			if [ -n "$coverage_Column_Group1" ] ;
+			then
+				cCol=${coverage_Column_Group1[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -j
+				((counter++))
+			fi
+		else
+			if [ -z "$coverage_Files_Group1" ] && [ -z "$coverage_Column_Group1" ] ;
+			then
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u -j
+			fi
+			if [ -n "$coverage_Files_Group1" ] ;
+			then
+				cfile=${coverage_Files_Group1[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile -f $geneAnnotation -e $decay -u -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile  -f $geneAnnotation -e $decay -u -j
+				((counter++))
+			fi
+			if [ -n "$coverage_Column_Group1" ] ;
+			then
+				cCol=${coverage_Column_Group1[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u -j
+				((counter++))
+			fi
 		fi
 	else
-		if [ -z "$coverage_Files_Group1" ] && [ -z "$coverage_Column_Group1" ] ;
+		if [ "$peakFeatures" == "TRUE" ];
 		then
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u
-		fi
-		if [ -n "$coverage_Files_Group1" ] ;
-		then
-			cfile=${coverage_Files_Group1[${counter}]}
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile -f $geneAnnotation -e $decay -u
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile  -f $geneAnnotation -e $decay -u
-			((counter++))
-		fi
-		if [ -n "$coverage_Column_Group1" ] ;
-		then
-			cCol=${coverage_Column_Group1[${counter}]}
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u
-			((counter++))
+			if [ -z "$coverage_Files_Group1" ] && [ -z "$coverage_Column_Group1" ] ;
+			then
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay
+			fi
+			if [ -n "$coverage_Files_Group1" ] ;
+			then
+				cfile=${coverage_Files_Group1[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile  -f $geneAnnotation -e $decay
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile  -f $geneAnnotation -e $decay
+				((counter++))
+			fi
+			if [ -n "$coverage_Column_Group1" ] ;
+			then
+				cCol=${coverage_Column_Group1[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay
+				((counter++))
+			fi
+		else
+			if [ -z "$coverage_Files_Group1" ] && [ -z "$coverage_Column_Group1" ] ;
+			then
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u
+			fi
+			if [ -n "$coverage_Files_Group1" ] ;
+			then
+				cfile=${coverage_Files_Group1[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile -f $geneAnnotation -e $decay -u
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cfile  -f $geneAnnotation -e $decay -u
+				((counter++))
+			fi
+			if [ -n "$coverage_Column_Group1" ] ;
+			then
+				cCol=${coverage_Column_Group1[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group1/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u
+				((counter++))
+			fi
 		fi
 	fi
 done
@@ -76,46 +122,92 @@ counter=0
 for file in $open_regions_Group2
 do
 	prefix=$(basename $file)
-	if [ "$peakFeatures" == "TRUE" ];
+	if [ "$chrPrefix" == "TRUE" ];
 	then
-		if [ -z "$coverage_Files_Group2" ] && [ -z "$coverage_Column_Group2" ] ;
+		if [ "$peakFeatures" == "TRUE" ];
 		then
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay
-		fi
-		if [ -n "$coverage_Files_Group2" ] ;
-		then
-			cFile=${coverage_Files_Group2[${counter}]}
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay
-			((counter++))
-		fi
-		if [ -n "$coverage_Column_Group2" ] ;
-		then
-			cCol=${coverage_Column_Group2[${counter}]}
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay
-			((counter++))
+			if [ -z "$coverage_Files_Group2" ] && [ -z "$coverage_Column_Group2" ] ;
+			then
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -j
+			fi
+			if [ -n "$coverage_Files_Group2" ] ;
+			then
+				cFile=${coverage_Files_Group2[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay -j 
+				((counter++))
+			fi
+			if [ -n "$coverage_Column_Group2" ] ;
+			then
+				cCol=${coverage_Column_Group2[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -j
+				((counter++))
+			fi
+		else
+			if [ -z "$coverage_Files_Group2" ] && [ -z "$coverage_Column_Group2" ] ;
+			then
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u -j
+			fi
+			if [ -n "$coverage_Files_Group2" ] ;
+			then
+				cFile=${coverage_Files_Group2[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay -u -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay -u -j
+				((counter++))
+			fi
+			if [ -n "$coverage_Column_Group2" ] ;
+			then
+				cCol=${coverage_Column_Group2[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u -j
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u -j
+				((counter++))
+			fi
 		fi
 	else
-		if [ -z "$coverage_Files_Group2" ] && [ -z "$coverage_Column_Group2" ] ;
+		if [ "$peakFeatures" == "TRUE" ];
 		then
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u
-		fi
-		if [ -n "$coverage_Files_Group2" ] ;
-		then
-			cFile=${coverage_Files_Group2[${counter}]}
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay -u
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay -u
-			((counter++))
-		fi
-		if [ -n "$coverage_Column_Group2" ] ;
-		then
-			cCol=${coverage_Column_Group2[${counter}]}
-			echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u
-			bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u
-			((counter++))
+			if [ -z "$coverage_Files_Group2" ] && [ -z "$coverage_Column_Group2" ] ;
+			then
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay
+			fi
+			if [ -n "$coverage_Files_Group2" ] ;
+			then
+				cFile=${coverage_Files_Group2[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay
+				((counter++))
+			fi
+			if [ -n "$coverage_Column_Group2" ] ;
+			then
+				cCol=${coverage_Column_Group2[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay
+				((counter++))
+			fi
+		else
+			if [ -z "$coverage_Files_Group2" ] && [ -z "$coverage_Column_Group2" ] ;
+			then
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -f $geneAnnotation -e $decay -u
+			fi
+			if [ -n "$coverage_Files_Group2" ] ;
+			then
+				cFile=${coverage_Files_Group2[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay -u
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -d $cFile -f $geneAnnotation -e $decay -u
+				((counter++))
+			fi
+			if [ -n "$coverage_Column_Group2" ] ;
+			then
+				cCol=${coverage_Column_Group2[${counter}]}
+				echo bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u
+				bash ${path}/Code/TEPIC.sh -g $referenceGenome -b $file -o $outputDirectory/Affinities/group2/$prefix -p $pwm -c $cores_TEPIC -a $geneAnnotation -w $window -n $cCol -f $geneAnnotation -e $decay -u
+				((counter++))
+			fi
 		fi
 	fi
 done

@@ -4,6 +4,8 @@
 \usepackage{graphicx}
 \usepackage[table,xcdraw]{xcolor}
 \usepackage{hyperref}
+\usepackage{svg}
+
 
 \begin{document}
 \section*{Computing transcription factor scores using TEPIC}
@@ -426,6 +428,17 @@ Additionaly, we report confusion matrices for the outer cross validation folds.
 We generate a bar-plot with the regression coefficients of all TFs selected in the final model.
 A positive coeffcient is used by the model to predict genes as upregulated, a negative coefficient is related to genes that are predicted as downregulated. The interpretation
 of the model can be simplified if the user makes sure that both TF ratios and gene expression fold changes are computed in the same order. 
+
+We provide an additional script to generate further plots per feature that can help to understand the model. As shown in Figure \ref{ExampleAnalysisOfDynamite},
+density plots, and scatter plots are generated to help elucidating why a particular feature was selected by the model.
+\begin{figure}[h!]
+\centering
+\includesvg[width=\textwidth]{Feature_overview_TEMvsTN_Peak_Counts}
+\caption{Example for a automatically created feature analysis Figure generated on the example data provided in the repository. The density plots show the distribution of TF affinities, the
+scatter plot relat the TF affinities to the observed expression changes. The miniature heatmap shows the regression coefficients determined during the outer cross validation.}
+\label{ExampleAnalysisOfDynamite}
+\end{figure}
+
 \newpage
 \bibliographystyle{plain}
 \bibliography{Description}

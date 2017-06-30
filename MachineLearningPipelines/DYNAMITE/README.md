@@ -26,7 +26,7 @@ by TEPIC with log2 gene expression ratios to generate the correct input [integra
 
 The gene expression data file is a two column, tab delimited file, including a header, with EnsembleGeneIDs in the the first column and
 log2 gene expression ratios in the second column. An example gene expression file is provided as well: 
-[Example](ExampleData/TN_vs_TEM0_000001.txt).
+[Example](ExampleData/TEM_vs_TN0_000001.txt).
 
 ## Using DYNAMITE
 DYNAMITE can be used in two different ways:
@@ -114,6 +114,22 @@ To run a test trial of *DYNAMITE*, execute the script runDYNAMITE.sh. You can ru
 We provide precomputed TEPIC results to run the example. If a reference genome and a gene annotation file are provided by the user,
 the first step of the pipeline, the run of TEPIC, can be carried out as well. Sample open chromatin regions, log2 gene expresssion ratios, and a reduced set of PSEMs (in the interest of runtime)
 are already contained in the folder [ExampleData](ExampleData). Note that the genome version used to compute the TF gene-scores in this example is hg19. 
+
+## Feature interpretation
+We provide a [script](Scripts/generateFeaturePlots.R) to generate several figures that facilitate the interpretation of the learned models.
+This script allows the automated generation of density plots that compare the distrubtion of a selected feature between the tissues and
+generates a scatter plot that relates the actual mean affinities per group to the expression changes of those genes. These plots
+are shown for all differentially expressed genes that are considered in the model and for a reduced set of genes (using the 0.9 quantile) to remove
+potential outliers. Additionally, the regression coefficients in the outer folds of a selected TF are shown. 
+To generate a plot on the example data set that investigates the role of the number of open regions in vessinity of the gene promoter, execute the command
+
+	Rscript Scripts/generateFeaturePlots.R TestRun/ Peak_Counts TEM TN	
+
+in the DYNAMIT folder. This should of course be done  after learning the actual model with  
+
+    bash runDYNAMITE.sh ./DYNAMITE.cfg
+
+Note that the internal folder structure of the script is specifically adapted to DYNAMITE results that were obtained using the DYNAMITE pipeline.
 
 ## Citation
 If you are using DYNAMITE please cite:

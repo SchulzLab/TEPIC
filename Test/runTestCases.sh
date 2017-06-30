@@ -37,45 +37,27 @@ echo ""
 echo TestV13: Windows 3kb - Annotation - Decay - Not Length Normalised - No Peak Features - Signal Feature
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V13 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -l -u -n 4
 echo ""
-echo TestV14: Windows 3kb - Annotation - Decay - Length Normalised - No Peak Features - Sparse Representation
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V14 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -s -u
-echo ""
-echo TestV15: Windows 3kb - Annotation - Decay - Not Length Normalised - No Peak Features - Sparse Representation
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V15 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -s -l -u
-echo ""
-echo TestV16: Windows 3kb - Annotation - Decay - Not Length Normalised - No Peak Features - Scaling original - Sparse Representation
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V16 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -l -u -n 4 -x -s
-echo ""
-echo TestV17: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - gzip
+echo TestV14: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - gzip
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V17 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -z
 echo ""
-echo TestV18: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - reduced peak set 
+echo TestV15: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - reduced peak set 
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V18 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -f example_annotation.gtf
 echo ""
-echo TestV19: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - gene body
+echo TestV16: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - gene body
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V19 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -y 
 echo ""
-echo TestV20: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - gene body - reduced peak set 
+echo TestV17: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - gene body - reduced peak set 
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V20 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -y -f example_annotation.gtf
 echo ""
-echo TestV21:  Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - gene body - reduced peak set - Signal Feature
+echo TestV18:  Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - gene body - reduced peak set - Signal Feature
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V21 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -y -f example_annotation.gtf -n 4
 echo ""
-echo TestV22:  Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - gene body - reduced peak set - Scaling original 
+echo TestV19:  Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - gene body - reduced peak set - Scaling original 
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V22 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -y -f example_annotation.gtf -n 4 -x
 echo ""
-echo TestV23: Windows 3kb - Annotation - Decay - Not Length Normalised - No Peak Features - Scaling original - Sparse Representation - gzip 
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V23 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -l -u -n 4 -x -s -z
-echo ""
-echo TestV24: Windows 3kb - Annotation - Decay - Not Length Normalised - No Peak Features - Signal Feature - Sparse Representation - gzip 
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V24 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -l -u -n 4 -s -z
-echo ""
-echo TestV25: Windows 3kb - Annotation - Decay - Not Length Normalised - No Peak Features - Signal Feature - Sparse Representation - bedGraph file - gzip
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V25 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -l -u -d example_regions.bg -s -z
-echo ""
-echo TestV26: Windows 3kb - Annotation - Decay - Not Length Normalised - No Peak Features - Original Scaling - Sparse Representation - bedGraph File - gzip
-bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V26 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -l -u -d example_regions.bg -s -z -x
-echo ""
-echo TestV27: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - Considering motif length
+echo TestV20: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - Considering motif length
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V27 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -m ../PWMs/human_jaspar_hoc_kellis_Length.txt
+echo ""
+echo TestV21: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features - Considering motif length - Chr prefix in the reference genome
+bash ../Code/TEPIC.sh -g example_sequence_chr.fa -b example_regions.bed  -o Test_V27 -p ../PWMs/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -m ../PWMs/human_jaspar_hoc_kellis_Length.txt -j
 echo ""

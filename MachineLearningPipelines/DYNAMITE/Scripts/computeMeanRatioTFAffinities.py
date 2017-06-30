@@ -14,11 +14,8 @@ def readFile(filename,geneSet,affinityDict):
 		else:		
 			affinityDict[s1[0]]=s1[1:]
 		temp.add(s1[0])
+		geneSet.add(s1[0])
 	print("Found "+str(len(temp))+" genes")
-	if (len(geneSet)==0):
-		geneSet=temp
-	else:
-		geneSet=geneSet.intersection(temp)
 	infile.close()
 	return (header,geneSet,affinityDict)
 
@@ -73,10 +70,21 @@ def main():
 			(header,genes,affinityDictG2)=readFile(args.group2[0]+"/"+group2file,genes,affinityDictG2)
 			headers+=[header]
 			counterG2+=1
+	for gene in genes:
+		if (affinityDictG1.has_key(gene)):
+			continue
+		else:
+			affinityDictG1[gene]=[0.0]*(len(headers[0].split())-1)
+	for gene in genes:
+		if (affinityDictG2.has_key(gene)):
+			continue
+		else:
+			affinityDictG2[gene]=[0.0]*(len(headers[0].split())-1)
+
 	if (len(genes)==0):
-		print("There are no genes in common")
+		print("There are no genes available") 
 		exit()
-	print("Number of common genes: "+str(len(genes)))
+	print("Total number of genes: "+str(len(genes)))
 
 	if (checkHeader(headers)):
 		print("Calculating mean affinities for group 1")

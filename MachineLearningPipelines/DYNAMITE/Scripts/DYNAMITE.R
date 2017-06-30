@@ -302,11 +302,11 @@ for(Sample in FileList){
 			if (ggplotAvailable){
 				ggplot2::ggplot(nf4,aes(x=reorder(TF,value),y=value,width=0.8,fill=np))+
 				geom_bar(stat="identity")+
-				theme_bw(15)+ylab("Normalised coefficient")+xlab("TF")+
+				theme_bw(10)+ylab("Normalised coefficient")+xlab("TF")+
 				theme(axis.text.x=element_text(angle=45,hjust=1))+
 				theme(strip.background  = element_blank())+
 				theme(legend.position="none")
-				ggsave(paste0(argsL$outDir,"Regression_Coeffcients_Entire_Data_Set_Class",j,"_",name,".png"),width=40,height=10,units=c("cm"))
+				ggsave(paste0(argsL$outDir,"Regression_Coeffcients_Entire_Data_Set_Class",j,"_",name,".png"),width=min(55,5+(.3*length(nf4$TF))),height=5)
 			}
 		}
 	}else{
@@ -327,11 +327,11 @@ for(Sample in FileList){
 			if (ggplotAvailable){
 				ggplot2::ggplot(nf4,aes(x=reorder(TF,value),y=value,width=0.8,fill=np))+
 				geom_bar(stat="identity")+
-				theme_bw(15)+ylab("Normalised coefficient")+xlab("TF")+
+				theme_bw(10)+ylab("Normalised coefficient")+xlab("TF")+
 				theme(axis.text.x=element_text(angle=45,hjust=1))+
 				theme(strip.background  = element_blank())+
 				theme(legend.position="none")
-				ggsave(paste0(argsL$outDir,"Regression_Coefficients_Entire_Data_Set",name,".png"),width=40,height=10,units=c("cm"))
+				ggsave(paste0(argsL$outDir,"Regression_Coefficients_Entire_Data_Set",name,".png"),width=min(55,5+(.3*length(nf4$TF))),height=5)
 		}
 	}	
 }
@@ -366,20 +366,14 @@ if (argsL$performance){
 				if (gplotsAvailable){
 					library("gplots")
 					svg(paste(argsL$outDir,"Coefficients_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".svg",sep=""),width=min(55,7+(.3*length(meanFeature))),height=min(55,5+(.5*as.numeric(argsL$Ofolds))))
-					if(any(meanFeatures < 0)){
-	#					limitP<-min(8,length(which(meanFeatures>0)))
-	#					limitN<-min(8,length(which(meanFeatures<0)))
-	#					allFeatures<-cbind(featureMatrix[,order(meanFeature,decreasing=TRUE)[1:limitP]],(featureMatrix[,order(meanFeature,decreasing=FALSE)[1:limitN]]))
-	#					meanFeatures<-c(meanFeature[order(meanFeature,decreasing=TRUE)[1:limitP]],(meanFeature[order(meanFeature,decreasing=FALSE)[1:limitN]]))
+					if(any(allFeatures < 0)){
 						allFeatures<-featureMatrix[,order(meanFeature,decreasing=TRUE)]
 						meanFeature<-meanFeature[order(meanFeature,decreasing=TRUE)]							
 						all<-rbind(allFeatures,meanFeatures)
 						all<-all[,order(all[dim(all)[1],],decreasing=TRUE)]
 						row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Median")
-						save(all,file="PlotData.RData")
 						heatmap.2(all,trace="none",col=bluered(250),srtCol=45,cexRow=fontSize,cexCol=fontSize,density.info="none",distfun = distF, dendrogram="none", margins=c(6,6),Colv=FALSE,Rowv=FALSE,key.xlab="Regression coefficient",keysize=0.9) 
 					}else{
-#						limit<-min(8,length(meanFeature)/2)
 						allFeatures<-featureMatrix[,order(meanFeature,decreasing=TRUE)]
 						meanFeatures<-meanFeature[order(meanFeature,decreasing=TRUE)]
 						all<-rbind(allFeatures,meanFeatures)

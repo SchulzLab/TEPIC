@@ -18,6 +18,8 @@ To run *DYNAMITE* the following packages/software must be installed additionally
 * doMC
 * optional: gplots
 * optional: ggplot2
+* optional: gridExtra
+* optional: reshape2
 
 ## Required Input:
 *DYNAMITE* can be applied to several samples at once. For each sample, one tab-delimited file has to be provided

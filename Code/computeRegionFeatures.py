@@ -304,11 +304,9 @@ def remove_gene_regions(gene_regions, subs_gene_regions):
         if annotation in gene_regions:
             for region in regions:
                 try:
-                    gene_regions[annotation].find(region[SORTING_KEY])
+                    gene_regions[annotation].remove(region)
                 except ValueError:
                     pass
-                else:
-                    gene_regions[annotation].remove(region)
     return gene_regions
 
 
@@ -357,7 +355,7 @@ def mergeGeneFeatureMatrices(matrix_a, matrix_b):
 
 def writeGeneFeatureMatrix(filename, feature_matrix):
     with open(filename, "w") as outputfile:
-        outputfile.write("geneID    region_count    total_length    total_signal")
+        outputfile.write("geneID\tregion_count\ttotal_length\ttotal_signal")
         outputfile.write('\n')
         for annotation, features in feature_matrix.iteritems():
             gene_id = annotation[0].split(".")[0].replace('"', '')
@@ -411,7 +409,7 @@ def main():
 
     print "Ready!"
     print "Starting annotation..."
-    print "Using window size: " + str(args.window_size/2)
+    print "Using window size: " + str(args.window_size)
     print "Decay set to: " + str(args.decay)
     print "Hi-C Decay set to: " + str(args.hic_decay)
 
@@ -449,7 +447,7 @@ def main():
 
     elif args.hi_c_regions is not None:
         print "Running into Hi-c mode.."
-        print "Using loop-window size: " + str(args.loopwindows / 2)
+        print "Using loop-window size: " + str(args.loopwindows)
         # read hi-c file and keep loops with desired resolution
         resolution = None
         if args.resolution is not None:

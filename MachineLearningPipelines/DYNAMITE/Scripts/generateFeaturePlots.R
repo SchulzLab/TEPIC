@@ -120,7 +120,7 @@ plot5<-ggplot2::ggplot(coefs,aes(x=Feature,y=Fold,fill=Value))+
         scale_fill_gradient2(high="red",low="blue",mid="white",midpoint=0)+
         labs(fill="Regression\n coefficient")
   
-svg(paste0("Feature_overview_",group1L,"vs",group2L,"_",feature,".svg"),width=10,height=6)
+svg(paste0(args[1],"/Feature_overview_",group1L,"vs",group2L,"_",feature,".svg"),width=10,height=6)
 grid.arrange(plot1, plot2, plot3, plot4, plot5,layout_matrix=rbind(c(1,1,1,1,1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,5),
                                                                    c(1,1,1,1,1,1,1,1,1,3,3,3,3,3,3,3,3,3,3,3,5,5,5,5,5),
                                                                    c(2,2,2,2,2,2,2,2,2,4,4,4,4,4,4,4,4,4,4,4,5,5,5,5,5),

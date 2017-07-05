@@ -86,10 +86,9 @@ argsL$randomise <- FALSE
 #Creating output directory if necessary
 dir.create(argsL$outDir,showWarning=FALSE)
 
-permute<-function(x,resPos){
+permute<-function(x){
 s<-sample(length(x))
-s<-s[which(s != resPos)]
-c(x[s],x[resPos])
+x[s]
 }
 
 #Loading required packages and initialising index variables
@@ -152,11 +151,10 @@ for(Sample in FileList){
 	#Normalising the data matrix
 	M[,-Response_Variable_location]<-log2(M[,-Response_Variable_location]+1)
 	M[,-Response_Variable_location]<-scale(M[,-Response_Variable_location],center=TRUE, scale=TRUE)
-
 	if (argsL$randomise == TRUE){
-          MP<-t(apply(M,1,permute,Response_Variable_location))
-          colnames(MP)<-colnames(M)
-          M<-cbind(data.frame(scale(MP[,-Response_Variable_location],center=TRUE, scale=TRUE)),MP[,Response_Variable_location])
+          MP<-apply(M[,-Response_Variable_location],2,permute)
+          M<-cbind(data.frame(scale(MP,center=TRUE, scale=TRUE)),M[,Response_Variable_location])
+	      colnames(M)<-FeatureName
 	}
 
 	#Balancing the data set
@@ -219,7 +217,7 @@ for(Sample in FileList){
 		}
 
 		#Generating a plot visualising the model selection
-		svg(paste(paste(paste(argsL$outDir,name,sep="/"),k,sep="-"),"svg",sep="."))
+		svg(paste(paste0(argsL$outDir,"/Misclassification_vs_Lambda_Fold_",k,"_",name),"svg",sep="."))
 		plot(elasticnet)
 		dev.off()
 
@@ -294,7 +292,7 @@ for(Sample in FileList){
 			nf4[,2]<-as.numeric(as.character(nf4[,2]))
 			nf4<-as.data.frame(nf4)
 			nf4[,2]<-as.numeric(as.character(nf4[,2]))
-			write.table(nf4,file=paste(argsL$outDir,paste("Class",j,"Features.txt",sep="-"),sep='/'),quote=FALSE,sep="\t",row.names=FALSE)
+			write.table(nf4,file=paste(argsL$outDir,paste("Class",j,"Regression_Coefficients_Entire_Data_Set.txt",sep="-"),sep='/'),quote=FALSE,sep="\t",row.names=FALSE)
 			nf4<-nf4[which(nf4$value >0.025),]
 			np<-c(1:length((nf4[,2])))
 			np[which(nf4[,2]>0)]<-1
@@ -306,7 +304,7 @@ for(Sample in FileList){
 				theme(axis.text.x=element_text(angle=45,hjust=1))+
 				theme(strip.background  = element_blank())+
 				theme(legend.position="none")
-				ggsave(paste0(argsL$outDir,"Regression_Coeffcients_Entire_Data_Set_Class",j,"_",name,".png"),width=min(55,5+(.3*length(nf4$TF))),height=5)
+				ggsave(paste0(argsL$outDir,"Regression_Coefficients_Entire_Data_Set_Class",j,"_",name,".png"),width=min(55,5+(.3*length(nf4$TF))),height=5)
 			}
 		}
 	}else{
@@ -319,7 +317,7 @@ for(Sample in FileList){
 			nf4[,2]<-as.numeric(as.character(nf4[,2]))
 			nf4<-as.data.frame(nf4)
 			nf4[,2]<-as.numeric(as.character(nf4[,2]))
-			write.table(nf4,file=paste(argsL$outDir,paste(name,"Entire_Data_Set_Features.txt",sep="-"),sep='/'),quote=FALSE,sep="\t",row.names=FALSE)
+			write.table(nf4,file=paste(argsL$outDir,paste0("Regression_Coefficients_Entire_Data_Set_",name,".txt"),sep='/'),quote=FALSE,sep="\t",row.names=FALSE)
 			nf4<-nf4[which(nf4$value !=0.0),]
 			np<-c(1:length((nf4[,2])))
 			np[which(nf4[,2]>0)]<-1
@@ -365,7 +363,7 @@ if (argsL$performance){
 				row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Median")
 				if (gplotsAvailable){
 					library("gplots")
-					svg(paste(argsL$outDir,"Coefficients_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".svg",sep=""),width=min(55,7+(.3*length(meanFeature))),height=min(55,5+(.5*as.numeric(argsL$Ofolds))))
+					svg(paste(argsL$outDir,"Regression_Coefficients_Cross_Validation_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".svg",sep=""),width=min(55,7+(.3*length(meanFeature))),height=min(55,5+(.5*as.numeric(argsL$Ofolds))))
 					if(any(allFeatures < 0)){
 						allFeatures<-featureMatrix[,order(meanFeature,decreasing=TRUE)]
 						meanFeature<-meanFeature[order(meanFeature,decreasing=TRUE)]							
@@ -388,7 +386,7 @@ if (argsL$performance){
 					library("ggplot2")
 					text<-"Mean regression coefficients are to small, a heatmap can not be shown."
 					ggplot()+annotate("text",x=4,y=25,size=8,label=text)+theme_void() 
-					ggsave(filename=paste(argsL$outDir,"Coefficients_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),width=11,height=4)
+					ggsave(filename=paste(argsL$outDir,"Regression_Coefficients_Cross_Validation_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),width=11,height=4)
 				}
 			}
 		}

@@ -38,8 +38,8 @@ To run *TEPIC* the following packages/software must be installed:
 * [bedtools](https://github.com/arq5x/bedtools2)
 * A g++ compiler supporting openmp to use the parallel implementation of TRAP.
 
-To compile the C++ version of TRAP execute the script
-	[Code/compileTRAP.sh](Code/compileTRAP.sh).
+To compile the C++ version of TRAP and to install possibly missing R-packages for downstream processing execute the script
+	[Code/compile_TRAP_install_R_packages.sh](Code/compile_TRAP_install_R_packages.sh).
 
 To use the script [findBackground](Code/findBackground.py), which is necessary to compute TF specific affinity thresholds, the following python libraries are required:
 * numpy

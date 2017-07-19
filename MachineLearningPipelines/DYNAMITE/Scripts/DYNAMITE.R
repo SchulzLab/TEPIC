@@ -329,7 +329,7 @@ for(Sample in FileList){
 				theme(axis.text.x=element_text(angle=45,hjust=1))+
 				theme(strip.background  = element_blank())+
 				theme(legend.position="none")
-				ggsave(paste0(argsL$outDir,"Regression_Coefficients_Entire_Data_Set",name,".png"),width=min(55,5+(.3*length(nf4$TF))),height=5)
+				ggsave(paste0(argsL$outDir,"Regression_Coefficients_Entire_Data_Set",name,".png"),width=min(55,5+(.3*length(nf4$TF))),height=5,limitsize=F)
 		}
 	}	
 }
@@ -397,7 +397,7 @@ if (argsL$performance){
 	if(class(SampleOverview)=="matrix"){
 		ggplotSampleOverview<-as.data.frame(rbind(cbind(SampleOverview[,1:3],rep("Test",length(SampleOverview[,1]))),cbind(SampleOverview[,c(1,8,9)],rep("Training",length(SampleOverview[,1]))),cbind(SampleOverview[,c(1,4,5)],rep("F1_1",length(SampleOverview[,1]))),cbind(SampleOverview[,c(1,6,7)],rep("F1_2",length(SampleOverview[,1])))))
 	}else{
-		ggplotSampleOverview<-as.data.frame(rbind(c(SampleOverview[1:3],"Test"),c(SampleOverview[c(1,8,9)],"Training"),c(SampleOverview[c(1,4,5)],"F1_1"),c(SampleOverview[c(1,6,7)],"F1_2")))
+		ggplotSampleOverview<-as.data.frame(rbind(c(SampleOverview[1:3],"Test Accuracy"),c(SampleOverview[c(1,8,9)],"Trainings Accuracy"),c(SampleOverview[c(1,4,5)],"F1-Up"),c(SampleOverview[c(1,6,7)],"F1-Down")))
 	}
 
 	colnames(ggplotSampleOverview)<-c("Name","Mean","Variance","Measure")

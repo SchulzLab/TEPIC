@@ -304,7 +304,7 @@ for(Sample in FileList){
 				theme(axis.text.x=element_text(angle=45,hjust=1))+
 				theme(strip.background  = element_blank())+
 				theme(legend.position="none")
-				ggsave(paste0(argsL$outDir,"Regression_Coefficients_Entire_Data_Set_Class",j,"_",name,".png"),width=min(55,5+(.3*length(nf4$TF))),height=5)
+				ggsave(paste0(argsL$outDir,"Regression_Coefficients_Entire_Data_Set_Class",j,"_",name,".png"),width=min(55,5+(.3*length(nf4$TF))),height=5,limitsize=F)
 			}
 		}
 	}else{

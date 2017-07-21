@@ -304,7 +304,7 @@ for(Sample in FileList){
 				theme(axis.text.x=element_text(angle=45,hjust=1))+
 				theme(strip.background  = element_blank())+
 				theme(legend.position="none")
-				ggsave(paste0(argsL$outDir,"Regression_Coefficients_Entire_Data_Set_Class",j,"_",name,".png"),width=min(55,5+(.3*length(nf4$TF))),height=5,limitsize=F)
+				ggsave(paste0(argsL$outDir,"Regression_Coefficients_Entire_Data_Set_Class",j,"_",name,".png"),width=min(50,5+(.3*length(nf4$TF))),height=5,limitsize=F)
 			}
 		}
 	}else{
@@ -329,7 +329,7 @@ for(Sample in FileList){
 				theme(axis.text.x=element_text(angle=45,hjust=1))+
 				theme(strip.background  = element_blank())+
 				theme(legend.position="none")
-				ggsave(paste0(argsL$outDir,"Regression_Coefficients_Entire_Data_Set",name,".png"),width=min(55,5+(.3*length(nf4$TF))),height=5,limitsize=F)
+				ggsave(paste0(argsL$outDir,"Regression_Coefficients_Entire_Data_Set",name,".png"),width=min(50,5+(.3*length(nf4$TF))),height=5,limitsize=F)
 		}
 	}	
 }
@@ -363,7 +363,7 @@ if (argsL$performance){
 				row.names(all)<-c(paste("Fold ",c(1:(dim(all)[1]-1))),"Median")
 				if (gplotsAvailable){
 					library("gplots")
-					svg(paste(argsL$outDir,"Regression_Coefficients_Cross_Validation_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".svg",sep=""),width=min(54,7+(.3*length(meanFeature))),height=min(54,5+(.5*as.numeric(argsL$Ofolds))))
+					svg(paste(argsL$outDir,"Regression_Coefficients_Cross_Validation_Heatmap_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".svg",sep=""),width=min(54,7+(.3*length(meanFeature))),height=min(50,5+(.5*as.numeric(argsL$Ofolds))))
 					if(any(allFeatures < 0)){
 						allFeatures<-featureMatrix[,order(meanFeature,decreasing=TRUE)]
 						meanFeature<-meanFeature[order(meanFeature,decreasing=TRUE)]							

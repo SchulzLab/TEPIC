@@ -219,7 +219,7 @@ echo "Number of considered pwms	"$numMat >> $metadatafile
 
 echo "Preprocessing region file: Removing chr prefix, sorting regions and removing duplicats"
 sed 's/chr//g' $regions >  ${filteredRegions}_Filtered_Regions.bed
-sort -s -V -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions.bed | uniq > ${filteredRegions}_sorted.bed
+sort -s -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions.bed | uniq > ${filteredRegions}_sorted.bed
 rm ${filteredRegions}_Filtered_Regions.bed
 
 if [ -n "$filter" ];
@@ -314,7 +314,7 @@ fi
 #Computing DNase Coverage in Peak regions
 if [ -n "$dnase" ] ;
 then 
-	sort -s -V -k1,1 -k2,2 -k3,3 $dnase > ${dnase}_sorted
+	sort -s -k1,1 -k2,2 -k3,3 $dnase > ${dnase}_sorted
 	python ${working_dir}/computeDNaseCoverage.py ${dnase}_sorted ${filteredRegions}_sorted.bed > ${prefix}_Peak_Coverage.txt
 	rm ${dnase}_sorted
 	if [ "$originalScaling" == "TRUE" ];

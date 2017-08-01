@@ -1,10 +1,12 @@
 import sys
 import string
 import operator
+from operator import itemgetter, add
 import math
 import argparse
 import random
 from decimal import Decimal
+from SortedCollection import SortedCollection
 
 #Computing per gene TF affinities
 #Reads a gtf file and generates a dictionary (key:gene, item:(#chromosom,TSS))
@@ -46,15 +48,17 @@ def readOC_Region(filename):
 	tfpa=open(filename,"r")
 	tfpa.readline()
 	oC={}
+	counter=1
 	for l in tfpa:
 		s=l.split()[0]
 		ds=s.split(":")
 		if (len(ds)>=2):
+			chrom=ds[0].replace("chr","")
 			se=ds[1].split("-")
-			if (not oC.has_key(ds[0].replace("chr",""))):
-				oC[ds[0].replace("chr","")]=[(int(se[0]),int(se[1]))]			
-			else:
-				oC[ds[0].replace("chr","")]+=[(int(se[0]),int(se[1]))]
+			if chrom not in oC:
+				oC[chrom]=SortedCollection(key=itemgetter(1))
+			oC[chrom].insert_right((counter,int(se[0]),int(se[1])))
+			counter+=1
 	tfpa.close()
 	return oC
 
@@ -512,6 +516,7 @@ def main():
 	motifLengths=generate_Motif_Length(args.affinity[0],args.motifLength)	
 	#Load open chromatin positions from TF-Affinity file
 	oC=readOC_Region(args.affinity[0])
+
 	#Create a TF name index
 	tfNames=tfIndex(args.affinity[0])
 	shift=int(args.windows/2)
@@ -530,41 +535,40 @@ def main():
 			else:
 				leftBorder=tss[gene][1][1]
 				rightBorder=tss[gene][1][0]+shift
-		if (oC.has_key(tss[gene][0])):
-			for tupel in oC[tss[gene][0]]:
-				#Right border of window <= Right border of open chromatin
-				if (rightBorder <= tupel[1]) and (leftBorder >= tupel[0]):
-					#Left border of window >= Left border of open chromatin ==> Window inside open chromatin
-					if (genesInOpenChromatin.has_key(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))):		
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]+=[gene]
-					else:
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]=[gene]
-					usedRegions.add(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))					
-				#Right border of window >= Left border of open chromatin ==> Window enters open chromatin in the 5' end and stops in the tss window
-				elif (rightBorder <= tupel[1]) and (leftBorder < tupel[0]) and (rightBorder > tupel[0]):
-					if (genesInOpenChromatin.has_key(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))):		
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]+=[gene]
-					else:
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]=[gene]
-					usedRegions.add(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))
-				#Right border of window > Right border of open chromatin
-				elif (rightBorder > tupel[1]) and (leftBorder < tupel[0]):
-					#Left border of window <= Left border of open chromatin ==> Window is larger than open chromatin
-					if (genesInOpenChromatin.has_key(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))):		
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]+=[gene]
-					else:
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]=[gene]
-					usedRegions.add(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))
-				#Left border of window <= Right border of open chromain ==> Window enters open chromatin in the 3' end stops in the tss window
-				elif (rightBorder > tupel[1]) and (leftBorder >= tupel[0]) and (leftBorder < tupel[1]):
-					if (genesInOpenChromatin.has_key(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))):		
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]+=[gene]
-					else:
-						genesInOpenChromatin[tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1])]=[gene]
-					usedRegions.add(tss[gene][0]+":"+str(tupel[0])+"-"+str(tupel[1]))
+		chrom=tss[gene][0]
+		if (chrom in oC):
+			try:
+				left_item = oC[chrom].find_lt(leftBorder)
+			except ValueError:
+				try:
+					left_item = oC[chrom].find_ge(leftBorder)
+				except ValueError:
+					left_item = None
+			else:
+				if left_item[2] < leftBorder:
+					try:
+						left_item = oC[chrom].find_ge(leftBorder)
+					except ValueError:
+						left_item = None
+			try:
+				right_item = oC[chrom].find_le(rightBorder)
+			except ValueError:
+				right_item = None
+			if left_item is not None and right_item is not None:
+				left_index = oC[chrom].index(left_item)
+				right_index = oC[chrom].index(right_item)
+				if left_index <= right_index:
+					for i in range(left_index, right_index + 1):
+						identifier=str(chrom)+":"+str(oC[chrom][i][1])+"-"+str(oC[chrom][i][2])
+						if identifier in genesInOpenChromatin:
+							genesInOpenChromatin[identifier]+=[gene]
+						else:
+							genesInOpenChromatin[identifier]=[gene]
+						usedRegions.add(str(chrom)+":"+str(oC[chrom][i][1])+"-"+str(oC[chrom][i][2]))
 
 	#Extract bound transcription factors
 	affinities,numberOfPeaks,peakLength=extractTF_Affinity(usedRegions,genesInOpenChromatin,args.affinity[0],tss,oC,decay,geneBody,addPeakFT,normaliseLength,motifLengths)
+
 	#Generate Peak based features
 	if (args.peakCoverage != None):
 		perBaseCoverage=generate_Peak_Coverage_Features(usedRegions,genesInOpenChromatin,args.peakCoverage,tss,oC,decay,geneBody)

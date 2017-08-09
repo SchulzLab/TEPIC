@@ -252,9 +252,9 @@ def generate_Peak_Coverage_Features(openRegions,genesInOpenChromatin,filename,ge
 			peakPos=s[0]+":"+s[1]+"-"+s[2]
 			middle=int(((float(s[2])-float(s[1]))/2)+float(s[1]))
 			length=float(int(s[2])-int(s[1]))
-			if (genesInOpenChromatin.has_key(s[0])):
-				for geneID in genesInOpenChromatin[s[0]]:
-					if(s[0] in openRegions):
+			if (genesInOpenChromatin.has_key(peakPos)):
+				for geneID in genesInOpenChromatin[peakPos]:
+					if(peakPos in openRegions):
 						tss=genePositions[geneID][1][0]
 						tts=genePositions[geneID][1][1]
 						if (tss < tts):
@@ -576,7 +576,8 @@ def main():
 	#Generate Output
 	if (decay):
 		if (addPeakF):
-			createAffinityFileAffinitiesPeakCountsLength(affinities,numberOfPeaks,peakLength,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Peak_Features_Affinity_Gene_View.txt"),tss)	
+			print("Generating gene score using signal and peak features")
+		#	createAffinityFileAffinitiesPeakCountsLength(affinities,numberOfPeaks,peakLength,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Peak_Features_Affinity_Gene_View.txt"),tss)	
 		else:
 			createAffinityFileAffintiesOnly(affinities,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Affinity_Gene_View.txt"),tss)		
 		if (sparseRep):

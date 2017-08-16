@@ -172,7 +172,15 @@ for(Sample in FileList){
 	Feature_zero_SD<-as.vector(which(SD==0))
 	if(length(Feature_zero_SD)>0){
 		print("Warning, there are constant features. These are not considered for further analysis.")
+		FeatureNames_temp<-colnames(M)
+		Response_Variable_location_temp <- grep(argsL$response,FeatureNames_temp)
+		if (Response_Variable_location_temp %in% Feature_zero_SD){
+			print("Warning, response is constant, this sample is excluded")
+			validSamples[i]=FALSE
+			next;
+			}
 		M<-M[,-c(Feature_zero_SD)]
+
 		}
 	FeatureNames<-colnames(M)
 	M<-data.frame(scale(M,center=TRUE, scale=TRUE))
@@ -206,7 +214,6 @@ for(Sample in FileList){
 		colnames(MP)<-colnames(M)
 		M<-data.frame(scale(MP,center=TRUE, scale=TRUE))  
 	}
-	print(head(M))
 	if (argsL$performance == TRUE){
 		if (argsL$leaveOneOutCV==FALSE){
 		#Looping through the outer folds

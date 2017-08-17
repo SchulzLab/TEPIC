@@ -16,7 +16,8 @@ Optional parameters:\n
 [-m path to a tab delimited file containing the length of the used PSEMs]\n
 [-y flag to be set if the entire gene body should be screened for TF binding. The search window is extended by a region half of the size that is specified by the -w option upstream of the genes 5' TSS]\n
 [-z flag indicating that the output of TEPIC should be zipped]\n
-[-r path to a 2bit representation of the reference genome, required to generate a binary score for TF binding. The binary score is generated in addition to the standard affinity values]\n
+[-k path to a set of background sequences that should be used to compute to generate a binary score for TF binding. Mutually exclusive to the -r option]\n
+[-r path to a 2bit representation of the reference genome, required to generate a binary score for TF binding. The binary score is generated in addition to the standard affinity values. Mutually exclusive to the -k option]\n
 [-v p-value cut off used to determine a cut off to derive a binary score for TF binding (default 0.05)]\n
 [-i minutes that should be spend at most per chromosome to find matching random regions (default 3)]\n
 [-j flag indicating that the reference genome contains a chr prefix]\n"
@@ -44,8 +45,9 @@ zip="FALSE"
 pvalue="0.05"
 minutes=3
 chrPrefix="FALSE"
+backgroundRegions=""
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:f:m:e:r:v:i:yluhxzj" o;
+while getopts "g:b:o:c:p:d:n:a:w:f:m:e:r:v:k:i:yluhxzj" o;
 do
 case $o in
 	g)	genome=$OPTARG;;
@@ -69,6 +71,7 @@ case $o in
 	v)	pvalue=$OPTARG;;
 	i)	minutes=$OPTARG;;
 	j)	chrPrefix="TRUE";;
+	k)	backgroundRegions=$OPTARG;;
 	h)	echo -e $help
 	exit 1;;
 	[?])	echo -e $help
@@ -112,10 +115,22 @@ then
 	exit 1;
 fi
 
+if [ -n "$backgroundRegions" ] && [ -n "$randomGenome" ] ;
+then
+	echo The options -k and -r are mutually exclusive
+	exit 1;
+fi
+
 if [ -n "$randomGenome" ] ;
 then
 	sparsity="TRUE"
 fi
+
+if [ -n "$backgroundRegions" ] ;
+then
+	sparsity="TRUE"
+fi
+
 
 d=$(date +%D)
 d=`echo $d | sed 's/\//\_/g'`
@@ -142,6 +157,10 @@ then
 	echo "gene_filter_file "$filter >> $metadatafile
 fi
 echo "original_scaling	"$originalScaling >> $metadatafile
+if [ -n "$backgroundRegions" ];
+then
+	echo "background_regions "$backgroundRegions >> $metadatafile
+fi
 echo "" >> $metadatafile
 echo "[References]" >> $metadatafile
 echo "genome_reference	"$genome >> $metadatafile
@@ -222,6 +241,14 @@ sed 's/chr//g' $regions >  ${filteredRegions}_Filtered_Regions.bed
 sort -s -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions.bed | uniq > ${filteredRegions}_sorted.bed
 rm ${filteredRegions}_Filtered_Regions.bed
 
+if [ -n "$backgroundRegions" ];
+then
+echo "Preprocessing background file"
+sed 's/chr//g' $backgroundRegions >  ${filteredRegions}_Filtered_Regions_background.bed
+sort -s -k1,1 -k2,2 -k3,3 ${filteredRegions}_Filtered_Regions_background.bed | uniq > ${prefix}_Random_Regions.bed
+rm ${filteredRegions}_Filtered_Regions_background.bed
+fi 
+
 if [ -n "$filter" ];
 then
 echo "Filter total peak set"
@@ -243,7 +270,7 @@ then
 	echo "Adapting chr prefix in bed files for intersection with the reference genome"
 	awk '{print "chr"$1"\t"$2"\t"$3}' ${filteredRegions}_sorted.bed > tempFasta.bed
 	getFastaRegion=tempFasta.bed
-	if [ -n "$randomGenome" ];
+	if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ]; 
 		then
 		awk '{print "chr"$1"\t"$2"\t"$3}' ${prefix}_Random_Regions.bed > tempFastaRandom.bed
 		getFastaRegionRandom=tempFastaRandom.bed
@@ -256,7 +283,7 @@ fi
 echo "Runnig bedtools"
 #Run bedtools to get a fasta file containing the sequence data for predicted open chromatin regions contained in the bedfile
 bedtools getfasta -fi $genome -bed ${getFastaRegion} -fo $openRegionSequences
-if [ -n "$randomGenome" ];
+if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 then
 bedtools getfasta -fi $genome -bed ${getFastaRegionRandom} -fo Random_$openRegionSequences
 rm ${prefix}_Random_Regions.bed
@@ -264,7 +291,7 @@ fi
 if [ ${chrPrefix} == "TRUE" ];
 then
 	rm tempFasta.bed
-	if [ -n "$randomGenome" ];
+	if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 	then
 		rm tempFastaRandom.bed	
 	fi
@@ -275,7 +302,7 @@ echo "Converting invalid characters"
 python ${working_dir}/convertInvalidCharacterstoN.py $openRegionSequences $prefixP-FilteredSequences.fa
 rm $openRegionSequences
 
-if [ -n "$randomGenome" ];
+if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 then
 python ${working_dir}/convertInvalidCharacterstoN.py Random_$openRegionSequences $prefixP-Random-FilteredSequences.fa
 rm Random_$openRegionSequences
@@ -287,7 +314,7 @@ affinity=${prefix}_Affinity.txt
 echo "Starting TRAP"
 ${working_dir}/TRAPmulti $pwms ${prefixP}-FilteredSequences.fa $cores > ${affinity}_temp 
 rm ${prefixP}-FilteredSequences.fa
-if [ -n "$randomGenome" ] ;
+if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 then
 ${working_dir}/TRAPmulti $pwms ${prefixP}-Random-FilteredSequences.fa $cores > ${affinity}_Random 
 rm ${prefixP}-Random-FilteredSequences.fa
@@ -296,7 +323,7 @@ fi
 if [ ${chrPrefix} == "TRUE" ];
 then
 	sed -i 's/chr//g' ${affinity}_temp
-	if [ -n "$randomGenome" ];
+	if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 	then
 		sed -i 's/chr//g' ${affinity}_Random
 	fi
@@ -304,10 +331,10 @@ fi
 
 
 
-if [ -n "$randomGenome" ] ;
+if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 then
 echo "Discretising TF affinities"
-Rscript IdfentifyCut-Offs.R ${affinity}_Random ${affinity}_temp ${prefix}_Filtered_Affinities_temp.txt ${pvalue}
+Rscript ${working_dir}/IdentifyCut-Offs.R ${affinity}_Random ${affinity}_temp ${prefix}_Filtered_Affinities_temp.txt ${pvalue}
 rm ${affinity}_Random
 fi
 
@@ -320,7 +347,7 @@ then
 	if [ "$originalScaling" == "TRUE" ];
 	then
 		python ${working_dir}/scaleAffinity.py --is-sorted -s ${prefix}_Peak_Coverage.txt -a ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
-		if [ -n "$randomGenome" ] ;
+		if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 		then
 			python ${working_dir}/scaleAffinity.py --is-sorted -s ${prefix}_Peak_Coverage.txt -a ${prefix}_Filtered_Affinities_temp.txt > ${prefix}_Filtered_Scaled_Affinity_temp.txt
 		fi
@@ -332,7 +359,7 @@ then
 	if [ "$originalScaling" == "TRUE" ] ;
 	then
 		python ${working_dir}/scaleAffinity.py --is-sorted --scale-col ${column} -s ${filteredRegions}_sorted.bed -a ${affinity}_temp > ${prefix}_Scaled_Affinity_temp.txt
-		if [ -n "$randomGenome" ] ;
+		if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 		then
 			python ${working_dir}/scaleAffinity.py --is-sorted --scale-col ${column} -s ${filteredRegions}_sorted.bed -a ${prefix}_Filtered_Affinities_temp.txt > ${prefix}_Filtered_Scaled_Affinity_temp.txt
 		fi
@@ -345,7 +372,7 @@ rm ${filteredRegions}_sorted.bed
 #Removing regions that could not be annotated
 echo "Filter regions that could not be annotated"
 python ${working_dir}/filterInvalidRegions.py ${affinity}_temp $affinity
-if [ -n "$randomGenome" ] ;
+if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ] ;
 then
 	python ${working_dir}/filterInvalidRegions.py ${prefix}_Filtered_Affinities_temp.txt ${prefix}_Thresholded_Affinities.txt
 	rm ${prefix}_Filtered_Affinities_temp.txt
@@ -358,7 +385,7 @@ then
 	then
 		python ${working_dir}/filterInvalidRegions.py ${prefix}_Scaled_Affinity_temp.txt ${prefix}_Scaled_Affinity.txt
 		rm ${prefix}_Scaled_Affinity_temp.txt
-		if [ -n "$randomGenome" ] ;
+		if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 		then
 			python ${working_dir}/filterInvalidRegions.py ${prefix}_Filtered_Scaled_Affinity_temp.txt ${prefix}_Thresholded_Scaled_Affinity.txt
 			rm ${prefix}_Filtered_Scaled_Affinity_temp.txt
@@ -382,7 +409,7 @@ then
 	else
 		python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--geneBody" $geneBody "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}
 	fi
-	if [ -n "$randomGenome" ] ;
+	if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 	then
 		if [ -n "$dnase" ] ||  [ -n "$column" ] ;
 			then
@@ -410,7 +437,7 @@ then
 				then
 					python ${working_dir}/filterGeneView.py ${prefix}_Decay_Three_Peak_Based_Features_Affinity_Gene_View.txt
 					rm ${prefix}_Decay_Three_Peak_Based_Features_Affinity_Gene_View.txt
-					if [ -n "$randomGenome" ];
+					if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 					then
 						python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Decay_Three_Peak_Based_Features_Affinity_Gene_View.txt
 						rm ${prefix}_Thresholded_Decay_Three_Peak_Based_Features_Affinity_Gene_View.txt
@@ -418,7 +445,7 @@ then
 				else
 					python ${working_dir}/filterGeneView.py ${prefix}_Decay_Scaled_Peak_Features_Affinity_Gene_View.txt
 					rm ${prefix}_Decay_Scaled_Peak_Features_Affinity_Gene_View.txt
-					if [ -n "$randomGenome" ];
+					if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 					then
 						python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Decay_Scaled_Peak_Features_Affinity_Gene_View.txt
 						rm ${prefix}_Thresholded_Decay_Scaled_Peak_Features_Affinity_Gene_View.txt
@@ -429,7 +456,7 @@ then
 				then
 					python ${working_dir}/filterGeneView.py ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
 					rm ${prefix}_Decay_Scaled_Affinity_Gene_View.txt
-					if [ -n "$randomGenome" ];
+					if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 					then
 						python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Decay_Scaled_Affinity_Gene_View.txt
 						rm ${prefix}_Thresholded_Decay_Scaled_Affinity_Gene_View.txt
@@ -437,7 +464,7 @@ then
 				else
 					python ${working_dir}/filterGeneView.py ${prefix}_Decay_Signal_Feature_Affinity_Gene_View.txt
 					rm ${prefix}_Decay_Signal_Feature_Affinity_Gene_View.txt
-					if [ -n "$randomGenome" ];
+					if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 					then
 						python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Decay_Signal_Feature_Affinity_Gene_View.txt
 						rm ${prefix}_Thresholded_Decay_Signal_Feature_Affinity_Gene_View.txt
@@ -449,7 +476,7 @@ then
 			then
 				python ${working_dir}/filterGeneView.py ${prefix}_Decay_Peak_Features_Affinity_Gene_View.txt
 				rm ${prefix}_Decay_Peak_Features_Affinity_Gene_View.txt
-				if [ -n "$randomGenome" ];
+				if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 				then
 					python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Decay_Peak_Features_Affinity_Gene_View.txt
 					rm ${prefix}_Thresholded_Decay_Peak_Features_Affinity_Gene_View.txt
@@ -457,7 +484,7 @@ then
 			else
 				python ${working_dir}/filterGeneView.py ${prefix}_Decay_Affinity_Gene_View.txt
 				rm ${prefix}_Decay_Affinity_Gene_View.txt
-				if [ -n "$randomGenome" ];
+				if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 				then
 					python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Decay_Affinity_Gene_View.txt
 					rm ${prefix}_Thresholded_Decay_Affinity_Gene_View.txt
@@ -472,7 +499,7 @@ then
 				then
 					python ${working_dir}/filterGeneView.py ${prefix}_Three_Peak_Based_Features_Affinity_Gene_View.txt
 					rm ${prefix}_Three_Peak_Based_Features_Affinity_Gene_View.txt
-					if [ -n "$randomGenome" ];
+					if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 					then
 						python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Three_Peak_Based_Features_Affinity_Gene_View.txt
 						rm ${prefix}_Thresholded_Three_Peak_Based_Features_Affinity_Gene_View.txt
@@ -480,7 +507,7 @@ then
 				else
 					python ${working_dir}/filterGeneView.py ${prefix}_Scaled_Peak_Features_Affinity_Gene_View.txt
 					rm ${prefix}_Scaled_Peak_Features_Affinity_Gene_View.txt
-					if [ -n "$randomGenome" ];
+					if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 					then
 						python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Scaled_Peak_Features_Affinity_Gene_View.txt
 						rm ${prefix}_Thresholded_Scaled_Peak_Features_Affinity_Gene_View.txt
@@ -491,7 +518,7 @@ then
 				then
 					python ${working_dir}/filterGeneView.py ${prefix}_Scaled_Affinity_Gene_View.txt
 					rm ${prefix}_Scaled_Affinity_Gene_View.txt
-					if [ -n "$randomGenome" ];
+					if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 					then
 						python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Scaled_Affinity_Gene_View.txt
 						rm ${prefix}_Thresholded_Scaled_Affinity_Gene_View.txt
@@ -499,7 +526,7 @@ then
 				else
 					python ${working_dir}/filterGeneView.py ${prefix}_Signal_Feature_Affinity_Gene_View.txt
 					rm ${prefix}_Signal_Feature_Affinity_Gene_View.txt
-					if [ -n "$randomGenome" ];
+					if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 					then
 						python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Signal_Feature_Affinity_Gene_View.txt
 						rm ${prefix}_Thresholded_Signal_Feature_Affinity_Gene_View.txt
@@ -511,7 +538,7 @@ then
 			then
 				python ${working_dir}/filterGeneView.py ${prefix}_Peak_Features_Affinity_Gene_View.txt
 				rm ${prefix}_Peak_Features_Affinity_Gene_View.txt
-				if [ -n "$randomGenome" ];
+				if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 				then
 					python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Peak_Features_Affinity_Gene_View.txt
 					rm ${prefix}_Thresholded_Peak_Features_Affinity_Gene_View.txt
@@ -519,7 +546,7 @@ then
 			else
 				python ${working_dir}/filterGeneView.py ${prefix}_Affinity_Gene_View.txt
 				rm ${prefix}_Affinity_Gene_View.txt
-				if [ -n "$randomGenome" ];
+				if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 				then
 					python ${working_dir}/filterGeneView.py ${prefix}_Thresholded_Affinity_Gene_View.txt
 					rm ${prefix}_Thresholded_Affinity_Gene_View.txt

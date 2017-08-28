@@ -3,6 +3,8 @@
 Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data. Learning of key regulatory TFs in  individual cell types or learning of discriminatory TFs that show a difference in regulation between two cell types.
 
 ## News
+17.08.2017: TEPIC TF-gene scores can now be binarisied using background regions provided by the user.
+
 21.06.2017: TEPIC TF-gene scores can be binarisied using a TF and tissue specific affinity cut off. This can be combined with the dynamic networks learner [DREM](http://www.sb.cs.cmu.edu/drem/) to build gene regulatory networks that make appropriate use of time-specific epigenetics data. Further details on this new feature are available in the [description](docs/Description.pdf).
 
 13.06.2017: [DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/DYNAMITE) our workflow for learning differential TF regulation is now included in the repository.
@@ -91,7 +93,8 @@ The optional parameters are:
 * -x If -d or -n is used together with this flag, the original (Decay-)Scaling formulation of TEPIC is used to compute gene-TF scores.
 * -m Path to a tab delimited file containing the length of the used PSEMs. This is incorporated in normalising peak length.
 * -z Flag indicating that the output of TEPIC should be zipped.
-* -r Path to a 2bit representation of the reference genome. This is required to compute a TF specific affinity threshold as well as a binary and sparse TF-gene interaction list.
+* -k Path to a file containing background regions provided by the user. This option can not be used together with the -r option. 
+* -r Path to a 2bit representation of the reference genome. This is required to compute a TF specific affinity threshold as well as a binary and sparse TF-gene interaction list. This can not be used together with the -k option. 
 * -v p-value cut off used to determine a cut off to derive a binary score for TF binding (default 0.05).
 * -i minutes that should be spend at most per chromosome to find matching random regions (default 3).
 * -j Flag indicating that the reference genome contains a chr prefix. 

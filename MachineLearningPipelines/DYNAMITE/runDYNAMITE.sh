@@ -226,6 +226,7 @@ then
 		python ${scriptPath}/computeMeanRatioTFAffinities.py $outputDirectory/Affinities/group1/ $outputDirectory/Affinities/group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "True" $peakFeatures
 	fi
 	else
+
 	if [ -z "$coverage_Files_Group1" ] && [ -z "$coverage_Column_Group1" ] && [ -z "$coverage_Files_Group2" ] && [ -z "$coverage_Column_Group2" ] ;
 	then
 		echo python ${scriptPath}/computeMeanRatioTFAffinities.py $existing_TEPIC_Results_Group1/ $existing_TEPIC_Results_Group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "False" $peakFeatures

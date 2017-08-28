@@ -23,9 +23,13 @@ cat("arg4: Identifier that should be used for group2\n")
 q(save="no")
 }
 
+print("Reading affinities for group 1")
 group1<-read.table(paste0(args[1],"/Affinities/Mean/Mean_Affinities_group1.txt"),header=T,stringsAsFactors = F)
+print("Reading affinities for group 2")
 group2<-read.table(paste0(args[1],"/Affinities/Mean/Mean_Affinities_group2.txt"),header=T,stringsAsFactors = F)
+print("Reading expression data")
 expression<-read.table(paste0(args[1],"/IntegratedData/Log2/Integrated_Data_Log2_Quotient.txt"),header=T,stringsAsFactors = F)
+print("Reading coefficients")
 regCoef<-read.table(paste0(args[1],"/Learning_Results/Regression_Coefficients_Cross_Validation_Integrated_Data_For_Classification.txt"),header=T,stringsAsFactors = F)
 feature=args[2]
 group1L=args[3]

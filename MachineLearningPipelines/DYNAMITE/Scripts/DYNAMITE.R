@@ -350,12 +350,12 @@ if (argsL$performance){
 		}
 		if (length(featureMatrix > 1)){
 			write.table(featureMatrix,paste(argsL$outDir,"Regression_Coefficients_Cross_Validation_",FileList[i],sep=""),quote=F,sep="\t",col.names=NA)
-            meanFeature<-apply(featureMatrix,2,median)
-		    featureMatrix<-featureMatrix[,-1]
-            meanFeature<-meanFeature[-1]
+			meanFeature<-apply(featureMatrix,2,median)
+			featureMatrix<-featureMatrix[,-1]
+			meanFeature<-meanFeature[-1]
 			featureMatrix<-featureMatrix[,which(meanFeature!=0.0)]
 			meanFeature<-meanFeature[which(meanFeature!=0.0)]
-			if(length(meanFeature) > 0){
+			if(length(meanFeature) > 1){
 				allFeatures<-featureMatrix[,order(meanFeature,decreasing=TRUE)]
 				meanFeatures<-meanFeature[order(meanFeature,decreasing=TRUE)]
 				all<-rbind(allFeatures,meanFeatures)

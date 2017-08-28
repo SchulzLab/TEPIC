@@ -5,7 +5,7 @@
 #arg3: Output file
 #--geneIDs: Column of gene IDs in the file specified with arg2
 #--expressionC Column of gene expression estimates in the file specified with arg2
-#--filterIDs File containing geneIDs that should used for intersection (File with one column only, no header)
+#--filterIDs File containing geneIDs that should be used for intersection (File with one column only, no header)
 
 import sys
 import os

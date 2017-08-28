@@ -28,6 +28,7 @@ if("--help" %in% args) {
 	--leaveOneOutCV Flag indicating whether a leave one out cross-validation should be used (default FALSE)
 	--asRData Store feature coefficients as RData files (default FALSE)
 	--randomise Randomise the feature matrix (default FALSE) 
+	--logResponse Flag indicating whether the response variable should be log transformed (default TRUE)
 	--help=print this text
 ")
 	q(save="no")
@@ -120,6 +121,11 @@ if (is.null(argsL$randomise)){
 	argsL$randomise <- FALSE
 }
 
+if (is.null(argsL$logResponse)){
+	argsL$logResponse <- TRUE
+}
+
+
 registerDoMC(cores = argsL$cores)
 
 permute<-function(x,resPos){
@@ -165,23 +171,41 @@ for(Sample in FileList){
 	
 	M<-unique(M)
 	M<-data.frame(M)
-	if (min(M) >= 0){
-		M<-log2(M+1)
+	FeatureNames_temp<-colnames(M)
+	Response_Variable_location_temp <- grep(argsL$response,FeatureNames_temp)
+	if (min(M[,Response_Variable_location_temp]) >= 0){
+		if (argsL$logResponse == TRUE){
+			M<-log2(M+1)
+		}
+	}else{
+		print("Applying log2 transformation only to features")
+		Response_Variable_location_temp <- grep(argsL$response,FeatureNames_temp)
+		M[,-Response_Variable_location_temp]<-log2(M[,-Response_Variable_location_temp]+1)
 	}
 	SD<-apply(M,2,sd)
 	Feature_zero_SD<-as.vector(which(SD==0))
 	if(length(Feature_zero_SD)>0){
 		print("Warning, there are constant features. These are not considered for further analysis.")
-		FeatureNames_temp<-colnames(M)
-		Response_Variable_location_temp <- grep(argsL$response,FeatureNames_temp)
 		if (Response_Variable_location_temp %in% Feature_zero_SD){
 			print("Warning, response is constant, this sample is excluded")
 			validSamples[i]=FALSE
 			next;
 			}
 		M<-M[,-c(Feature_zero_SD)]
+	}
+	if (is.null(dim(M))){
+		validSamples[i]=FALSE
+		next;
+	}
+	if (dim(M)[2] < 2){
+		validSamples[i]=FALSE
+		next;
+	}
+	if (length(which(M==0))>(dim(M)[1]*dim(M)[2]*0.9)){
+		validSamples[i]=FALSE
+		next;
+	}
 
-		}
 	FeatureNames<-colnames(M)
 	M<-data.frame(scale(M,center=TRUE, scale=TRUE))
      if (dim(M)[1] < 30){
@@ -585,8 +609,8 @@ if (argsL$performance == TRUE){
 			meanFeature<-apply(featureMatrix,2,median)
 			featureMatrix<-featureMatrix[,-which(meanFeature==0)]
 			meanFeature<-meanFeature[-which(meanFeature==0)]
-			if(length(meanFeature) > 0){
-				limit<-min(10,length(meanFeature)/2)
+			if(length(meanFeature) > 1){
+				limit<-floor(min(10,length(meanFeature)/2))
 				allFeatures<-cbind(featureMatrix[,order(meanFeature,decreasing=TRUE)[1:limit]],(featureMatrix[,order(meanFeature,decreasing=FALSE)[1:limit]]))
 				meanFeatures<-c(meanFeature[order(meanFeature,decreasing=TRUE)[1:limit]],(meanFeature[order(meanFeature,decreasing=FALSE)[1:limit]]))
 				all<-rbind(allFeatures,meanFeatures)
@@ -640,28 +664,32 @@ for (i in 1:length(FileList)){
 	if (validSamples[i]){
 	#Generating perSample features
 		features<-coefficientsF[[i]][which(abs(coefficientsF[[i]])!=0)]
-		names(features)<-row.names(coefficientsF[[i]])[which(abs(coefficientsF[[i]])!=0)]
-		coefG<-cbind(names(features),features)
-		colnames(coefG)<-c("name", "value")
-		row.names(coefG)<-c(1:dim(coefG)[1])
-		coefG<-as.data.frame(coefG)
-		write.table(coefG,paste(argsL$outDir,"Regression_Coefficients_Entire_DataSet_",FileList[i],sep=""),sep="\t",quote=F,row.names=F)
-		if (ggplotAvailable){
-			library("ggplot2")
-			features<-coefficientsF[[i]][which(abs(coefficientsF[[i]])>0.025)]
-			names(features)<-row.names(coefficientsF[[i]])[which(abs(coefficientsF[[i]])>0.025)]
+		if (length(features > 1)){
+			names(features)<-row.names(coefficientsF[[i]])[which(abs(coefficientsF[[i]])!=0)]
 			coefG<-cbind(names(features),features)
-			if ((round(dim(coefG)[1]*1.5) < 40) & (dim(coefG)[1] > 0)){
-				colnames(coefG)<-c("name", "value")
-				row.names(coefG)<-c(1:dim(coefG)[1])
-				coefG<-as.data.frame(coefG)
-				coefG$value<-as.numeric(as.character(coefG$value))	 	
-				ggplot2::ggplot(coefG,ggplot2::aes(x=reorder(name,-value),y=value))+ggplot2::geom_bar(stat="identity")+ggplot2::theme_bw(20)+ggplot2::xlab("Feature name")+ggplot2::ylab("Regression coefficient")+ggplot2::theme(axis.text.x = element_text(angle = 45, hjust = 1))
-				ggsave(filename=paste(argsL$outDir,"Coefficients_Barplot_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),dpi=600,width=round(dim(coefG)[1]*1.5),limitsize=F)
-			} else {
-				text<-"No regression coefficients > 0.025"
-				ggplot()+annotate("text",x=4,y=25,size=8,label=text)+theme_void()	
-				ggsave(filename=paste(argsL$outDir,"Coefficients_Barplot_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),width=10,height=4)
+			colnames(coefG)<-c("name", "value")
+			row.names(coefG)<-c(1:dim(coefG)[1])
+			coefG<-as.data.frame(coefG)
+			write.table(coefG,paste(argsL$outDir,"Regression_Coefficients_Entire_DataSet_",FileList[i],sep=""),sep="\t",quote=F,row.names=F)
+			if (ggplotAvailable){
+				library("ggplot2")
+				features<-coefficientsF[[i]][which(abs(coefficientsF[[i]])>0.025)]
+				if (length(features>1)){
+					names(features)<-row.names(coefficientsF[[i]])[which(abs(coefficientsF[[i]])>0.025)]
+					coefG<-cbind(names(features),features)
+					if ((round(dim(coefG)[1]*1.5) < 40) & (dim(coefG)[1] > 0)){
+						colnames(coefG)<-c("name", "value")
+						row.names(coefG)<-c(1:dim(coefG)[1])
+						coefG<-as.data.frame(coefG)
+						coefG$value<-as.numeric(as.character(coefG$value))	 	
+						ggplot2::ggplot(coefG,ggplot2::aes(x=reorder(name,-value),y=value))+ggplot2::geom_bar(stat="identity")+ggplot2::theme_bw(20)+ggplot2::xlab("Feature name")+ggplot2::ylab("Regression coefficient")+ggplot2::theme(axis.text.x = element_text(angle = 45, hjust = 1))
+						ggsave(filename=paste(argsL$outDir,"Coefficients_Barplot_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),dpi=600,width=round(dim(coefG)[1]*1.5),limitsize=F)
+					} else {
+						text<-"No regression coefficients > 0.025"
+						ggplot()+annotate("text",x=4,y=25,size=8,label=text)+theme_void()	
+						ggsave(filename=paste(argsL$outDir,"Coefficients_Barplot_",unlist(unlist(strsplit(FileList[i],".txt")))[1],".png",sep=""),width=10,height=4)
+					}
+				}
 			}
 		}
 	}

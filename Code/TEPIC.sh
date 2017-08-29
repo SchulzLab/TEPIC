@@ -268,12 +268,12 @@ fi
 if [ ${chrPrefix} == "TRUE" ];
 then
 	echo "Adapting chr prefix in bed files for intersection with the reference genome"
-	awk '{print "chr"$1"\t"$2"\t"$3}' ${filteredRegions}_sorted.bed > tempFasta.bed
-	getFastaRegion=tempFasta.bed
+	awk '{print "chr"$1"\t"$2"\t"$3}' ${filteredRegions}_sorted.bed > ${prefix}_tempFasta.bed
+	getFastaRegion=${prefix}_tempFasta.bed
 	if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ]; 
 		then
-		awk '{print "chr"$1"\t"$2"\t"$3}' ${prefix}_Random_Regions.bed > tempFastaRandom.bed
-		getFastaRegionRandom=tempFastaRandom.bed
+		awk '{print "chr"$1"\t"$2"\t"$3}' ${prefix}_Random_Regions.bed > ${prefix}_tempFastaRandom.bed
+		getFastaRegionRandom=${prefix}_tempFastaRandom.bed
 		fi
 else
 	getFastaRegion=${filteredRegions}_sorted.bed
@@ -290,21 +290,21 @@ rm ${prefix}_Random_Regions.bed
 fi
 if [ ${chrPrefix} == "TRUE" ];
 then
-	rm tempFasta.bed
+	rm ${prefix}_tempFasta.bed
 	if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 	then
-		rm tempFastaRandom.bed	
+		rm ${prefix}_tempFastaRandom.bed	
 	fi
 fi
 
 echo "Converting invalid characters"
 #Remove R and Y from the sequence
-python ${working_dir}/convertInvalidCharacterstoN.py $openRegionSequences $prefixP-FilteredSequences.fa
+python ${working_dir}/convertInvalidCharacterstoN.py $openRegionSequences $prefix-FilteredSequences.fa
 rm $openRegionSequences
 
 if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 then
-python ${working_dir}/convertInvalidCharacterstoN.py Random_$openRegionSequences $prefixP-Random-FilteredSequences.fa
+python ${working_dir}/convertInvalidCharacterstoN.py Random_$openRegionSequences $prefix-Random-FilteredSequences.fa
 rm Random_$openRegionSequences
 fi
 
@@ -312,12 +312,12 @@ fi
 affinity=${prefix}_Affinity.txt
 
 echo "Starting TRAP"
-${working_dir}/TRAPmulti $pwms ${prefixP}-FilteredSequences.fa $cores > ${affinity}_temp 
-rm ${prefixP}-FilteredSequences.fa
+${working_dir}/TRAPmulti $pwms ${prefix}-FilteredSequences.fa $cores > ${affinity}_temp 
+rm ${prefix}-FilteredSequences.fa
 if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 then
-${working_dir}/TRAPmulti $pwms ${prefixP}-Random-FilteredSequences.fa $cores > ${affinity}_Random 
-rm ${prefixP}-Random-FilteredSequences.fa
+${working_dir}/TRAPmulti $pwms ${prefix}-Random-FilteredSequences.fa $cores > ${affinity}_Random 
+rm ${prefix}-Random-FilteredSequences.fa
 fi
 
 if [ ${chrPrefix} == "TRUE" ];

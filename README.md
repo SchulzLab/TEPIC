@@ -86,7 +86,7 @@ The optional parameters are:
 * -e Boolean controlling exponential decay (default TRUE).
 * -n Indicates that the file in -b contains the average signal in the peaks in the specified column. In this case the -d option is not required to obtain scaled TF affinities.
 * -c Number of cores used within TRAP.
-* -f A gtf file containing genes of interest. Only regions contained in the file specified by the -b option that are within the window specified by the -w option around these genes will be annotated.
+* -f A gtf file containing genes of interest. Only regions contained in the file specified by the -b option that are within the window specified by the -w option around these genes will be annotated. The file must have the original format provided by gencode, gzipped files are not supported.
 * -y Flag indicating whether the entire gene body should be annotated with TF affinities. A window of half the size of the -w option will be additionaly considered upstream of the genes TSS.
 * -l Flag to be set if affinities should not be normalised by peak length.
 * -u Flag to be set if peak features for peak length and peak counts should not be generated.

@@ -80,7 +80,7 @@ The following parameters are required to run TEPIC:
 
 The optional parameters are:
 
-* -a Genome annotation file (gtf). All genes contained in this file will be annotated. The file must have the original format provided by gencode. 
+* -a Genome annotation file (gtf). All genes contained in this file will be annotated. The file must have the original format provided by gencode, gzipped files are not supported. 
 * -w Size of the window around the TSS of genes.
 * -d Signal of the open chromatin assay in bg format. Used to compute the average per peak coverage within the regions specified in -b.
 * -e Boolean controlling exponential decay (default TRUE).

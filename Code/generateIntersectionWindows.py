@@ -1,6 +1,9 @@
 import sys
 
 def main():
+	if (".gz" in sys.argv[1]):
+		print("Gzipped files are not supported")
+		return 0;
 	infile=open(sys.argv[1],"r")
 	identifier="start_codon"
 	for l in infile:

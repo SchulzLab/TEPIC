@@ -12,15 +12,13 @@ then
      exit 1;
 fi
 
-mkdir $outputDirectory
-mkdir $outputDirectory"/Affinities"
 
 if [ -n "$existing_TEPIC_Results_Group1" ];
 then
 	echo "Using already computed TF affinities"
 else
-mkdir $outputDirectory"/Affinities/group1"
-mkdir $outputDirectory"/Affinities/group2"
+mkdir -p $outputDirectory"/Affinities/group1"
+mkdir -p $outputDirectory"/Affinities/group2"
 
 echo "Running TEPIC for all files of group 1"
 counter=0
@@ -213,8 +211,8 @@ do
 done
 fi
 echo "Postprocessing TF affinities"
-mkdir $outputDirectory"/Affinities/Mean/"
-mkdir $outputDirectory"/Affinities/Ratio/"
+mkdir -p $outputDirectory"/Affinities/Mean/"
+mkdir -p $outputDirectory"/Affinities/Ratio/"
 if [ -z $existing_TEPIC_Results_Group1 ];
 then
 	if [ -z "$coverage_Files_Group1" ] && [ -z "$coverage_Column_Group1" ] && [ -z "$coverage_Files_Group2" ] && [ -z "$coverage_Column_Group2" ] ; 
@@ -238,12 +236,11 @@ then
 fi
 
 echo "Combining TF affinities with differential gene expression data"
-mkdir $outputDirectory"/IntegratedData"
-mkdir $outputDirectory"/IntegratedData/Log2"
+mkdir -p $outputDirectory"/IntegratedData/Log2"
 echo python ${scriptPath}/integrateData.py $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" $differential_Gene_Expression_Data $outputDirectory"/IntegratedData/Log2/Integrated_Data_Log2_Quotient.txt"
 python ${scriptPath}/integrateData.py $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" $differential_Gene_Expression_Data $outputDirectory"/IntegratedData/Log2/Integrated_Data_Log2_Quotient.txt"
 
-mkdir $outputDirectory"/IntegratedData/Binary"
+mkdir -p $outputDirectory"/IntegratedData/Binary"
 echo Rscript ${scriptPath}/prepareForClassificiation.R  $outputDirectory"/IntegratedData/Log2/Integrated_Data_Log2_Quotient.txt" $outputDirectory"/IntegratedData/Binary/Integrated_Data_For_Classification.txt"
 Rscript ${scriptPath}/prepareForClassificiation.R  $outputDirectory"/IntegratedData/Log2/Integrated_Data_Log2_Quotient.txt" $outputDirectory"/IntegratedData/Binary/Integrated_Data_For_Classification.txt"
 
@@ -253,7 +250,7 @@ Rscript ${scriptPath}/DYNAMITE.R --dataDir=$outputDirectory"/IntegratedData/Bina
 
 if [ "$randomise" == "TRUE" ];
 then
-mkdir $outputDirectory"/Learning_Results_Random/"
+mkdir -p $outputDirectory"/Learning_Results_Random/"
 echo Rscript ${scriptPath}/DYNAMITE.R --dataDir=$outputDirectory"/IntegratedData/Binary/" --outDir=$outputDirectory"/Learning_Results_Random/" --out_var="Expression" --Ofolds=$outerCV --Ifolds=$innerCV --performance=${performance} --alpha=$alpha_Step_Size --cores=$coresR --randomise=$randomise
 Rscript ${scriptPath}/DYNAMITE.R --dataDir=$outputDirectory"/IntegratedData/Binary/" --outDir=$outputDirectory"/Learning_Results_Random/" --out_var="Expression" --Ofolds=${outerCV} --Ifolds=${innerCV} --performance=${performance} --alpha=${alpha_Step_Size} --cores=${coresR} --randomise=${randomise}
 fi

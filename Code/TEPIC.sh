@@ -134,7 +134,7 @@ fi
 
 d=$(date +%D)
 d=`echo $d | sed 's/\//\_/g'`
-t=$(date +%T | sed 's/:/_/g')
+t=$(date +%H:%M:%S:%N | sed 's/:/_/g')
 
 prefix=$prefixP"_TEPIC_"${d}"_"${t}
 filteredRegions=`echo $prefix"_"$regions | sed 's/.bed//g'`

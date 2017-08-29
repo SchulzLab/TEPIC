@@ -12,8 +12,7 @@ then
 fi
 
 
-mkdir $outputDirectory
-mkdir $outputDirectory"/Affinities"
+mkdir -p $outputDirectory"/Affinities"
 
 if [ -z "$preComputedTEPIC" ];
 then
@@ -152,13 +151,13 @@ done
 fi
 
 echo "Starting linear regression"
-mkdir ${outputDirectory}"/Learning_Results"
+mkdir -p ${outputDirectory}"/Learning_Results"
 echo Rscript ${scriptPath}/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/Learning_Results/ --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance}
 Rscript ${scriptPath}/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/Learning_Results/ --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance}
 
 if [ "$randomise" == "TRUE" ];
 then
-	mkdir ${outputDirectory}"/Learning_Results_Random"
+	mkdir -p ${outputDirectory}"/Learning_Results_Random"
 	echo Rscript ${scriptPath}/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/Learning_Results_Random --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance} --randomise=${randomise}
 	Rscript ${scriptPath}/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/Learning_Results_Random --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance} --randomise=${randomise}
 fi

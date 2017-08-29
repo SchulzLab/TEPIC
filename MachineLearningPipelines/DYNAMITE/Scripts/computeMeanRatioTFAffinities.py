@@ -8,7 +8,7 @@ def readFile(filename,geneSet,affinityDict):
 	header=infile.readline()
 	for l1 in infile:
 		s1=l1.split()
-		if (affinityDict.has_key(s1[0])):
+		if (s1[0] in affinityDict):
 			for i in xrange(1,len(s1)):
 				affinityDict[s1[0]][i-1]=float(affinityDict[s1[0]][i-1])+float(s1[i])
 		else:		
@@ -71,12 +71,12 @@ def main():
 			headers+=[header]
 			counterG2+=1
 	for gene in genes:
-		if (affinityDictG1.has_key(gene)):
+		if (gene in affinityDictG1):
 			continue
 		else:
 			affinityDictG1[gene]=[0.0]*(len(headers[0].split())-1)
 	for gene in genes:
-		if (affinityDictG2.has_key(gene)):
+		if (gene in affinityDictG2):
 			continue
 		else:
 			affinityDictG2[gene]=[0.0]*(len(headers[0].split())-1)

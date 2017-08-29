@@ -137,7 +137,7 @@ d=`echo $d | sed 's/\//\_/g'`
 t=$(date +%T | sed 's/:/_/g')
 
 prefix=$prefixP"_TEPIC_"${d}"_"${t}
-filteredRegions=`echo $regions | sed 's/.bed//g'`
+filteredRegions=`echo $prefix"_"$regions | sed 's/.bed//g'`
 #Generating name of the fasta file containing the overlapping regions
 openRegionSequences=${prefix}.OpenChromatin.fasta
 metadatafile=${prefix}.amd.tsv

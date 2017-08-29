@@ -2,7 +2,6 @@
 #Loading arguments from configFile differentialAnalysis.cfg
 echo Loading arguments from configFile $1
 source $1
-working_dir=$(cd $(dirname "$0") && pwd -P)
 
 #This part runs the necessary scripts to perform a differential analysis using TEPIC affinity ratios
 #DO NOT PERFORM CHANGES HERE!

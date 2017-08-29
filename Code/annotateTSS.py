@@ -28,13 +28,13 @@ def readGTF(filename):
 		if (len(s) >=9):
 			if (s[2]==identifier):
 				if (s[6]=="+"):
-					if (tss.has_key(s[9])):
+					if (s[9] in tss):
 						if (int(s[3]) < tss[s[9]][1]):
 							tss[s[9]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
 					else:
 						tss[s[9]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
 				else:
-					if (tss.has_key(s[9])):
+					if (s[9] in tss):
 						if (int(s[4]) > tss[s[9]][1]):
 							tss[s[9]]=(s[0].replace("chr",""),(int(s[4]),int(s[3])))
 					else:
@@ -74,13 +74,13 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 			middles=s[0].split(":")[1].split("-")
 			middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
 			length=float(int(middles[1])-int(middles[0]))
-			if (genesInOpenChromatin.has_key(s[0])):
+			if (s[0] in genesInOpenChromatin):
 				for geneID in genesInOpenChromatin[s[0]]:
 					if(s[0] in openRegions):
 						tss=genePositions[geneID][1][0]
 						if (expDecay):
 							factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
-							if (geneAffinities.has_key(geneID)):
+							if (geneID in geneAffinities):
 								if (lengthNormalisation):	
 									geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.div,map(lambda x: factor*float(x),s[1:]),map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
 								else:
@@ -96,7 +96,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 								totalPeakLength[geneID]=length*factor
 								numberOfPeaks[geneID]=factor
 						else:
-							if (geneAffinities.has_key(geneID)):
+							if (geneID in geneAffinities):
 								numberOfPeaks[geneID]+=1.0
 								totalPeakLength[geneID]+=length
 								if (lengthNormalisation):
@@ -116,7 +116,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 			middles=s[0].split(":")[1].split("-")
 			middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
 			length=float(int(middles[1])-int(middles[0]))
-			if (genesInOpenChromatin.has_key(s[0])):
+			if (s[0] in genesInOpenChromatin):
 				for geneID in genesInOpenChromatin[s[0]]:
 					if(s[0] in openRegions):
 						tss=genePositions[geneID][1][0]
@@ -125,7 +125,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 							if (middle < tss):
 								if (expDecay):
 									factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
-									if (geneAffinities.has_key(geneID)):
+									if (geneID in geneAffinities):
 										if (lengthNormalisation):
 											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.div,map(lambda x: factor*float(x),s[1:]),map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
 										else:
@@ -141,7 +141,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 										numberOfPeaks[geneID]=factor
 										totalPeakLength[geneID]=length*factor
 								else:
-									if (geneAffinities.has_key(geneID)):
+									if (geneID in geneAffinities):
 										if (lengthNormalisation):
 											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.div,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
 										else:
@@ -156,7 +156,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 										numberOfPeaks[geneID]=1.0
 										totalPeakLength[geneID]=length
 							else:
-								if (geneAffinities.has_key(geneID)):
+								if (geneID in geneAffinities):
 									if (lengthNormalisation):
 										geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.div,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
 									else:
@@ -174,7 +174,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 							if (middle > tss):
 								if (expDecay):
 									factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
-									if (geneAffinities.has_key(geneID)):
+									if (geneID in geneAffinities):
 										if (lengthNormalisation):
 											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.div,map(lambda x: factor*float(x),s[1:]),map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
 										else:
@@ -190,7 +190,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 										numberOfPeaks[geneID]=factor
 										totalPeakLength[geneID]=length*factor
 								else:
-									if (geneAffinities.has_key(geneID)):
+									if (geneID in geneAffinities):
 										if (lengthNormalisation):
 											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.div,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
 										else:
@@ -205,7 +205,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 										numberOfPeaks[geneID]=1.0
 										totalPeakLength[geneID]=length
 							else:
-								if (geneAffinities.has_key(geneID)):
+								if (geneID in geneAffinities):
 									if (lengthNormalisation):
 										geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.div,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
 									else:
@@ -231,18 +231,18 @@ def generate_Peak_Coverage_Features(openRegions,genesInOpenChromatin,filename,ge
 			s=l.split()
 			peakPos=s[0]+":"+s[1]+"-"+s[2]
 			middle=int(((float(s[2])-float(s[1]))/2)+float(s[1]))
-			if (genesInOpenChromatin.has_key(peakPos)):
+			if (peakPos in genesInOpenChromatin):
 				for geneID in genesInOpenChromatin[peakPos]:
 					if(peakPos in openRegions):
 						tss=genePositions[geneID][1][0]
 						if (expDecay):
 							factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
-							if (perBaseDNaseSignal.has_key(geneID)):
+							if (geneID in perBaseDNaseSignal):
 								perBaseDNaseSignal[geneID]+=(float(s[3])*factor)
 							else:
 								perBaseDNaseSignal[geneID]=float(s[3])*factor
 						else:
-							if (perBaseDNaseSignal.has_key(geneID)):
+							if (geneID in perBaseDNaseSignal):
 								perBaseDNaseSignal[geneID]+=float(s[3])
 							else:
 								perBaseDNaseSignal[geneID]=float(s[3])	
@@ -252,7 +252,7 @@ def generate_Peak_Coverage_Features(openRegions,genesInOpenChromatin,filename,ge
 			peakPos=s[0]+":"+s[1]+"-"+s[2]
 			middle=int(((float(s[2])-float(s[1]))/2)+float(s[1]))
 			length=float(int(s[2])-int(s[1]))
-			if (genesInOpenChromatin.has_key(peakPos)):
+			if (peakPos in genesInOpenChromatin):
 				for geneID in genesInOpenChromatin[peakPos]:
 					if(peakPos in openRegions):
 						tss=genePositions[geneID][1][0]
@@ -261,17 +261,17 @@ def generate_Peak_Coverage_Features(openRegions,genesInOpenChromatin,filename,ge
 							if (middle < tss):
 								if (expDecay):
 									factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
-									if (perBaseDNaseSignal.has_key(geneID)):
+									if (geneID in perBaseDNaseSignal):
 										perBaseDNaseSignal[geneID]+=(float(s[3])*factor)
 									else:
 										perBaseDNaseSignal[geneID]=float(s[3])*factor
 								else:
-									if (perBaseDNaseSignal.has_key(geneID)):
+									if (geneID in perBaseDNaseSignal):
 										perBaseDNaseSignal[geneID]+=float(s[3])
 									else:
 										perBaseDNaseSignal[geneID]=float(s[3])
 							else:
-								if (perBaseDNaseSignal.has_key(geneID)):
+								if (geneID in perBaseDNaseSignal):
 									perBaseDNaseSignal[geneID]+=float(s[3])
 								else:
 									perBaseDNaseSignal[geneID]=float(s[3])
@@ -279,17 +279,17 @@ def generate_Peak_Coverage_Features(openRegions,genesInOpenChromatin,filename,ge
 							if (middle > tss):
 								if (expDecay):
 									factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
-									if (perBaseDNaseSignal.has_key(geneID)):
+									if (geneID in perBaseDNaseSignal):
 										perBaseDNaseSignal[geneID]+=(float(s[3])*factor)
 									else:
 										perBaseDNaseSignal[geneID]=float(s[3])*factor
 								else:
-									if (perBaseDNaseSignal.has_key(geneID)):
+									if (geneID in perBaseDNaseSignal):
 										perBaseDNaseSignal[geneID]+=float(s[3])
 									else:
 										perBaseDNaseSignal[geneID]=float(s[3])
 							else:
-								if (perBaseDNaseSignal.has_key(geneID)):
+								if (geneID in perBaseDNaseSignal):
 									perBaseDNaseSignal[geneID]+=float(s[3])
 								else:
 									perBaseDNaseSignal[geneID]=float(s[3])
@@ -313,7 +313,7 @@ def createAffinityFileAffintiesOnly(affinities,tfNames,filename,tss):
 	output.write(header+'\n')
 	for Gene in tss.keys():
 		line=""
-		if (affinities.has_key(Gene)):
+		if (Gene in affinities):
 			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
 			for entry in affinities[Gene]:
 				line+='\t'+str(entry)
@@ -334,7 +334,7 @@ def createAffinityFileAffinitiesPeakCountsLength(affinities,peakCounts,peakLengt
 	output.write(header+'\n')
 	for Gene in tss.keys():
 		line=""
-		if (affinities.has_key(Gene)):
+		if (Gene in affinities):
 			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
 			for entry in affinities[Gene]:
 				line+='\t'+str(entry)
@@ -342,11 +342,11 @@ def createAffinityFileAffinitiesPeakCountsLength(affinities,peakCounts,peakLengt
 			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
 			for i in xrange(0,len(tfNames)):
 				line+='\t'+str(0.0)
-		if (peakCounts.has_key(Gene)):
+		if (Gene in peakCounts):
 			line+='\t'+str(peakCounts[Gene])
 		else:
 			line+='\t0'
-		if (peakLength.has_key(Gene)):
+		if (Gene in peakLength):
 			line+='\t'+str(peakLength[Gene])
 		else:
 			line+='\t0'
@@ -363,7 +363,7 @@ def createAffinityFileAffinitiesPeakCountsLengthSignal(affinities,peakCounts,pea
 	output.write(header+'\n')
 	for Gene in tss.keys():
 		line=""
-		if (affinities.has_key(Gene)):
+		if (Gene in affinities):
 			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
 			for entry in affinities[Gene]:
 				line+='\t'+str(entry)
@@ -371,15 +371,15 @@ def createAffinityFileAffinitiesPeakCountsLengthSignal(affinities,peakCounts,pea
 			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
 			for i in xrange(0,len(tfNames)):
 				line+='\t'+str(0.0)
-		if (peakCounts.has_key(Gene)):
+		if (Gene in peakCounts):
 			line+='\t'+str(peakCounts[Gene])
 		else:
 			line+='\t0'
-		if (peakLength.has_key(Gene)):
+		if (Gene in peakLength):
 			line+='\t'+str(peakLength[Gene])
 		else:
 			line+='\t0'
-		if (peakSignal.has_key(Gene)):
+		if (Gene in peakSignal):
 			line+='\t'+str(peakSignal[Gene])
 		else:
 			line+='\t0'
@@ -396,7 +396,7 @@ def createAffinityFileAffinitiesSignal(affinities,peakSignal,tfNames,filename,ts
 	output.write(header+'\n')
 	for Gene in tss.keys():
 		line=""
-		if (affinities.has_key(Gene)):
+		if (Gene in affinities):
 			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
 			for entry in affinities[Gene]:
 				line+='\t'+str(entry)
@@ -404,7 +404,7 @@ def createAffinityFileAffinitiesSignal(affinities,peakSignal,tfNames,filename,ts
 			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
 			for i in xrange(0,len(tfNames)):
 				line+='\t'+str(0.0)
-		if (peakSignal.has_key(Gene)):
+		if (Gene in peakSignal):
 			line+='\t'+str(peakSignal[Gene])
 		else:
 			line+='\t0'
@@ -417,7 +417,7 @@ def createSparseFile(affinities,tfNames,filename,tss):
 	header="geneID\tTF\tAffinity\n"
 	output.write(header)
 	for Gene in tss.keys():
-		if (affinities.has_key(Gene)):
+		if (Gene in  affinities):
 			geneID=str(Gene.replace("\"","").replace(";","").split(".")[0])
 			temp=affinities[Gene]
 			for i in xrange(0,len(tfNames)):
@@ -445,7 +445,7 @@ def generate_Motif_Length(affinityFile,motifFile):
 			motifDict[s[0]]=int(s[1])
 		motifF.close()
 	for tf in header:
-		if (motifDict.has_key(tf.upper())):
+		if (tf.upper() in motifDict):
 			motifList+=[motifDict[tf.upper()]]
 		else:
 			motifList+=[0]

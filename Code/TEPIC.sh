@@ -46,8 +46,9 @@ pvalue="0.05"
 minutes=3
 chrPrefix="FALSE"
 backgroundRegions=""
+onlyPeakFeatures="FALSE"
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:f:m:e:r:v:k:i:yluhxzj" o;
+while getopts "g:b:o:c:p:d:n:a:w:f:m:e:r:v:k:i:q:yluhxzj" o;
 do
 case $o in
 	g)	genome=$OPTARG;;
@@ -72,6 +73,7 @@ case $o in
 	i)	minutes=$OPTARG;;
 	j)	chrPrefix="TRUE";;
 	k)	backgroundRegions=$OPTARG;;
+	q)	onlyPeakFeatures=$OPTARG;;
 	h)	echo -e $help
 	exit 1;;
 	[?])	echo -e $help
@@ -284,7 +286,7 @@ echo "Runnig bedtools"
 bedtools getfasta -fi $genome -bed ${getFastaRegion} -fo $openRegionSequences
 if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 then
-bedtools getfasta -fi $genome -bed ${getFastaRegionRandom} -fo Random_$openRegionSequences
+bedtools getfasta -fi $genome -bed ${getFastaRegionRandom} -fo ${openRegionSequences}_Random
 rm ${prefix}_Random_Regions.bed
 fi
 if [ ${chrPrefix} == "TRUE" ];
@@ -303,8 +305,8 @@ rm $openRegionSequences
 
 if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 then
-python ${working_dir}/convertInvalidCharacterstoN.py Random_$openRegionSequences $prefix-Random-FilteredSequences.fa
-rm Random_$openRegionSequences
+python ${working_dir}/convertInvalidCharacterstoN.py ${openRegionSequences}_Random $prefix-Random-FilteredSequences.fa
+rm ${openRegionSequences}_Random
 fi
 
 #Use TRAP to compute transcription factor affinities to the above extracted sequences
@@ -401,12 +403,12 @@ then
 	then
 		if [ "$originalScaling" == "FALSE" ] ;
 		then
-			python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--peakCoverage" ${prefix}_Peak_Coverage.txt "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}
+			python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--peakCoverage" ${prefix}_Peak_Coverage.txt "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures}
 		else
-			python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay  "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--signalScale" ${prefix}_Scaled_Affinity.txt "--additionalPeakFeatures" ${peakFeatures}
+			python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay  "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--signalScale" ${prefix}_Scaled_Affinity.txt "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures}
 		fi
 	else
-		python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--geneBody" $geneBody "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}
+		python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--geneBody" $geneBody "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures}
 	fi
 	if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 	then
@@ -414,14 +416,12 @@ then
 			then
 			if [ "$originalScaling" == "FALSE" ] ;
 				then
-				python ${working_dir}/annotateTSS.py ${annotation} ${prefix}_Thresholded_Affinities.txt "--geneViewAffinity" ${prefix}_Thresholded_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--peakCoverage" ${prefix}_Peak_Coverage.txt "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures} "--sparseRep" $sparsity
+				python ${working_dir}/annotateTSS.py ${annotation} ${prefix}_Thresholded_Affinities.txt "--geneViewAffinity" ${prefix}_Thresholded_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--peakCoverage" ${prefix}_Peak_Coverage.txt "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures} "--sparseRep" $sparsity  "--onlyPeakFeatures" ${onlyPeakFeatures}
 				else
-				python ${working_dir}/annotateTSS.py ${annotation} ${prefix}_Thresholded_Affinities.txt "--geneViewAffinity" ${prefix}_Thresholded_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--sparseRep" $sparsity "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--signalScale" ${prefix}_Thresholded_Scaled_Affinity.txt "--additionalPeakFeatures" ${peakFeatures}
+				python ${working_dir}/annotateTSS.py ${annotation} ${prefix}_Thresholded_Affinities.txt "--geneViewAffinity" ${prefix}_Thresholded_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--sparseRep" $sparsity "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--signalScale" ${prefix}_Thresholded_Scaled_Affinity.txt "--additionalPeakFeatures" ${peakFeatures} "--onlyPeakFeatures" ${onlyPeakFeatures}
 			fi
 		else
-		python ${working_dir}/annotateTSS.py ${annotation} ${prefix}_Thresholded_Affinities.txt "--geneViewAffinity" ${prefix}_Thresholded_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--geneBody" $geneBody "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures} "--sparseRep" $sparsity
-		echo python ${working_dir}/annotateTSS.py ${annotation} ${prefix}_Thresholded_Affinities.txt "--geneViewAffinity" ${prefix}_Thresholded_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--geneBody" $geneBody "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures} "--sparseRep" $sparsity
-
+		python ${working_dir}/annotateTSS.py ${annotation} ${prefix}_Thresholded_Affinities.txt "--geneViewAffinity" ${prefix}_Thresholded_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--geneBody" $geneBody "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures} "--sparseRep" $sparsity "--onlyPeakFeatures" ${onlyPeakFeatures}
 		fi
 	fi
 	#Creating files containing only genes for which TF predictions are available

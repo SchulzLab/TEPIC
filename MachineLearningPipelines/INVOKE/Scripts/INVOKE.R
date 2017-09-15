@@ -201,7 +201,8 @@ for(Sample in FileList){
 		validSamples[i]=FALSE
 		next;
 	}
-	if (length(which(M==0))>(dim(M)[1]*dim(M)[2]*0.9)){
+	print(length(which(M==0)))
+	if (length(which(M==0))>(dim(M)[1]*dim(M)[2]*0.2)){
 		validSamples[i]=FALSE
 		next;
 	}

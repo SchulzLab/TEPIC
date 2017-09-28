@@ -167,7 +167,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 									if (lengthNormalisation):
 										geneAffinities[geneID]=map(operator.div,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))
 									else:
-										geneAffinities[geneID]=map(lambda x: flota(x),s[1:])
+										geneAffinities[geneID]=map(lambda x: float(x),s[1:])
 									totalPeakLength[geneID]=length
 									numberOfPeaks[geneID]=1.0
 						else:

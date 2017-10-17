@@ -57,5 +57,5 @@ reprocessedData<-originalData
 for (i in c(2:dim(originalData)[2])){
   reprocessedData[which(originalDataNormalised[,i-1]<quantiles[i-1]),i]<-0.0
 }
-colnames(reprocessedData)[1]<-"\t"
+colnames(reprocessedData)[1]<-""
 write.table(reprocessedData,args[3],quote=F,sep="\t",col.names=TRUE,row.names=FALSE)

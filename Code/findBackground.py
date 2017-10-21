@@ -165,9 +165,11 @@ def compute_seq_features(yardstick, sequence):
     ft_pct_len = np.round(seq_len / yardstick * 100., 2)
     num_c = sequence.count('C')
     num_g = sequence.count('G')
-    ft_pct_gc = np.round((num_g + num_c) / seq_len * 100., 2)
-    return [ft_pct_len, ft_pct_gc]
-
+    if (seq_len > 0):
+        ft_pct_gc = np.round((num_g + num_c) / seq_len * 100., 2)
+        return [True,ft_pct_len, ft_pct_gc]
+    else:
+        return [False,0,0]
 
 def start_relaxed_search(nntree, chromseq, covered, idxmap, limits, params):
     """
@@ -204,8 +206,9 @@ def start_relaxed_search(nntree, chromseq, covered, idxmap, limits, params):
                 continue
             cand_seq = chromseq[s:e]
             cand_feat = compfeat(cand_seq)
-            cand_regions.append((s, e, cand_feat[0], cand_feat[1]))
-            cand_points.append(cand_feat)
+            if (cand_feat[0]==True):
+                cand_regions.append((s, e, cand_feat[1], cand_feat[2]))
+                cand_points.append([cand_feat[1],cand_feat[2]])
         if len(cand_points) == 0:
             # this can happen, e.g., for small
             # chromosomes like chrM

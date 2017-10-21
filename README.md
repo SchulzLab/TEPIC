@@ -67,28 +67,49 @@ This program converts matrices in TRANSFAC format to the energy format used by T
 Details on the parameters used for conversion can be found in the header of the provided files.
 
 In TRANSFAC format, a matrix has to have the following structure:
+
 XX
-ID <RunningNumber>        <TF-Name>
+
+ID \<RunningNumber\> \<TF-Name\>
+	
 XX
+
 P0        A         C         G         T
+
 1         0         93        6         1
+
 2         7         81        1         12
+
 .
+
 .
+
 .
+
 14        1         3         95        0
+
 XX
+
 //   
 
 
+
 In the PSEM format, a matrix has to be in the following structure:
-><RunningNumber>  <TF-Name> lnR0: <value>
+
+\> \<RunningNumber\> \<TF-Name\>	lnR0: \<value\>
+	
 1.56945   -0.108976 1.46047   0
+
 5.06003   4.54008   0         4.06982
+
 .
+
 .
+
 .
+
 4.59839   4.07844   4.07844   0
+
 5.11834   4.59839   0         5.11834
 
 

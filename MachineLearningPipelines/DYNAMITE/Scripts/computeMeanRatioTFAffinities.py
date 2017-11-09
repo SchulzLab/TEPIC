@@ -2,6 +2,13 @@ import sys
 import argparse
 import os
 
+###computeMeanRatioTFAFfinities.py####
+#This script computes the TF ratios between two groups. 
+#First, it calculates the mean TF affinities per gene within one group.
+#Second, affinity ratios are computed using a pseudocount of 1
+#Peak features are included in the computation
+
+#Reads TF affinities for one sample 
 def readFile(filename,geneSet,affinityDict):
 	temp=set()
 	infile=open(filename,"r")
@@ -19,13 +26,16 @@ def readFile(filename,geneSet,affinityDict):
 	infile.close()
 	return (header,geneSet,affinityDict)
 
-def divideGeneExpression(affinityDict,gene,counter):
+
+#Computes the mean TF affinities
+def computeMeanAffinities(affinityDict,gene,counter):
 	temp=gene
 	s=affinityDict[gene]
 	for i in xrange(0,len(s)):
 		temp+="\t"+str(float(s[i])/counter)
 	return temp+"\n"
 
+#Ensures that there are no repeatitive elements in the header
 def checkHeader(headers):
 	for i in xrange(0,len(headers)-2):
 		if (headers[i]!=headers[i+1]):
@@ -91,13 +101,13 @@ def main():
 		outfile1=open(args.ogroup1[0],"w")
 		outfile1.write(str(headers[0]))
 		for geneID in genes:
-			outfile1.write(divideGeneExpression(affinityDictG1,geneID,counterG1))
+			outfile1.write(computeMeanAffinities(affinityDictG1,geneID,counterG1))
 		outfile1.close()
 		print("Calculating mean affinities for group 2")
 		outfile2=open(args.ogroup2[0],"w")
 		outfile2.write(str(headers[0]))
 		for geneID in genes:
-			outfile2.write(divideGeneExpression(affinityDictG2,geneID,counterG2))
+			outfile2.write(computeMeanAffinities(affinityDictG2,geneID,counterG2))
 		outfile2.close()
 	else:
 		print("Error,processed files do not contain data for the same TFs")

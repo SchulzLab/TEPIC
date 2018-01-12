@@ -67,10 +67,13 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 	numberOfPeaks={}
 	totalPeakLength={}
 	tfpa=open(filename,"r")
-	tfpa.readline()
+	headerlength=len(tfpa.readline().split())
 	if (not geneBody):
 		for l in tfpa:
 			s=l.split()
+			if (headerlength != len(s) -1):
+				print("Header of TF affinity file is not correctly formatted. Number of columns does not match to file entries")
+				exit()
 			middles=s[0].split(":")[1].split("-")
 			middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
 			length=float(int(middles[1])-int(middles[0]))
@@ -113,6 +116,10 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 	else:
 		for l in tfpa:
 			s=l.split()
+			if (headerlength != len(s) -1):
+				print("Header of TF affinity file is not correctly formatted. Number of columns does not match to file entries")
+				exit()
+
 			middles=s[0].split(":")[1].split("-")
 			middle=int(((float(middles[1])-float(middles[0]))/2)+float(middles[0]))
 			length=float(int(middles[1])-int(middles[0]))

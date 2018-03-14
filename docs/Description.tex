@@ -222,42 +222,8 @@ This step generates the following output:
 \item Optionally a seperate file containing the signal information in peaks. 
 \end{enumerate}
 
-\subsection*{Thresholded TF affinities}
-In some applications it is required to make a binary decision whether a factor is binding or not. 
-To infer this information from TF affinities, \textit{TEPIC} allows the computation of a TF specific affinity threshold by calculating TF affinities on a randomly selected set of genomic regions.
-These regions show similar characteristics compared to the provided regions (GC content and length). 
-By applying a user defined p-value on the distribution of affinities computed on the random regions, a threshold is chosen. 
-Per TF, all affinities that are smaller than the selected threshold, are set to zero, thus a sparse matrix with TF-gene interactions can be generated. 
-Such a matrix can, for example, be used as input in the \textit{DREM} \cite{pmid17224918} software to identify key regulators in time series data. 
-In Figure \ref{epicdrem}, we illustrate how TF affinities can be discretised and illustrate their usage in \textit{DREM}. Note that \textit{DREM}
-is not included in the \textit{TEPIC} repository. It is available \href{http://www.sb.cs.cmu.edu/drem/}{online}.
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=\textwidth]{epicdrem.pdf}
-\end{center}
-\caption{Overview on the EPIC-DREM approach: Note that in this Figure, different time points are indicated by different colours. First, epigenetic data, e.g. DNase1 experiments, are conducted for different points (a).
-Next, putative TF binding sites are identified by peak and/or footprint calling (b,c) and annotated with TF affinities (d). 
-From the putative binding sites, a random set of genomic regions is chosen (e) and annotated with TF affinities as well (f). By applying a p-value cut-off on the distribution of TF affinities calculated on the random regions (g),
-a suitable, TF specific affinitiy threshold is choosen to discretise the original TF affinities (h). Using the default TEPIC TF-gene score formulation (i), a TF-gene interaction matrix (j) is computed. Together with gene expression data (k),
-the sparse matrix (j) can be used as input for DREM (l) to identify potential key regulators of expression changes in time series data.}
-\label{epicdrem}
-\end{figure}
-
-
-\subsubsection*{Required input}
-In addition to the input mentioned above, a reference genome in 2bit format is required. 
-
-\subsubsection*{Output}
-The following output files are generated in addition:
-\begin{enumerate}
-\item TF affinities for all selected \textit{PSEMs} in the regions provided by the user that passed the filtering step, where all affinities below the TF specific thresholds are set to 0.
-\item (Length normalised) TF gene scores for all selected \textit{PSEMs} calculated as described above (optionally including peak features) using the thresholded affinities.
-\item A sparse representation of TF gene interactions.
-\end{enumerate}
-
 \newpage
-\mbox{}
-\newpage
+
 \section*{Identification of key transcriptional regulators using epigenetics data (INVOKE)}
 Epigenetics data contains a wealth of information on gene regulation. It was shown that especially
 data on open-chromatin is well suited to build predictive models of gene-expression \cite{pmid27899623,pmid22955983,pmid25231769,pmid22954627}.
@@ -370,6 +336,8 @@ The right hand site illustrates model training on the entire data set, again usi
 \end{figure}
 
 \newpage
+\mbox{}
+\newpage
 \section*{Differential analysis to identify novel transcriptional regulators for differentially expressed genes (DYNAMITE)}
 Although a variety of methods have been proposed to generate genome-wide TF binding predictions [\cite{pmid27899623,pmid22072382,pmid23424114,pmid25086003}] and to establish \textit{TF to tissue} 
 associations [\cite{pmid22955983,pmid19995984,pmid27899623}], systematic, feasible, and easy to use ways of linking TFs to distinct genes are rare. 
@@ -440,6 +408,54 @@ scatter plot relat the TF affinities to the observed expression changes. The min
 \end{figure}
 
 \newpage
+\mbox{}
+\newpage
+
+\subsection*{Determine important transcriptional regulators from time serires data (EPIC-DREM)}
+\textit{EPIC-DREM} is a combination of \textit{TEPIC}  and the \textit{Dynamic Regulatory Events Miner (DREM)} \cite{pmid17224918}.
+Instead of using static ChIP-seq data, which is provided in \textit{DREM 2.0}, we suggest to use time-point specific TF binding predictions
+based on time-dependent epigenomic profiles. Thereby, \textit{DREM} can infer regulators that can be linked to expression changes at distinct points in time.
+We have shown that using the predicted, dynamic TF binding events is superior to the static data included in \textit{DREM}.
+
+In order generate a sparse input matrix for \textit{DREM}, we devised a strategy to threshold TF affinities based on a set of background sequences.
+These can be either chosen automatically or be provided by the user. Please check the README file for detailed options. 
+
+In Figure \ref{epicdrem}, we illustrate how TF affinities can be discretised and illustrate their usage in \textit{DREM}. Note that \textit{DREM}
+is not included in the \textit{TEPIC} repository. It is available \href{http://www.sb.cs.cmu.edu/drem/}{online}.
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=\textwidth]{epicdrem.pdf}
+\end{center}
+\caption{Overview on the EPIC-DREM approach: Note that in this Figure, different time points are indicated by different colours. First, epigenetic data, e.g. DNase1 experiments, are conducted for different points (a).
+Next, putative TF binding sites are identified by peak and/or footprint calling (b,c) and annotated with TF affinities (d). 
+From the putative binding sites, a random set of genomic regions is chosen (e) and annotated with TF affinities as well (f). By applying a p-value cut-off on the distribution of TF affinities calculated on the random regions (g),
+a suitable, TF specific affinitiy threshold is choosen to discretise the original TF affinities (h). Using the default TEPIC TF-gene score formulation (i), a TF-gene interaction matrix (j) is computed. Together with gene expression data (k),
+the sparse matrix (j) can be used as input for DREM (l) to identify potential key regulators of expression changes in time series data.}
+\label{epicdrem}
+\end{figure}
+
+\subsubsection*{Thresholded TF affinities}
+In some applications it is required to make a binary decision whether a factor is binding or not. 
+To infer this information from TF affinities, \textit{TEPIC} allows the computation of a TF specific affinity threshold by calculating TF affinities on a randomly selected set of genomic regions. When selected by TEPIC, these regions show similar characteristics compared to the provided regions (GC content and length). 
+Alternatively a set of background regions can be provided by the user.
+By applying a user defined p-value on the distribution of affinities computed on the random regions, a threshold is chosen. 
+Per TF, all affinities that are smaller than the selected threshold, are set to zero, thus a sparse matrix with TF-gene interactions can be generated. 
+
+\subsubsection*{Required input}
+In addition to the input mentioned above, a reference genome in 2bit format is required. 
+Optionally, the user can provide a bed file containing background regions. 
+These replace the automated generation of background sequences. 
+
+\subsubsection*{Output}
+The following output files are generated in addition:
+\begin{enumerate}
+\item TF affinities for all selected \textit{PSEMs} in the regions provided by the user that passed the filtering step, where all affinities below the TF specific thresholds are set to 0.
+\item (Length normalised) TF gene scores for all selected \textit{PSEMs} calculated as described above (optionally including peak features) using the thresholded affinities.
+\item A sparse representation of TF gene interactions.
+\end{enumerate}
+
+Either (2) or (3) can be combined with RNA-seq data and used as input for \textit{DREM}.
+
 \bibliographystyle{plain}
 \bibliography{Description}
 \end{document} 

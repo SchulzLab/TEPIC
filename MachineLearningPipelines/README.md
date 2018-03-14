@@ -6,7 +6,7 @@ as they are regulated similiary, thus TFs that affect the expression of many gen
 *DYNAMITE* uses logistic regression to identify TFs that can classify genes as being up or downregulated between tissues/samples. 
 This can be used to find TFs that might be related to differences between two distinct cell types or cell states. 
 
-*EPIC-DREM* uses links TFs to classes of genes with similar expression changes observed in time-series data. It uses
+*EPIC-DREM* links TFs to groups of genes exhibiting similar expression changes observed in time-series data. It uses
 TEPIC to compute time-point specific TF binding predictions from temporal epigenomic data sets.
  
 For details on the methods, please check the individual subfolders as well as the [documentation](/docs/Description.pdf).

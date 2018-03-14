@@ -43,7 +43,7 @@ DREM requires the following input:
 
 * Gene expression data in a tab seperated file (including a header) with the structure:
 
-			Timepoint1	Timepoint2 	...	Timepoint<N>
+				Timepoint1	Timepoint2 	...	Timepoint<N>
 		GeneID	value		value		...	value
 
 * TF-gene links in a tab seperated file (including a header) with the structure:

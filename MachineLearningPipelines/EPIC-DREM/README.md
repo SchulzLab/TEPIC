@@ -43,13 +43,12 @@ DREM requires the following input:
 
 * Gene expression data in a tab seperated file (including a header) with the structure:
 
-		Timepoint1	Timepoint2 	...	Timepoint<N>
-	GeneID	value		value		...	value
+			Timepoint1	Timepoint2 	...	Timepoint<N>
+		GeneID	value		value		...	value
 
 * TF-gene links in a tab seperated file (including a header) with the structure:
 
-
-	TF	GeneID	score	Timepoint
+		TF	GeneID	score	Timepoint
 
 Note that score can be set to 1 (e.g. using binary TF affinities, as done in (0)), or using the actual TF affinities.
 *TEPIC* automatically provides columnes 1 to 3 of the *TF-gene links* file when either the *-k* or *-r* is used option. 

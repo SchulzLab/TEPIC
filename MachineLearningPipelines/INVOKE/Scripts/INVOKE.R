@@ -481,15 +481,10 @@ for(Sample in FileList){
 							}
 						}
 						mRSS<-mean(error)
-						print(mRSS)
 						mORSS<-mean(unlist(rss_error[[i]]),na.rm=TRUE)
-						print(mORSS)
 						MSe<-mORSS/(dim(MF)[1]-(length(nonZeroFeatures)))
-						print(MSe)
 						partialRSS<-mRSS-mORSS
-						print(partialRSS)
 						fvalue<-partialRSS/MSe
-						print(fvalue)
 						pValue<-1.0-pf(as.numeric(fvalue),length(nonZeroFeatures)-1,(dim(MF)[1]-length(nonZeroFeatures)))
 						ftest_result[[i]][m]<-pValue
 						}

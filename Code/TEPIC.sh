@@ -1,18 +1,18 @@
 #!/bin/bash -e
 
-help="TEPIC version 2.0\n
+help="TEPIC version 2.1\n
 Usage: ./TEPIC.sh [-g input fasta file (in RefSeq format, without \"chr\" prefix] [-b bed file containing open chromatin regions] [-o prefix of outputfiles] [-p psems] \n
 Optional parameters:\n
 [-c number of cores to use (default 1)]\n
-[-d bedgraph file containing open chromatin signal, e.g. DNase1-seq]\n
+[-d bedgraph file containing open chromatin signal, e.g. DNase1-seq, or Histone-Mark signal]\n
 [-n column in the -b file containg the average per base signal within a peak. If this option is used, the -d option must not be used]\n
 [-a gene annotation file, required to generate the gene view]\n
-[-w size of the window to be considered to generate gene view (default 50000bp)]\n
+[-w size of the window to be considered to generate gene view (default 50kb)]\n
 [-f annotate only DNase peaks that are within a window specified by the -w option around all genes contained in the gene annotation file specified by this option]\n
-[-e Indicating whether exponential decay should be used (default TRUE)]\n
+[-e indicating whether exponential decay should be used (default TRUE)]\n
 [-l flag to be set if affinities should not be normalised by peak length]\n
 [-u flag to be set if peak features for peak length and peak counts should not be generated]\n 
-[-x If -d or -n is used together with this flag, the original (Decay-)Scaling formulation of TEPIC is used to compute gene-TF scores]\n
+[-x if -d or -n is used together with this flag, the original (Decay-)Scaling formulation of TEPIC is used to compute gene-TF scores]\n
 [-m path to a tab delimited file containing the length of the used PSEMs]\n
 [-y flag to be set if the entire gene body should be screened for TF binding. The search window is extended by a region half of the size that is specified by the -w option upstream of the genes 5' TSS]\n
 [-z flag indicating that the output of TEPIC should be zipped]\n
@@ -145,7 +145,7 @@ metadatafile=${prefix}.amd.tsv
 #Create metadata file
 touch $metadatafile
 echo "[Description]" >> $metadatafile
-echo "process	TEPICv2" >> $metadatafile
+echo "process	TEPICv2.1" >> $metadatafile
 echo "run_by_user	"$USER >> $metadatafile
 echo "date	"$d >> $metadatafile
 echo "time	"$t >> $metadatafile
@@ -157,7 +157,6 @@ if [ -n "$filter" ];
 then
 	echo "gene_filter_file "$filter >> $metadatafile
 fi
-echo "original_scaling	"$originalScaling >> $metadatafile
 if [ -n "$backgroundRegions" ];
 then
 	echo "background_regions "$backgroundRegions >> $metadatafile
@@ -185,32 +184,53 @@ fi
 echo "" >> $metadatafile
 echo "[Outputs]" >> $metadatafile
 echo "affinity_file_peak_view	"$prefix"_Affinity.txt" >> $metadatafile
-echo "affinity_file_gene_view_filtered	"$prefix"_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+
+decayout=""
+if [ "$decay" == "TRUE" ];
+then
+	decayout="_Decay"
+fi
+
+if [ "$peakFeatures" == "TRUE" ];
+then
+	echo "affinity_gene_view_peak_features "${prefix}${decayout}"_Peak_Based_Features_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+else
+	echo "affinity_file_gene_view_filtered	"${prefix}${decayout}"_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+fi
+
 if [ -n "$dnase" ];
 then 
 	echo "signal_scaling_factors	"$prefix"_Peak_Coverage.txt" >> $metadatafile
-	echo "affinity_gene_view_peak_features_signal "$prefix"_Three_Peak_Based_Features_Affinity_Gene_View_Filtered.txt" >> $metadatafile
-	if [ "$peakFeatures" == "FALSE" ];
+	if [ "$originalScaling" == "FALSE" ];
+	then
+		echo "affinity_gene_view_peak_features_signal "${prefix}${decayout}"_Three_Peak_Based_Features_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+	fi
+	if [ "$originalScaling" == "TRUE" ];
 	then
 		echo "scaled affinity_peak_view	"$prefix"_Scaled_Affinity.txt" >> $metadatafile
-		echo "scaled_affinity_gene_view_filtered	"$prefix"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+		echo "scaled_affinity_gene_view_filtered	"${prefix}${decayout}"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
 	fi
 fi
 if [ -n "$column" ];
 then
 	echo "signal_scaling_factors	"$prefix"_Peak_Coverage.txt" >> $metadatafile
-	echo "affinity_gene_view_peak_features_signal "$prefix"_Three_Peak_Based_Features_Affinity_Gene_View_Filtered.txt" >> $metadatafile
-	if [ "$peakFeatures" == "FALSE" ];
+	if [ "$originalScaling" == "FALSE" ];
+	then
+		echo "affinity_gene_view_peak_features_signal "${prefix}${decayout}"_Three_Peak_Based_Features_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+	fi
+	if [ "$originalScaling" == "TRUE" ];
 	then
 		echo "scaled affinity_peak_view	"$prefix"_Scaled_Affinity.txt" >> $metadatafile
-		echo "scaled_affinity_gene_view_filtered	"$prefix"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
+		echo "scaled_affinity_gene_view_filtered	"${prefix}${decayout}"_Scaled_Affinity_Gene_View_Filtered.txt" >> $metadatafile
 	fi
 fi
 echo "" >> $metadatafile
 echo "[Parameters]" >> $metadatafile
-echo "SampleID:	"$prefixP >> $metadatafile
-echo "cores:	"$cores >> $metadatafile
-echo "Chr prefix: "$chrPrefix >> $metadatafile
+echo "original_scaling	"$originalScaling >> $metadatafile
+echo "SampleID	"$prefixP >> $metadatafile
+echo "cores	"$cores >> $metadatafile
+echo "Chr prefix	"$chrPrefix >> $metadatafile
+echo "gzip	"$zip >> $metadatafile
 if [ -n "$annotation" ];
 then
 	echo "window	"$window >> $metadatafile
@@ -228,11 +248,12 @@ if [ -n "$randomGenome" ];
 then
 	echo "minutes	"$minutes >> $metadatafile
 	echo "p-value	"$pvalue >> $metadatafile
+	echo "sparse_affinity_gene_view	"${prefix}${decayout}"_Sparse_Affinity_Gene_View_Filtered.txt" >> $metadatafile
 fi
 echo "" >> $metadatafile
 echo "[Metrics]" >> $metadatafile
 numReg=`wc -l $regions | cut -f 1 -d " "`
-echo "Number of analysed regions	"$numReg >> $metadatafile
+echo "Number of provided regions	"$numReg >> $metadatafile
 numMat=`grep ">" $pwms | wc -l`
 echo "Number of considered pwms	"$numMat >> $metadatafile 
 

@@ -5,7 +5,6 @@ from utils import readIntraLoops, filterLoops, detectAllResolutions
 
 
 def readOC_Region(filename):
-    print("reading...")
     tfpa = open(filename, "r")
     oC = {}
     for l in tfpa:
@@ -18,7 +17,6 @@ def readOC_Region(filename):
             else:
                 oC[ds[0].replace("chr", "")] += [(int(se[0]), int(se[1]))]
     tfpa.close()
-    print("done")
     return oC
 
 

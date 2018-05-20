@@ -1,27 +1,7 @@
 import argparse
-import datetime
+import copy
 
-from . import utils
-
-
-def readIntraLoopsWithRes(loopsFile):
-    lf = open(loopsFile, 'r')
-    loops = {}
-
-    for i in range(1, 23):
-        loops[str(i)] = []
-
-    loopID = 0
-    for l in lf:
-        s = l.split()
-        if len(s) >= 8:
-            # check if loop is intra-chromosomal and not on X or Y chromosome
-            if s[0] == s[3] and s[0] != 'X' and s[0] != 'Y':
-                loopID += 1
-                resolution = int(s[2]) - int(s[1])
-                loops[s[0]].append((loopID, int(s[1]), int(s[2]), int(s[4]), int(s[5]), int(s[7]), resolution))
-    lf.close()
-    return loops
+from utils import detectAllResolutions, filterLoops, readGTF, readIntraLoops, writeToFile
 
 
 def run(genes, intraLoops, windows):
@@ -46,57 +26,78 @@ def run(genes, intraLoops, windows):
                 if resolution not in matchedLoops[geneKey][window]:
                     matchedLoops[geneKey][window][resolution] = []
 
-                if posLeft <= loop[1] <= posRight or posLeft <= loop[2] <= posRight:
+                if posLeft <= loop[1] <= posRight or posLeft <= loop[2] <= posRight or (loop[1] <= posLeft and posRight <= loop[2]):
                     matchedLoops[geneKey][window][resolution].append(loop)
 
                 else:
-                    if posLeft <= loop[3] <= posRight or posLeft <= loop[4] <= posRight:
+                    if posLeft <= loop[3] <= posRight or posLeft <= loop[4] <= posRight or (loop[3] <= posLeft and posRight <= loop[4]):
                         matchedLoops[geneKey][window][resolution].append(loop)
 
     return matchedLoops
 
 
-def postProcessing(results):
-    header = 'window	count	resolution'
-    output = ''
+def postProcessing(results, sample, resolution):
+    per_window_counter = {}
 
-    for geneKey in results:
-        windows = results[geneKey]
+    for geneKey, windows in results.items():
 
-        for windowKey in windows:
-            resolutions = windows[windowKey]
+        for windowKey, resolutions in windows.items():
 
-            for resolutionKey in resolutions:
-                hits = resolutions[resolutionKey]
-                output += str(windowKey) + '	'
-                output += str(len(hits)) + '	'
-                output += str(resolutionKey)
-                output += '\n'
+            for resolutionKey, hits in resolutions.items():
+                if resolution and resolutionKey != resolution:
+                    raise ValueError("Resolution " + resolution + "cannot be found in the data!")
+                else:
+                    if len(hits):
+                        if windowKey not in per_window_counter:
+                            per_window_counter[windowKey] = 0
+                        per_window_counter[windowKey] += 1
 
-    now = datetime.datetime.now()
-    filename = now.strftime("%Y-%m-%d-%H-%M") + '_ResolutionPerWindowToSize' + '.txt'
+    if not resolution:
+        resolution = "All"
 
-    utils.writeToFile(filename, header, output)
+    for window, gene_count in per_window_counter.items():
+        output = str(sample) + "\t"
+        output += str(resolution) + "\t"
+        output += str(window) + '\t'
+        output += str(gene_count)
+        print(output)
 
 
-def collectResolutionsPerWindowToSize(annotationFile, loopsFile, windows):
+def collectResolutionsPerWindowToSize(annotationFile, loopsFile, windows, sample):
     print('Indexing TSS')
-    tss = utils.readGTF(annotationFile)
+    tss = readGTF(annotationFile)
     print('Indexing Loops')
-    intraLoops = readIntraLoopsWithRes(loopsFile)
-
+    loops = readIntraLoops(loopsFile)
     print('Preprocessing')
     for window in windows:
         if window < 100:
             print('Window radius too small... please use greater values e.g. 100 and above.')
             return 1
 
+    resolutions = detectAllResolutions(loopsFile)
     print('Running core algorithm')
-    results = run(tss, intraLoops, windows)
+    print('sample\thi-c_resolution\twindow\tgene_count')
+    for res in sorted(list(resolutions)):
 
-    postProcessing(results)
+        loops_of_res = copy.deepcopy(loops)
+        filterLoops(loops_of_res, res)
+        results = run(tss, loops_of_res, windows)
+        postProcessing(results, sample, res)
+
+    results = run(tss, loops, windows)
+    postProcessing(results, sample, None)
 
     return 0
+
+
+def convert_multipliers(n_str):
+    last_char= n_str[-1:].upper()
+    if last_char == 'K':
+        return n_str[:-1]  + "000"
+    elif last_char == 'M':
+        return n_str[:-1] + "000000"
+    else:
+        return n_str
 
 
 ######
@@ -112,11 +113,12 @@ parser = argparse.ArgumentParser(
 parser.add_argument('annotation', help='Path to an annotation file')
 parser.add_argument('loops', help='Path to a loop file')
 parser.add_argument('windows', type=str, help='A list of window radii around the genestart which should be scanned')
+parser.add_argument("--sample", type=str, default="-", help="Define a sample name to use in output.")
 
 args = parser.parse_args()
 win = args.windows.split(',')
-win = [int(numeric_string) for numeric_string in win]
+win = [int(convert_multipliers(numeric_string)) for numeric_string in win]
 
 print('Starting to collect data...')
-collectResolutionsPerWindowToSize(args.annotation, args.loops, win)
+collectResolutionsPerWindowToSize(args.annotation, args.loops, win, args.sample)
 print('\n-> Completed all!')

@@ -1,9 +1,11 @@
 import argparse
+import copy
 
 from utils import readIntraLoops, filterLoops, detectAllResolutions
 
 
 def readOC_Region(filename):
+    print("reading...")
     tfpa = open(filename, "r")
     oC = {}
     for l in tfpa:
@@ -16,6 +18,7 @@ def readOC_Region(filename):
             else:
                 oC[ds[0].replace("chr", "")] += [(int(se[0]), int(se[1]))]
     tfpa.close()
+    print("done")
     return oC
 
 
@@ -72,11 +75,14 @@ def intersectRegions(oc, loops):
     return looptable
 
 
-def print_results(sample, loopOCregions, loops, resolution):
+def get_loop_count(loops):
     loopcount = 0
     for chrKey in loops:
         loopcount += len(loops[chrKey])
+    return loopcount
 
+
+def print_results(sample, loopOCregions, loopcount, resolution):
     intersections = 0
     for intersection, sites in loopOCregions.items():
         if len(sites[0]) > 0 and len(sites[1]) > 0:
@@ -87,30 +93,31 @@ def print_results(sample, loopOCregions, loops, resolution):
 
 def main():
     parser = argparse.ArgumentParser(prog="calculateIntersectionRatio.py")
-    parser.add_argument("regions", nargs=1, help="Open chromatin regions")
+    parser.add_argument("affinities", nargs=1, help="Affinity file (first column is required).")
     parser.add_argument("loopfile", nargs=1,
                         help="If the name of the Hi-C loop file is provided, all open chromatin regions will be intersected with loop regions around the TSS of each gene.")
     parser.add_argument("--sample", type=str, default="-", help="Define a sample name to use in output.")
     args = parser.parse_args()
 
-    oC = readOC_Region(args.regions[0])
+    oC = readOC_Region(args.affinities[0])
 
     loops = readIntraLoops(args.loopfile[0])
+    loopcount = get_loop_count(loops)
     resolutions = detectAllResolutions(args.loopfile[0])
 
     print("Cell-line\thi-c_resolution\tintersection_count\tintersection_percentage\ttotal_count")
 
     for res in sorted(list(resolutions)):
 
-        loops_of_res = dict(loops)
+        loops_of_res = copy.deepcopy(loops)
         filterLoops(loops_of_res, res)
 
         loopOCregions = intersectRegions(oC, loops_of_res)
-        print_results(args.sample, loopOCregions, loops_of_res, res)
+        print_results(args.sample, loopOCregions, loopcount, res)
 
     loopOCregions = intersectRegions(oC, loops)
     # Repeat it once using loops from all resolutions
-    print_results(args.sample, loopOCregions, loops, "All")
+    print_results(args.sample, loopOCregions, loopcount, "All")
 
 
 main()

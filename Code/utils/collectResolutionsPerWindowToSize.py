@@ -8,30 +8,32 @@ def run(genes, intraLoops, windows):
     matchedLoops = {}
 
     for geneKey in genes:
-        chrLoops = intraLoops[genes[geneKey][0]]
-        pos = genes[geneKey][1]
-        if geneKey not in matchedLoops:
-            matchedLoops[geneKey] = {}
+        chr = genes[geneKey][0].upper()
+        if chr != "X" and chr != "Y" and chr != "M":
+            chrLoops = intraLoops[chr]
+            pos = genes[geneKey][1]
+            if geneKey not in matchedLoops:
+                matchedLoops[geneKey] = {}
 
-        for loop in chrLoops:
-            resolution = loop[6]
+            for loop in chrLoops:
+                resolution = loop[6]
 
-            for window in windows:
-                posRight = pos + window
-                posLeft = pos - window
+                for window in windows:
+                    posRight = pos + window
+                    posLeft = pos - window
 
-                if window not in matchedLoops[geneKey]:
-                    matchedLoops[geneKey][window] = {}
+                    if window not in matchedLoops[geneKey]:
+                        matchedLoops[geneKey][window] = {}
 
-                if resolution not in matchedLoops[geneKey][window]:
-                    matchedLoops[geneKey][window][resolution] = []
+                    if resolution not in matchedLoops[geneKey][window]:
+                        matchedLoops[geneKey][window][resolution] = []
 
-                if posLeft <= loop[1] <= posRight or posLeft <= loop[2] <= posRight or (loop[1] <= posLeft and posRight <= loop[2]):
-                    matchedLoops[geneKey][window][resolution].append(loop)
-
-                else:
-                    if posLeft <= loop[3] <= posRight or posLeft <= loop[4] <= posRight or (loop[3] <= posLeft and posRight <= loop[4]):
+                    if posLeft <= loop[1] <= posRight or posLeft <= loop[2] <= posRight or (loop[1] <= posLeft and posRight <= loop[2]):
                         matchedLoops[geneKey][window][resolution].append(loop)
+
+                    else:
+                        if posLeft <= loop[3] <= posRight or posLeft <= loop[4] <= posRight or (loop[3] <= posLeft and posRight <= loop[4]):
+                            matchedLoops[geneKey][window][resolution].append(loop)
 
     return matchedLoops
 
@@ -66,6 +68,12 @@ def postProcessing(results, sample, resolution):
 def collectResolutionsPerWindowToSize(annotationFile, loopsFile, windows, sample):
     print('Indexing TSS')
     tss = readGTF(annotationFile)
+    print('Found ' + str(len(tss)) + " genes")
+    gene_count = 0
+    for _, gene in tss.items():
+        if gene[0].upper() != "X" and gene[0].upper() != "Y" and gene[0].upper() != "M":
+            gene_count += 1
+    print('Found ' + str(gene_count) + " genes on autosomes")
     print('Indexing Loops')
     loops = readIntraLoops(loopsFile)
     print('Preprocessing')

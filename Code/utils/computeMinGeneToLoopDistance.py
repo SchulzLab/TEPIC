@@ -1,7 +1,7 @@
 import argparse
 import datetime
 
-import utils
+from . import utils
 
 
 def run(tss, intraLoops, usemiddle, resolution):
@@ -80,13 +80,13 @@ def postProcessing(geneToLoopDistances, usemiddle, resolution):
 # 	an annotation-file
 #  	a loop-file
 def computeMinGeneToLoopDistance(annotationFile, loopsFile, resolution, usemiddle):
-    print 'Indexing TSS'
+    print('Indexing TSS')
     tss = utils.readGTF(annotationFile)
-    print 'Indexing Loops'
+    print('Indexing Loops')
     intraLoops = utils.readIntraLoops(loopsFile)
 
-    print 'Running core algorithm'
-    print 'Using middle: ' + str(usemiddle)
+    print('Running core algorithm')
+    print('Using middle: ' + str(usemiddle))
     results = run(tss, intraLoops, usemiddle, resolution)
 
     postProcessing(results, usemiddle, resolution)
@@ -113,6 +113,6 @@ mid = False
 if args.middle.upper() == "TRUE":
     mid = True
 
-print 'Starting to collect data...'
+print('Starting to collect data...')
 computeMinGeneToLoopDistance(args.annotation, args.loops, int(args.resolution), mid)
-print '\n-> Completed all!'
+print('\n-> Completed all!')

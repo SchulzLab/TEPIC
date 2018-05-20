@@ -1,7 +1,6 @@
 import argparse
 
-import utils
-
+import utils.utils
 
 def filterInclusions(intraLoops, inclusions):
     for chrKey in inclusions:
@@ -56,10 +55,10 @@ def postProcessing(results):
 # Main entry point for algorithm, requires:
 # 	a loop-file
 def detectLoopInclusions(loopsFile):
-    print 'Indexing Loops'
+    print('Indexing Loops')
     intraLoops = utils.readIntraLoops(loopsFile)
 
-    print 'Running core algorithm'
+    print('Running core algorithm')
     results = run(intraLoops)
 
     postProcessing(results)
@@ -81,6 +80,6 @@ def main():
 
     args = parser.parse_args()
 
-    print 'Starting to collect data...'
+    print('Starting to collect data...')
     detectLoopInclusions(args.loops)
-    print '\n-> Completed all!'
+    print('\n-> Completed all!')

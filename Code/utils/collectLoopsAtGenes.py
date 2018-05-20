@@ -1,7 +1,7 @@
 import argparse
 import datetime
 
-import utils
+from . import utils
 
 
 # Iterates over all genes and for each gene over all loops of its respective chromosome
@@ -66,7 +66,7 @@ def postProcessing(results, tss, intraLoops, radius):
     header = 'ChrNo	Counts	Remaining	Total	Coverage'
     outstring = ''
 
-    print 'Extracting statistics and preparing output'
+    print('Extracting statistics and preparing output')
     for geneKey in matchedLoops:
         hits = len(matchedLoops[geneKey])
         if hits > maxl:
@@ -102,18 +102,18 @@ def postProcessing(results, tss, intraLoops, radius):
     outstring += str('%.1f' % round(float(len(loopSet)) / float(totalLoopCount) * 100, 1))
     outstring += '\n'
 
-    print '\n###############'
-    print 'Parsed ' + str(totalGeneCount) + ' genes in total.'
-    print 'Parsed ' + str(totalLoopCount) + ' intrachromosomal loops in total.'
-    print str(len(geneIntersection)) + ' genes have a loop within the radius, that are ' + str(
-        '%.1f' % round(float(len(geneIntersection)) / float(totalGeneCount) * 100, 1)) + ' % of all genes.'
-    print 'Found ' + str(len(loopSet)) + ' loops within a distance of ' + str(
-        radius) + ' bases around the annotated TSS.'
-    print 'That are ' + str('%.1f' % round(float(len(loopSet)) / float(totalLoopCount) * 100, 1)) + '% of all loops.'
-    print 'Observed a maximum of ' + str(maxl) + ' loops nearby a single gene.'
-    print 'On average, there are ' + str(
-        '%.1f' % round(float(hitCounter) / float(totalGeneCount), 1)) + ' loops nearby a gene.'
-    print '###############\n'
+    print('\n###############')
+    print('Parsed ' + str(totalGeneCount) + ' genes in total.')
+    print('Parsed ' + str(totalLoopCount) + ' intrachromosomal loops in total.')
+    print(str(len(geneIntersection)) + ' genes have a loop within the radius, that are ' + str(
+        '%.1f' % round(float(len(geneIntersection)) / float(totalGeneCount) * 100, 1)) + ' % of all genes.')
+    print('Found ' + str(len(loopSet)) + ' loops within a distance of ' + str(
+        radius) + ' bases around the annotated TSS.')
+    print('That are ' + str('%.1f' % round(float(len(loopSet)) / float(totalLoopCount) * 100, 1)) + '% of all loops.')
+    print('Observed a maximum of ' + str(maxl) + ' loops nearby a single gene.')
+    print('On average, there are ' + str(
+        '%.1f' % round(float(hitCounter) / float(totalGeneCount), 1)) + ' loops nearby a gene.')
+    print('###############\n')
 
     now = datetime.datetime.now()
     filename = now.strftime("%Y-%m-%d-%H-%M") + '_' + str(radius / 1000) + 'kb' + '.txt'
@@ -128,16 +128,16 @@ def postProcessing(results, tss, intraLoops, radius):
 #  	a loop-file
 # 	a radius in 1000 bases, which is >= 100
 def collectLoopsAtGenes(annotationFile, loopsFile, radius):
-    print 'Indexing TSS'
+    print('Indexing TSS')
     tss = utils.readGTF(annotationFile)
-    print 'Indexing Loops'
+    print('Indexing Loops')
     intraLoops = utils.readIntraLoops(loopsFile)
 
     if radius < 100:
-        print 'Radius too small... please use greater values e.g. 100 and above.'
+        print('Radius too small... please use greater values e.g. 100 and above.')
         return 1
 
-    print 'Running core algorithm'
+    print('Running core algorithm')
     results = run(tss, intraLoops, radius)
 
     postProcessing(results, tss, intraLoops, radius)
@@ -161,6 +161,6 @@ parser.add_argument('radius', type=int, help='A radius around the genestart whic
 
 args = parser.parse_args()
 
-print 'Starting to collect data...'
+print('Starting to collect data...')
 collectLoopsAtGenes(args.annotation, args.loops, args.radius)
-print '\n-> Completed all!'
+print('\n-> Completed all!')

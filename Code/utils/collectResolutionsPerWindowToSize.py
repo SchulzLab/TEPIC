@@ -1,7 +1,7 @@
 import argparse
 import datetime
 
-import utils
+from . import utils
 
 
 def readIntraLoopsWithRes(loopsFile):
@@ -80,18 +80,18 @@ def postProcessing(results):
 
 
 def collectResolutionsPerWindowToSize(annotationFile, loopsFile, windows):
-    print 'Indexing TSS'
+    print('Indexing TSS')
     tss = utils.readGTF(annotationFile)
-    print 'Indexing Loops'
+    print('Indexing Loops')
     intraLoops = readIntraLoopsWithRes(loopsFile)
 
-    print 'Preprocessing'
+    print('Preprocessing')
     for window in windows:
         if window < 100:
-            print 'Window radius too small... please use greater values e.g. 100 and above.'
+            print('Window radius too small... please use greater values e.g. 100 and above.')
             return 1
 
-    print 'Running core algorithm'
+    print('Running core algorithm')
     results = run(tss, intraLoops, windows)
 
     postProcessing(results)
@@ -117,6 +117,6 @@ args = parser.parse_args()
 win = args.windows.split(',')
 win = [int(numeric_string) for numeric_string in win]
 
-print 'Starting to collect data...'
+print('Starting to collect data...')
 collectResolutionsPerWindowToSize(args.annotation, args.loops, win)
-print '\n-> Completed all!'
+print('\n-> Completed all!')

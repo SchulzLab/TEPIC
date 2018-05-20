@@ -88,16 +88,21 @@ def detectAllResolutions(loopsFile):
 # TODO: define format
 def readInterLoops(loopsFile):
     # TODO: implement this
-    print 'Not implemented yet!'
     return 0
 
 
 # Writes given header and body to a file defined by filename
 def writeToFile(filename, header, body):
-    print 'Writing contents of ' + filename + ' to disk...'
     f = open(filename, 'w')
     f.write(str(header))
     f.write('\n')
     f.write(str(body))
     f.close()
-    print 'Finished'
+
+
+def filterLoops(loops, resolution):
+    for chrKey in loops:
+        chrLoops = loops[chrKey]
+        for loop in chrLoops:
+            if (loop[2] - loop[1]) != resolution:
+                chrLoops.remove(loop)

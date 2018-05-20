@@ -3,7 +3,7 @@ import datetime
 import math
 
 import detectLoopInclusions
-import utils
+import utils.utils
 
 
 # Computing per gene TF affinities
@@ -39,7 +39,7 @@ def readTFPA(filename):
 
 
 def aggregateAffinity(old, new, factor):
-    for i in xrange(0, len(old)):
+    for i in range(0, len(old)):
         old[i] = float(old[i]) + factor * float(new[i])
     return old
 
@@ -65,7 +65,7 @@ def extractTF_Affinity(openChromatinInGenes, filename, tss, expDecay, loopsactiv
                             geneAffinities[geneID] = aggregateAffinity(geneAffinities[geneID], s[1:], factor)
                         else:
                             numbers = s[1:]
-                            for i in xrange(0, len(numbers)):
+                            for i in range(0, len(numbers)):
                                 numbers[i] = float(factor) * float(numbers[i])
                             geneAffinities[geneID] = numbers
                     else:
@@ -131,7 +131,7 @@ def extractTF_Affinity(openChromatinInGenes, filename, tss, expDecay, loopsactiv
                                                                            factor)
                             else:
                                 numbers = afftupel[1][1:]
-                                for i in xrange(0, len(numbers)):
+                                for i in range(0, len(numbers)):
                                     numbers[i] = float(factor) * float(numbers[i])
                                 loopAffinities[geneID] = numbers
 
@@ -165,14 +165,14 @@ def createAffinityFile(affs, tfNames, filename, tss, loopsactivated, doublefeatu
             for entry in affinities[Gene]:
                 line += '\t' + str(entry)
         else:
-            for i in xrange(0, len(tfNames)):
+            for i in range(0, len(tfNames)):
                 line += '\t' + str(0.0)
         if loopsactivated and doublefeatures:
             if Gene in loopaffinities:
                 for entry in loopaffinities[Gene]:
                     line += '\t' + str(entry)
             else:
-                for i in xrange(0, len(tfNames)):
+                for i in range(0, len(tfNames)):
                     line += '\t' + str(0.0)
         output.write(line + '\n')
     output.close()
@@ -190,10 +190,10 @@ def createSparseFile(affinities, tfNames, filename, tss, number):
         if Gene in affinities:
             geneID = str(Gene.replace("\"", "").replace(";", "").split(".")[0])
             temp = affinities[Gene]
-            for i in xrange(0, len(tfNames)):
+            for i in range(0, len(tfNames)):
                 tfList += [(tfNames[i], float(temp[i]))]
             tfList.sort(key=lambda tup: tup[1], reverse=True)
-            for i in xrange(0, number):
+            for i in range(0, number):
                 output.write(str(geneID) + "\t" + str(tfList[i][0]) + "\t" + str(tfList[i][1]) + "\n")
     output.close()
 
@@ -284,14 +284,6 @@ def intersectRegions(oc, loops):
                         looptable[loop[0]][1].append(octupel)
 
     return looptable
-
-
-def filterLoops(loops, resolution):
-    for chrKey in loops:
-        chrLoops = loops[chrKey]
-        for loop in chrLoops:
-            if (loop[2] - loop[1]) != resolution:
-                chrLoops.remove(loop)
 
 
 # Find all loops belonging to a gene that are in the range of the given loopwindow around the TSS
@@ -449,7 +441,7 @@ def main():
         doublefeatures = True
 
     now = datetime.datetime.now()
-    print 'Start time: ' + now.strftime("%Y-%m-%d-%H-%M-%S")
+    print('Start time: ' + now.strftime("%Y-%m-%d-%H-%M-%S"))
 
     # Extract TSS of GTF files
     tss = utils.readGTF(args.gtf[0])
@@ -469,7 +461,7 @@ def main():
 
     # Extract loops of Hi-C loopfile
     if args.loopfile != "":
-        print 'Running annotation in Hi-C mode'
+        print('Running annotation in Hi-C mode')
         loopsactivated = True
 
         loops = utils.readIntraLoops(args.loopfile)
@@ -482,7 +474,7 @@ def main():
         else:
             # filter loops and keep user-defined resolution only
             resolution = int(args.resolution)
-            filterLoops(loops, resolution)
+            utils.filterLoops(loops, resolution)
 
         geneloops = findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle)
         looplookuptable = utils.readIntraLoopsLookupTable(args.loopfile)
@@ -495,7 +487,7 @@ def main():
         loopOCregions = intersectRegions(oC, loops)
 
     else:
-        print 'Running annotation in original mode'
+        print('Running annotation in original mode')
 
     # Determine gene windows in open chromatin regions
     openChromatinInGenes = {}
@@ -600,7 +592,7 @@ def main():
                                  args.geneViewAffinity.replace("_Affinity_Gene_View.txt", "_GenesWithLoops.txt"))
 
     now = datetime.datetime.now()
-    print 'Finished annotation: ' + now.strftime("%Y-%m-%d-%H-%M-%S")
+    print('Finished annotation: ' + now.strftime("%Y-%m-%d-%H-%M-%S"))
 
 
 main()

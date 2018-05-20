@@ -1,5 +1,5 @@
 import argparse
-import utils
+from . import utils
 
 
 def readGTF(filename):
@@ -27,13 +27,13 @@ def findLoopsNearbyGenes(tss, loops, window_size):
 
                 leftmiddle = int(((float(loop[2]) - float(loop[1])) / 2) + float(loop[1]))
                 if abs(leftmiddle - startpos) <= loopwindows:
-                    print tss[geneID][2]
+                    print(tss[geneID][2])
                     break
 
                 else:
                     rightmiddle = int(((float(loop[3]) - float(loop[4])) / 2) + float(loop[3]))
                     if abs(rightmiddle - startpos) <= loopwindows:
-                        print tss[geneID][2]
+                        print(tss[geneID][2])
                         break
 
 

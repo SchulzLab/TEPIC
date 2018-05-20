@@ -1,6 +1,6 @@
 import argparse
 
-import utils
+from utils import readIntraLoops, filterLoops, detectAllResolutions
 
 
 def readOC_Region(filename):
@@ -72,33 +72,45 @@ def intersectRegions(oc, loops):
     return looptable
 
 
-def main():
-    parser = argparse.ArgumentParser(prog="calculateIntersectionRatio.py")
-    parser.add_argument("affinity", nargs=1, help="TRAP generated TF Affinity file")
-    # noinspection PyPep8
-    parser.add_argument("loopfile", nargs=1,
-                        help="If the name of the Hi-C loop file is provided, all open chromatin regions will be intersected with loop regions around the TSS of each gene.")
-    args = parser.parse_args()
-
-    oC = readOC_Region(args.affinity[0])
-
-    loops = utils.readIntraLoops(args.loopfile[0])
-
-    loopOCregions = intersectRegions(oC, loops)
-
+def print_results(sample, loopOCregions, loops, resolution):
     loopcount = 0
     for chrKey in loops:
         loopcount += len(loops[chrKey])
 
     intersections = 0
-    for intersection in loopOCregions:
-        sites = loopOCregions[intersection]
+    for intersection, sites in loopOCregions.items():
         if len(sites[0]) > 0 and len(sites[1]) > 0:
             intersections += 1
 
-    print "Parsed " + str(loopcount) + " loops."
-    print "Found " + str(intersections) + " loops intersecting in both loop-sites with affinity regions."
-    print "That are " + str('%.1f' % round(float(intersections) / float(loopcount) * 100, 1)) + '%'
+    print("{}\t{}\t{}\t{}\t{}".format(sample, resolution, intersections, round(float(intersections) / float(loopcount) * 100, 1), loopcount))
+
+
+def main():
+    parser = argparse.ArgumentParser(prog="calculateIntersectionRatio.py")
+    parser.add_argument("regions", nargs=1, help="Open chromatin regions")
+    parser.add_argument("loopfile", nargs=1,
+                        help="If the name of the Hi-C loop file is provided, all open chromatin regions will be intersected with loop regions around the TSS of each gene.")
+    parser.add_argument("--sample", type=str, default="-", help="Define a sample name to use in output.")
+    args = parser.parse_args()
+
+    oC = readOC_Region(args.regions[0])
+
+    loops = readIntraLoops(args.loopfile[0])
+    resolutions = detectAllResolutions(args.loopfile[0])
+
+    print("Cell-line\thi-c_resolution\tintersection_count\tintersection_percentage\ttotal_count")
+
+    for res in sorted(list(resolutions)):
+
+        loops_of_res = dict(loops)
+        filterLoops(loops_of_res, res)
+
+        loopOCregions = intersectRegions(oC, loops_of_res)
+        print_results(args.sample, loopOCregions, loops_of_res, res)
+
+    loopOCregions = intersectRegions(oC, loops)
+    # Repeat it once using loops from all resolutions
+    print_results(args.sample, loopOCregions, loops, "All")
 
 
 main()

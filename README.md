@@ -1,8 +1,10 @@
-# TEPIC (version 2.0)
+# TEPIC (version 2.1)
 -------
 Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data. Learning of key regulatory TFs in  individual cell types or learning of discriminatory TFs that show a difference in regulation between two cell types.
 
 ## News
+21.05.2018: A new collection of TF motifs is included. They are available in the folder [PWMs/2.1] (PWMs/2.1).
+
 03.05.2018: INVOKE now supports computing a F-test to judge the importance of individual features.
 
 17.08.2017: TEPIC TF-gene scores can now be binarisied using background regions provided by the user.
@@ -52,16 +54,62 @@ To use the script [findBackground](Code/findBackground.py), which is necessary t
 
 
 ## Position specific energy matrices
+There are three folder containing Position specific energy matrices (PSEMs):
+Our current collection of PSEMs, containing matrices from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis ENCODE Motif database* (6), is stored in the folder
+	[PWMs/2.1] (PWMs/2.1).
+The previously used motifs are provided in the folders [PWMs/2.0] (PWMs/2.0) and [PWMs/1.0] (PWMs/1.0).
 The position weight matrices used in the *TEPIC* manuscript are stored in the file
-	[PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM](PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM).
-An extended set of pwms is also available for human, mouse, rat, drosophila melanogaster, and Caenorhabditis elegans.
-We collected motifs from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis Lab ENCODE Motif database* (6).
-* The human set contains 515 *JASPAR Vertebrata* matrices, 81 *Hocomoco human* matrices, and 130 matrices from the *Kellis Lab database*.
-* The mouse set contains 499 *JASPAR Vertebrata* matrices, 67 *Hocomoco mouse* matrices , and 121 matrcies from the *Kellis Lab database*.
-* The rat set contains 489 *JASPAR Vertebrata* matrices, 67 *Hocomoco mouse* matrices, and 121 matrices from the *Kellis Lab database*.
-* The drosophila melanogaster set contains 129 *JASPAR* matrices retrieved from *JASPAR Insecta*.
-* The Caenorhabditis elegans set contains 26 *JASPAR* matrices retrieved from *JASPAR Nematoda*.
-Files holding the length of the provided PSEMs are provided too. 
+	[PWMs/1.0/pwm_vertebrates_jaspar_uniprobe_original.PSEM](PWMs/1.0/pwm_vertebrates_jaspar_uniprobe_original.PSEM).
+
+In detail, the current collection contains from the JASPAR 2018 Core database:
+* 579 PSEMs for vertebrates
+* 176 PSEMs for fungi
+* 26 PSEMs for nematodes
+* 489 PSEMs for plants 
+* 1 PSEM for urochordates
+* 133 PSEMs for insects
+
+Additionally, we provide species specific collections of JASPAR matricies:
+* 3 PSEMs for Antirrhinum majus
+* 5 PSEMs for Arabidopsis lyrata
+* 440 PSEMs for Arabidopsis thaliana
+* 22 PSEMs for Caenorhabditis elegans
+* 132 PSEMs for Drosophila melanogaster
+* 1 PSEMs for Fragaria x ananassa
+* 7 PSEMs for Gallus gallus
+* 6 PSEMs for Glycine max
+* 1 PSEM for Halocynthia roretzi
+* 459 PSEMs for Homo sapiens
+* 1 PSEM for Hordeum vulgare
+* 1 PSEM for Medicago truncatula
+* 1 PSEM for Meleagris gallopavo
+* 157 PSEMs for Mus musculus
+* 1 PSEM for Neurospora crassa
+* 1 PSEM for Nicotiana
+* 4 PSEMs for Orcytolagus
+* 7 PSEMs for Oryza sativa
+* 1 PSEM for Petunia x hybrida
+* 1 PSEM for Phaeodactylum tricornutum
+* 9 PSEMs for Physcomitrella patens
+* 3 PSEMs for Pisum sativum
+* 1 PSEM for Populus trichocarpa
+* 2 PSEMs for Rattus norvegicus
+* 2 PSEMs for Rattus rattus
+* 176 PSEMs for Saccaromyces cerevisiae
+* 2 PSEMs for Solanum lycopersicum
+* 1 PSEM for Triticum aestivum
+* 4 PSEMs for Xenopus laevis
+* 8 PSEMs for Zea mays
+
+From HOCOMOCO we provide 402 motifs for homo sapiens and 358 for mus musculus.
+
+The Kellis set contains 58 motifs.
+
+Additionally we provide non-redundant collections for homo sapiens and mus musculus considering motifs from all three sources:
+* 561 PSEMS for homo sapiens
+* 380 PSEMs for mus musculus
+
+Files holding the length of the PSEMs are provided too. 
 
 Additional position weight matrices can be transformed to a usable format using 
 	[Code/PSCM_to_PSEM.cpp](Code/PSCM_to_PSEM.cpp).
@@ -157,7 +205,7 @@ Depending on the used arguments, TEPIC produces files containing:
 * A file containing the factors used to scale the original TF affinities.
 * TF affinities along with features for peak length, peak counts and/or the average signal within a peak. 
 * Thresholded TF affinities and TF-gene scores.
-* A sparse representation that contains only those TF-gene interactions with affinities above a affinity threshold derived from random genomic sequences.
+* A sparse representation that contains only those TF-gene interactions with affinities above an affinity threshold derived from random genomic sequences.
 
 Each run of TEPIC generates an *analysis meta datafile (amd)* containing all parameters, files, and outputs associated with the last run of TEPIC.
 Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
@@ -169,7 +217,7 @@ rattus norvegicus.
 ## Example
 To run a test trial of *TEPIC*, you can use the data provided in the *Test* folder. You can run it with the command
 
-	./TEPIC.sh -g ../Test/example_sequence.fa -b ../Test/example_regions.bed -o TEPIC-Example -p ../PWMs/pwm_vertebrates_jaspar_uniprobe_original.PSEM -a ../Test/example_annotation.gtf -w 3000 -e FALSE
+	./TEPIC.sh -g ../Test/example_sequence.fa -b ../Test/example_regions.bed -o TEPIC-Example -p ../PWMs/1.0/pwm_vertebrates_jaspar_uniprobe_original.PSEM -a ../Test/example_annotation.gtf -w 3000 -e FALSE
 
 This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.PSEM*, and without 
 exponential decay. 
@@ -179,6 +227,9 @@ Additionally, we provide a script to test several annotation versions of TEPIC. 
 	bash runTestCases.sh
 
 to compute multiple trial cases.
+
+##Acknowledgments
+We thank Matthias Heinig for providing the C++ implementation of TRAP.
 
 ## Citation
 If you are using TEPIC and/or [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/INVOKE) please cite:

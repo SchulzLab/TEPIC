@@ -1,0 +1,2 @@
+AR	22
+ARNT::HIF1A	8

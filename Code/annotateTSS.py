@@ -474,7 +474,7 @@ def main():
         else:
             # filter loops and keep user-defined resolution only
             resolution = int(args.resolution)
-            utils.filterLoops(loops, resolution)
+            loops = utils.filterLoops(loops, resolution)
 
         geneloops = findLoopsNearbyGenes(tss, loops, loopwindows, usemiddle)
         looplookuptable = utils.readIntraLoopsLookupTable(args.loopfile)

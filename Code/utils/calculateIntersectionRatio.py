@@ -1,5 +1,4 @@
 import argparse
-import copy
 
 from utils import readIntraLoops, filterLoops, detectAllResolutions
 
@@ -107,8 +106,7 @@ def main():
 
     for res in sorted(list(resolutions)):
 
-        loops_of_res = copy.deepcopy(loops)
-        filterLoops(loops_of_res, res)
+        loops_of_res = filterLoops(loops, res)
 
         loopOCregions = intersectRegions(oC, loops_of_res)
         print_results(args.sample, loopOCregions, loopcount, res)

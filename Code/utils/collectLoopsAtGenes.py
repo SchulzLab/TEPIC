@@ -1,7 +1,7 @@
 import argparse
 import datetime
 
-from . import utils
+from utils import readGTF, readIntraLoops, writeToFile
 
 
 # Iterates over all genes and for each gene over all loops of its respective chromosome
@@ -118,7 +118,7 @@ def postProcessing(results, tss, intraLoops, radius):
     now = datetime.datetime.now()
     filename = now.strftime("%Y-%m-%d-%H-%M") + '_' + str(radius / 1000) + 'kb' + '.txt'
 
-    utils.writeToFile(filename, header, outstring)
+    writeToFile(filename, header, outstring)
 
     return 0
 
@@ -128,10 +128,10 @@ def postProcessing(results, tss, intraLoops, radius):
 #  	a loop-file
 # 	a radius in 1000 bases, which is >= 100
 def collectLoopsAtGenes(annotationFile, loopsFile, radius):
-    print('Indexing TSS')
-    tss = utils.readGTF(annotationFile)
+    print('Indexing TSSs')
+    tss = readGTF(annotationFile)
     print('Indexing Loops')
-    intraLoops = utils.readIntraLoops(loopsFile)
+    intraLoops = readIntraLoops(loopsFile)
 
     if radius < 100:
         print('Radius too small... please use greater values e.g. 100 and above.')
@@ -155,9 +155,9 @@ def collectLoopsAtGenes(annotationFile, loopsFile, radius):
 # preparation-routine 
 parser = argparse.ArgumentParser(
     description='Collects all loops in a window around genes and extracts some statistical values')
-parser.add_argument('annotation', help='Path to an annotation file')
-parser.add_argument('loops', help='Path to a loop file')
-parser.add_argument('radius', type=int, help='A radius around the genestart which should be scanned')
+parser.add_argument('annotation', help='Path to an annotation file containing genes of interest.')
+parser.add_argument('loops', help='Path to a Hi-C loop file')
+parser.add_argument('radius', type=int, help='A radius around the TSS which should be scanned')
 
 args = parser.parse_args()
 

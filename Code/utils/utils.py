@@ -101,8 +101,12 @@ def writeToFile(filename, header, body):
 
 
 def filterLoops(loops, resolution):
+    filtered_loops = {}
     for chrKey in loops:
+        if chrKey not in filtered_loops:
+            filtered_loops[chrKey] = []
         chrLoops = loops[chrKey]
         for loop in chrLoops:
-            if (loop[2] - loop[1]) != resolution:
-                chrLoops.remove(loop)
+            if (loop[2] - loop[1]) == resolution:
+                filtered_loops[chrKey].append(loop)
+    return filtered_loops

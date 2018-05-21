@@ -1,5 +1,4 @@
 import argparse
-import copy
 
 from utils import detectAllResolutions, filterLoops, readGTF, readIntraLoops, writeToFile
 
@@ -46,18 +45,17 @@ def postProcessing(results, sample, resolution):
         for windowKey, resolutions in windows.items():
 
             for resolutionKey, hits in resolutions.items():
-                if resolution and resolutionKey != resolution:
-                    raise ValueError("Resolution " + resolution + "cannot be found in the data!")
-                else:
-                    if len(hits):
-                        if windowKey not in per_window_counter:
-                            per_window_counter[windowKey] = 0
-                        per_window_counter[windowKey] += 1
+                if len(hits):
+                    if resolution and int(resolutionKey) != resolution:
+                        raise ValueError("Resolution " + str(resolution) + " cannot be found in the data! Searched for " + str(resolutionKey))
+                    if windowKey not in per_window_counter:
+                        per_window_counter[windowKey] = 0
+                    per_window_counter[windowKey] += 1
 
     if not resolution:
         resolution = "All"
 
-    for window, gene_count in per_window_counter.items():
+    for window, gene_count in sorted(per_window_counter.items()):
         output = str(sample) + "\t"
         output += str(resolution) + "\t"
         output += str(window) + '\t'
@@ -66,29 +64,21 @@ def postProcessing(results, sample, resolution):
 
 
 def collectResolutionsPerWindowToSize(annotationFile, loopsFile, windows, sample):
-    print('Indexing TSS')
     tss = readGTF(annotationFile)
-    print('Found ' + str(len(tss)) + " genes")
     gene_count = 0
     for _, gene in tss.items():
         if gene[0].upper() != "X" and gene[0].upper() != "Y" and gene[0].upper() != "M":
             gene_count += 1
-    print('Found ' + str(gene_count) + " genes on autosomes")
-    print('Indexing Loops')
     loops = readIntraLoops(loopsFile)
-    print('Preprocessing')
     for window in windows:
         if window < 100:
             print('Window radius too small... please use greater values e.g. 100 and above.')
             return 1
 
     resolutions = detectAllResolutions(loopsFile)
-    print('Running core algorithm')
     print('sample\thi-c_resolution\twindow\tgene_count')
     for res in sorted(list(resolutions)):
-
-        loops_of_res = copy.deepcopy(loops)
-        filterLoops(loops_of_res, res)
+        loops_of_res = filterLoops(loops, res)
         results = run(tss, loops_of_res, windows)
         postProcessing(results, sample, res)
 
@@ -127,6 +117,4 @@ args = parser.parse_args()
 win = args.windows.split(',')
 win = [int(convert_multipliers(numeric_string)) for numeric_string in win]
 
-print('Starting to collect data...')
 collectResolutionsPerWindowToSize(args.annotation, args.loops, win, args.sample)
-print('\n-> Completed all!')

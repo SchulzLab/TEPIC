@@ -227,8 +227,8 @@ Additionally, we provide a script to test several annotation versions of TEPIC. 
 
 to compute multiple trial cases.
 
-##Acknowledgments
-We thank Matthias Heinig for providing the C++ implementation of TRAP.
+## Acknowledgments
+We thank Helge Roider for providing the C++ implementation of TRAP, which we slightly modified to run it in parallel.
 
 ## Citation
 If you are using TEPIC and/or [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/INVOKE) please cite:

@@ -51,6 +51,7 @@ def postProcessing(results, sample, resolution):
                     if windowKey not in per_window_counter:
                         per_window_counter[windowKey] = 0
                     per_window_counter[windowKey] += 1
+                    break
 
     if not resolution:
         resolution = "All"

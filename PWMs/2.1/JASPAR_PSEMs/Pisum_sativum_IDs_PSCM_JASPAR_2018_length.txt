@@ -1,0 +1,3 @@
+HMG-1	9
+HMG-I/Y	16
+PEND	10

@@ -569,7 +569,9 @@ def main():
 	motifLengths=generate_Motif_Length(args.affinity[0],args.motifLength)	
 	#Load open chromatin positions from TF-Affinity file
 	oC=readOC_Region(args.affinity[0])
-
+	if (not oC):
+		print("No TF affinities provided in "+args.affinity[0]+".")
+		return 0
 	#Create a TF name index
 	tfNames=tfIndex(args.affinity[0])
 	shift=int(args.windows/2)

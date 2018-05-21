@@ -112,49 +112,10 @@ where $|M|$ denotes the length of the \textit{PCM} as above.
 \item \textit{drosophila melanogaster }$=0.43$
 \item \textit{caenorhabditis elegans }$=0.36$
 \end{itemize}
-Table \ref{Matrices2} shows the number of \textit{PCMs} that based the quality filtering and the within database redundancy check. 
+In all other cases, a default GC-content of $0.42$ is used.
+
 Table \ref{Matrices} provides an overview on the final counts of the unified set of PCMs.
-The entire processing workflow of \textit{PCMs} to \textit{PSEMs} is shown in Figure \ref{PCM-Workflow}.
-
-\begin{table}[h!]
-\centering
-\small
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-\textit{\textbf{}} & Jaspar & Hocomoco & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Kellis Lab Encode \\ Motif Database\end{tabular}} & Transfac \\ \hline
-\begin{tabular}[c]{@{}c@{}}Homo \\ sapiens\end{tabular} & 515 & 390 & 559 & 1747 \\ \hline
-\begin{tabular}[c]{@{}c@{}}Mus \\ musculus\end{tabular} & 499 & 261 & 523 & 921 \\ \hline
-\begin{tabular}[c]{@{}c@{}}Rattus \\ norvegicus\end{tabular} & 489  & 253 & 513 & 389 \\ \hline
-\begin{tabular}[c]{@{}c@{}}Drosophila \\ melanogaster\end{tabular} & 129 & 0 & 0 & 290  \\ \hline
-\begin{tabular}[c]{@{}c@{}}Caenorhabditis \\ elegans\end{tabular} & 26 & 0 & 0 & 42  \\ \hline
-\end{tabular}
-\caption{Overview on \textit{PCM} counts per species and database after quality filtering and a within database redundancy check.}
-\label{Matrices2}
-\end{table}
-
-\begin{table}[h!]
-\centering
-\small
-\begin{tabular}{|c|c|c|c|c|c|}
-\hline
-\textit{\textbf{}} & Jaspar & Hocomoco & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Kellis Lab Encode \\ Motif Database\end{tabular}} & Transfac & \multicolumn{1}{l|}{Total} \\ \hline
-\begin{tabular}[c]{@{}c@{}}Homo \\ sapiens\end{tabular} & 515 & 81 & 130 & 584 & 1310 \\ \hline
-\begin{tabular}[c]{@{}c@{}}Mus \\ musculus\end{tabular} & 499 & 67 & 124 & 194 & 884 \\ \hline
-\begin{tabular}[c]{@{}c@{}}Rattus \\ norvegicus\end{tabular} & 489 & 67 & 121 & 50 & 727 \\ \hline
-\begin{tabular}[c]{@{}c@{}}Drosophila \\ melanogaster\end{tabular} & 129 & 0 & 0 & 92 & 221 \\ \hline
-\begin{tabular}[c]{@{}c@{}}Caenorhabditis \\ elegans\end{tabular} & 26 & 0 & 0 & 14 & 40 \\ \hline
-\end{tabular}
-\caption{Overview on \textit{PCM} counts per species and database after quality and redundancy filtering. We considered all Jaspar matrices and added additional non redundant \textit{PCMs} from Hocomoco, the Kellis Lab Encode Motif Database, and Transfac.}
-\label{Matrices}
-\end{table}
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=\textwidth]{PCM_Processing_RegulatorTrail.pdf}
-\end{center}
-\caption{Visualization of the PCM preprocessing workflow.}
-\label{PCM-Workflow}
-\end{figure}
+The online documentation contains a up-to-date overview on the currently avialble TF-motifs.
 
 \newpage
 \mbox{}

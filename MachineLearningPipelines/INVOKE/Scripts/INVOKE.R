@@ -380,67 +380,72 @@ for(Sample in FileList){
 		if (argsL$ftest==TRUE){
 			numFeatures=dim(M)[2]
 			if (numFeatures-1 > 1){
-				print(paste0("Running F-test using ",dim(M)[2]-1," features"))
-				featureIndex<-c(1:numFeatures)
-				featureIndex<-featureIndex[-Response_Variable_location]
-				for (m in featureIndex){
-					print(paste0("Excluding feature ",m," ",FeatureNames[m]))
-					MF<-M[,-m]
-					error<-c(1:argsL$outerCV)
-					for (k in 1:argsL$outerCV){
-							# Partition data into test and training data sets
-							Test_size<-round(nrow(MF)/(1/as.numeric(argsL$testsize)))
-							rndselect<-sample(x=nrow(MF), size=Test_size)
-							Test_Data<-MF[rndselect,]
-							Train_Data<-MF[-rndselect,]
-							Response_Variable_location_MF<- grep(argsL$response,colnames(MF))
-
-							# Split the features from response
-							x_train<-as.matrix(Train_Data[,-Response_Variable_location_MF])
-							x_test<-as.matrix(Test_Data[,-Response_Variable_location_MF])
-							y_train<-as.vector(unlist(Train_Data[,Response_Variable_location_MF,drop=FALSE]))
-							y_test<-as.vector(unlist(Test_Data[,Response_Variable_location_MF]))
-
-							#Creating alpha vector
-					 		A<-c()
-							if(argsL$regularisation=="L"){
-								alphaslist <- c(1.0)
-							}else{
-								if(argsL$regularisation=="R"){
-									alphaslist <- c(0.0)
-								}else{
-									alphaslist<-seq(0,1,by=as.numeric(argsL$alpha))
-								}
-							}
-							#Learning model on training data
-							if(argsL$regularisation=="E"){   
-								if(argsL$fixedAlpha==-1){
-									if(is.null(argsL$constraint)){
-										elasticnet<-mclapply(alphaslist, function(x){cv.glmnet(x_train, y_train,alpha=x,nfolds=as.numeric(argsL$innerCV))}, mc.cores=argsL$cores)
-									}else{ 
+				featureMatrixF<-c()
+		          for (j in 1:length(coefficients[[i]])){
+		               if (length(coefficients[[i]][[j]]>1)){
+		                    featureMatrixF<-rbind(featureMatrixF,coefficients[[i]][[j]][,1])
+		               }
+		          }
+				featureMatrixF<-featureMatrixF[,-1]
+		          if (length(featureMatrixF > 1)){
+						ftest_result[[i]]<-rep(1.0,numFeatures-1)
+		                    meanFeature<-apply(featureMatrixF,2,median)
+						nonZeroFeatures<-which(meanFeature != 0)
+						print(nonZeroFeatures)
+						print(paste0("Running F-test using ",length(nonZeroFeatures)," features"))
+						featureIndex<-nonZeroFeatures
+						for (m in featureIndex){
+							print(paste0("Excluding feature ",m," ",FeatureNames[m]))
+							MF<-M[,-m]
+								error<-c(1:argsL$outerCV)
+							for (k in 1:argsL$outerCV){
+									Test_size<-round(nrow(MF)/(1/as.numeric(argsL$testsize)))
+									rndselect<-sample(x=nrow(MF), size=Test_size)
+									Test_Data<-MF[rndselect,]
+									Train_Data<-MF[-rndselect,]
+									Response_Variable_location_MF<- grep(argsL$response,colnames(MF))
+									x_train<-as.matrix(Train_Data[,-Response_Variable_location_MF])
+									x_test<-as.matrix(Test_Data[,-Response_Variable_location_MF])
+										y_train<-as.vector(unlist(Train_Data[,Response_Variable_location_MF,drop=FALSE]))
+									y_test<-as.vector(unlist(Test_Data[,Response_Variable_location_MF]))
+							 		A<-c()
+									if(argsL$regularisation=="L"){
+										alphaslist <- c(1.0)
+									}else{
+										if(argsL$regularisation=="R"){
+											alphaslist <- c(0.0)
+										}else{
+											alphaslist<-seq(0,1,by=as.numeric(argsL$alpha))
+										}
+									}
+								if(argsL$regularisation=="E"){   
+									if(argsL$fixedAlpha==-1){
+										if(is.null(argsL$constraint)){
+											elasticnet<-mclapply(alphaslist, function(x){cv.glmnet(x_train, y_train,alpha=x,nfolds=as.numeric(argsL$innerCV))}, mc.cores=argsL$cores)
+										}else{ 
+											if(argsL$constraint=="P"){
+												elasticnet<-mclapply(alphaslist, function(x){cv.glmnet(x_train, y_train,alpha=x,lower=0,nfolds=as.numeric(argsL$innerCV))}, mc.cores=argsL$cores)
+											}else{
+												if(argsL$constraint=="N"){
+													elasticnet<-mclapply(alphaslist, function(x){cv.glmnet(x_train, y_train,alpha=x,upper=0,nfolds=as.numeric(argsL$innerCV))}, mc.cores=argsL$cores)
+												}
+											}
+							      		}
+									}else{
+										x=argsL$fixedAlpha
+										if(is.null(argsL$constraint)){
+											elasticnet<-cv.glmnet(x_train, y_train,alpha=x,nfolds=as.numeric(argsL$innerCV),parallel=TRUE)
+										}else{ 
 										if(argsL$constraint=="P"){
-											elasticnet<-mclapply(alphaslist, function(x){cv.glmnet(x_train, y_train,alpha=x,lower=0,nfolds=as.numeric(argsL$innerCV))}, mc.cores=argsL$cores)
+											elasticnet<-cv.glmnet(x_train, y_train,alpha=x,lower=0,nfolds=as.numeric(argsL$innerCV),parallel=TRUE)
 										}else{
 											if(argsL$constraint=="N"){
-												elasticnet<-mclapply(alphaslist, function(x){cv.glmnet(x_train, y_train,alpha=x,upper=0,nfolds=as.numeric(argsL$innerCV))}, mc.cores=argsL$cores)
-											}
-										}
-						      		}
+												elasticnet<-cv.glmnet(x_train, y_train,alpha=x,upper=0,nfolds=as.numeric(argsL$innerCV),parallel=TRUE)
+													}
+												}
+								     	 	}
+										}			   
 								}else{
-									x=argsL$fixedAlpha
-									if(is.null(argsL$constraint)){
-										elasticnet<-cv.glmnet(x_train, y_train,alpha=x,nfolds=as.numeric(argsL$innerCV),parallel=TRUE)
-									}else{ 
-									if(argsL$constraint=="P"){
-										elasticnet<-cv.glmnet(x_train, y_train,alpha=x,lower=0,nfolds=as.numeric(argsL$innerCV),parallel=TRUE)
-									}else{
-										if(argsL$constraint=="N"){
-											elasticnet<-cv.glmnet(x_train, y_train,alpha=x,upper=0,nfolds=as.numeric(argsL$innerCV),parallel=TRUE)
-											}
-										}
-						     	 	}
-								}			   
-							}else{
 								x=alphaslist[1]
 								if(is.null(argsL$constraint)){
 									elasticnet<-cv.glmnet(x_train, y_train,alpha=x,nfolds=as.numeric(argsL$innerCV),parallel=TRUE)
@@ -460,32 +465,30 @@ for(Sample in FileList){
 										for (j in 1:length(alphaslist)) {
 											A[j]<-min(elasticnet[[j]]$cvm)
 										}
-									#Determine best alpha value from training data
 									index<-which(A==min(A), arr.ind=TRUE)
 									model<-elasticnet[[index]]
 									}
 								}else{
 									model<-elasticnet
 									}
+								}
+							if (length(elasticnet[[1]]) > 1){ 
+								predict_fit<-predict(model, x_test, s="lambda.min")
+								predict_fit_train<-predict(model, x_train, s="lambda.min")
+								error[k]<-sum((y_test-predict_fit)^2)	
+							}else{
+								error[k]<-1.0
 							}
-						if (length(elasticnet[[1]]) > 1){ 
-							#Determine error of the best alpha model on hold out data and on training data
-							predict_fit<-predict(model, x_test, s="lambda.min")
-							predict_fit_train<-predict(model, x_train, s="lambda.min")
-							error[k]<-sum((y_test-predict_fit)^2)	
-						}else{
-							error[k]<-1.0
+						}
+						mRSS<-mean(error)
+						mORSS<-mean(unlist(rss_error[[i]]),na.rm=TRUE)
+						MSe<-mORSS/(dim(MF)[1]-(length(nonZeroFeatures)))
+						partialRSS<-mRSS-mORSS
+						fvalue<-partialRSS/MSe
+						pValue<-1.0-pf(as.numeric(fvalue),length(nonZeroFeatures)-1,(dim(MF)[1]-length(nonZeroFeatures)))
+						ftest_result[[i]][m]<-pValue
 						}
 					}
-					mRSS<-mean(error)
-					mORSS<-mean(unlist(rss_error[[i]]),na.rm=TRUE)
-					MSe<-mORSS/(dim(MF)[1]-numFeatures)
-					partialRSS<-mRSS-mORSS
-					fvalue<-partialRSS/MSe
-					pValue<-1.0-pf(as.numeric(fvalue),numFeatures-1,dim(MF)[1]-numFeatures)
-					ftest_result[[i]][m]<-pValue
-					}
-			#	}
 				###Generate output
 			}else{
 				print(paste0("Computing significance for feature ",FeatureNames[1]))
@@ -495,7 +498,7 @@ for(Sample in FileList){
 				pValue<-1.0-pf(as.numeric(fvalue),1,dim(MF)[1]-2)
 				ftest_result[[i]][1]<-pValue
 			}
-		}
+	}
 	}else{
 	#Leave one out cross validation
 	for (k in 1:nrow(M)){                                                                                                                                                                                                                                                                                                                      
@@ -745,6 +748,9 @@ if (argsL$performance == TRUE){
 		if (length(featureMatrix > 1)){
 			if (argsL$ftest==TRUE){
 				meanFeature<-apply(featureMatrix,2,median)
+				print(dim(featureMatrix))
+				print(length(meanFeature))
+				print(length(unlist(ftest_result[[i]])))
 				featureMatrixTemp<-rbind(featureMatrix,meanFeature,c(1.0,unlist(ftest_result[[i]])))
 				row.names(featureMatrixTemp)<-c(paste("Fold ",c(1:(dim(featureMatrixTemp)[1]-2))),"Median","p-value")
 				write.table(featureMatrixTemp[,-1],paste(argsL$outDir,"Regression_Coefficients_",FileList[i],sep=""),quote=F,sep="\t",col.names=NA)

@@ -217,11 +217,11 @@ then
 	echo "decay	"$decay >> $metadatafile
 	echo "sparsity	"$sparsity >> $metadatafile
 	echo "genebody	"$geneBody >> $metadatafile
-	echo "length normalisation	"$lengthNorm >> $metadatafile
-	echo "peak features	"$peakFeatures >> $metadatafile
+	echo "length_normalisation	"$lengthNorm >> $metadatafile
+	echo "peak_features	"$peakFeatures >> $metadatafile
 	if [ -n "$motifLength" ];
 	then
-		echo "motif length	"$motifLength >> $metadatafile
+		echo "motif_length	"$motifLength >> $metadatafile
 	fi
 fi
 if [ -n "$randomGenome" ];

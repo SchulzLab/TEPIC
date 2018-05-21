@@ -39,7 +39,7 @@ int main(int argc, char *argv[]){
   double lnR0; //effectifelength * slope + intercept
 
   //GLOBAL GENOMIC BACKGROUND
-  const double gc_content = 0.36;
+  const double gc_content = 0.43;
   const double at_content = 1 - gc_content;
 
   cout << "#/Lambda=" << lambda << "\t/Regression_slope=" << slope << "\t/Regression_intercept=" << intercept << "\t/GC_content=" << gc_content << "\t/Pseudocount=maximal_row_counts/counts_in_row\n";

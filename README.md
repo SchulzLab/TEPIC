@@ -109,12 +109,14 @@ The Kellis set contains 58 motifs, stored in  [PWMs/Kellis_PSEMs](PWMs/Kellis_PS
 Additionally we provide non-redundant collections for homo sapiens and mus musculus considering motifs from all three sources:
 * 561 PSEMS for homo sapiens
 * 380 PSEMs for mus musculus
+
 The matrices are stored in the folder [PWMs/2.1/Merged_PSEMs](PWMs/2.1/Merged_PSEMs)
 
 
 Furthermore, we used a motif clustering approach (7), to merge similar motifs of the files containing matrices from all three sources. This lead to
 * 483 PSEMs for homo sapiens
 * 306 PSEMs for mus musculus
+
 The matrices are stored in the folder [PWMs/2.1/Clustered_PSEMs](PWMs/2.1/Clustered_PSEMs)
 
 Files holding the length of the PSEMs are provided too. 

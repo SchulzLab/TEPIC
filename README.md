@@ -55,8 +55,7 @@ To use the script [findBackground](Code/findBackground.py), which is necessary t
 
 ## Position specific energy matrices
 There are three folder containing Position specific energy matrices (PSEMs):
-Our current collection of PSEMs, containing matrices from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis ENCODE Motif database* (6), is stored in the folder
-	[PWMs/2.1] (PWMs/2.1).
+Our current collection of PSEMs, containing matrices from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis ENCODE Motif database* (6), is stored in the folder [PWMs/2.1] (PWMs/2.1).
 The previously used motifs are provided in the folders [PWMs/2.0] (PWMs/2.0) and [PWMs/1.0] (PWMs/1.0).
 The position weight matrices used in the *TEPIC* manuscript are stored in the file
 	[PWMs/1.0/pwm_vertebrates_jaspar_uniprobe_original.PSEM](PWMs/1.0/pwm_vertebrates_jaspar_uniprobe_original.PSEM).
@@ -101,13 +100,22 @@ Additionally, we provide species specific collections of JASPAR matricies:
 * 4 PSEMs for Xenopus laevis
 * 8 PSEMs for Zea mays
 
-From HOCOMOCO we provide 402 motifs for homo sapiens and 358 for mus musculus.
+All JASPAR matrices can be found in [PWMs/JASPAR_PSEMs](PWMs/JASPAR_PSEMs)
 
-The Kellis set contains 58 motifs.
+From HOCOMOCO we provide 402 motifs for homo sapiens and 358 for mus musculus, available in [PWMs/HOCOMOCO_PSEMs](PWMs/HOCOMOCO_PSEMs)
+
+The Kellis set contains 58 motifs, stored in  [PWMs/Kellis_PSEMs](PWMs/Kellis_PSEMs).
 
 Additionally we provide non-redundant collections for homo sapiens and mus musculus considering motifs from all three sources:
 * 561 PSEMS for homo sapiens
 * 380 PSEMs for mus musculus
+The matrices are stored in the folder [PWMs/2.1/Merged_PSEMs](PWMs/2.1/Merged_PSEMs)
+
+
+Furthermore, we used a motif clustering approach (7), to merge similar motifs of the files containing matrices from all three sources. This lead to
+* 483 PSEMs for homo sapiens
+* 306 PSEMs for mus musculus
+The matrices are stored in the folder [PWMs/2.1/Clustered_PSEMs](PWMs/2.1/Clustered_PSEMs)
 
 Files holding the length of the PSEMs are provided too. 
 
@@ -254,3 +262,5 @@ Other works that have influenced ours:
 > (5) HOCOMOCO: a comprehensive collection of human transcription factor binding sites models , Kulakovskiy Ivan V., et al., Nucleic Acids Research, 2013.
 
 > (6) Systematic discovery and characterization of regulatory motifs in ENCODE TF binding experiments, Kheradpour P, and Kellis M, Nucleic Acids Research, 2013.
+
+> (7) Natural similarity measures between position frequency matrices with an application to clustering, Pape U.J., et al., Bioinformatics, 2008.

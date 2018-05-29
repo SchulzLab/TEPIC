@@ -54,7 +54,7 @@ To use the script [findBackground](Code/findBackground.py), which is necessary t
 
 
 ## Position specific energy matrices
-There are three folder containing Position specific energy matrices (PSEMs):
+There are three folders containing Position specific energy matrices (PSEMs):
 Our current collection of PSEMs, containing matrices from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis ENCODE Motif database* (6), is stored in the folder [PWMs/2.1](PWMs/2.1).
 The previously used motifs are provided in the folders [PWMs/2.0](PWMs/2.0) and [PWMs/1.0](PWMs/1.0).
 The position weight matrices used in the *TEPIC* manuscript are stored in the file

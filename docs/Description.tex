@@ -21,63 +21,79 @@ low-affinity binding sites can be included \cite{pmid27899623,pmid17098775}. Usi
 The scores, either per peak/region or gene, can be interpreted as a quantitative measurement of TF binding. 
 
 \subsection*{Preprocessing of Position Count Matrices (PCM)}
-We obtained \textit{Position Count Matrices (PCMs)} from JASPAR \cite{pmid26531826}, which is also including data from Uniprobe \cite{pmid25378322}, HOCOMOCO \cite{pmid23175603}, the Kellis Lab ENCODE Motif database \cite{pmid24335146}, and TRANSFAC \cite{pmid16381825} for five
-species: \textit{homo sapiens, mus musculus, rattus norvegicus, drosophila melanogaster,} and \textit{caenorhabditis elegans}. 
+We obtained \textit{Position Count Matrices (PCMs)} from JASPAR \cite{pmid26531826}, which is also including data from Uniprobe \cite{pmid25378322}, HOCOMOCO \cite{pmid23175603} and the Kellis Lab ENCODE Motif database \cite{pmid24335146}.
 
-Briefly, we downloaded the JASPAR CORE Vertebrata data set to cover \textit{homo sapiens, mus musculus,} and \textit{rattus norvegicus}, 
-for \textit{drosophila melanogaster} we use the JASPAR CORE Insecta data set and for \textit{caenorhabditis elegans} we obtained the JASPAR CORE Nematoda PCMs.
-From HOCOMOCO we use the provided data for \textit{homo sapiens} and \textit{mus musculus}. The latter is also used for \textit{rattus norvegicus}. 
-The Kellis Lab ENCODE Motifs are based on human ChIP-seq data. Thus, we consider these \textit{PCMs} for \textit{homo sapiens, mus musculus}, and \textit{rattus norvegicus}.
-From TRANSFAC, we obtained species specific sets for all considered organisms. 
+There are three folder containing Position specific energy matrices (PSEMs): Our current collection of PSEMs \textit{PWMs/2.1}. The previously used motifs are provided in the folders \textit{PWMs/2.0} and \textit{PWMs/1.0}. 
+The position weight matrices used in the TEPIC manuscript are stored in the file \\\textit{PWMs/1.0/pwm\_vertebrates\_jaspar\_uniprobe\_original.PSEM}.
 
-From this initial set, we removed all TFs that could not be mapped to an Ensembl gene ID, using the Ensemble Genes 87 database, 
-and the current versions of the reference genomes: GRCh38, GRCm38, Rnor\_6, BDGP6, and WBcel235. 
-Thereby, we generate species specific sets of \textit{PCMs} assuming a motif conservation
-among vertebrates for the JASPAR CORE Vertebrata \textit{PCMs}, the HOCOMOCO mouse \textit{PCMs}, and Kellis Lab ENCODE Motif \textit{PCMs}.
-Neither HOCOMOCO nor Kellis Lab ENCODE Motifs are considered for \textit{drosophila melanogaster} and \textit{caenorhabditis elegans}.
-
-Next, for each species set, we computed the information content $IC$ of each \textit{PCM} $M$  normalized per motif length $|M|$ as
-\begin{align}
-P(i,j)= \frac{M(i,j)+pc}{4*pc+\sum_{i}M(i,j)}, \\
-IC=-\frac{\sum_{ij}log(P(i,j)*P(i,j)}{|M|},
-\end{align}
-with $i \in \{A,C,G,T\}$, $j \in \{1,...|M|\}$, and a pseudo count $pc=1$.
-\bigskip
-\\Note that the smaller the $IC$ value of a matrix, the more informative the matrix is.
-
-In Figure \ref{IC-Content}, a violin plot shows the distribution of the normalized information content for the \textit{homo sapiens} data set. 
-Across all species collections, we find that the JASPAR matrices have a small variance and that the poorest JASPAR \textit{PCM} 
-is still more informative than several \textit{PCMs} from other databases.
-Therefore, we decided to consider all JASPAR \textit{PCMs} and use the normalized information content value of the poorest JASPAR \textit{PCM} as a species specific cut-off value for the remaining databases. The cut-offs are:
+In detail, the current collection contains from the JASPAR 2018 Core database:
 \begin{itemize}
-\item \textit{homo sapiens: } $1.55928$
-\item \textit{mus musculus: } $1.55928$
-\item \textit{rattus norvegicus: $1.55928$ }
-\item \textit{drosophila melanogaster: $1.67157$}
-\item \textit{caenorhabditis elegans: $1.33879$}
+\item 579 PSEMs for vertebrates
+\item 176 PSEMs for fungi
+\item 26 PSEMs for nematodes
+\item 489 PSEMs for plants
+\item 1 PSEM for urochordates
+\item 133 PSEMs for insects
 \end{itemize}
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=\textwidth]{Information_Content_Violin_Plot.png}
-\end{center}
-\caption{Normalized information content for \textit{PCMs} extracted from JASPAR Core Vertebrata, HOCOMOCO human, the Kellis ENCODE Motif database, and TRANSFAC Human. 
-Small values indicate high quality matrices. Clearly, the poorest \textit{PCM} in JASPAR is still better than several \textit{PCMs} out of the other databases.}
-\label{IC-Content}
-\end{figure}
-In case that multiple motifs exists for one distinct TF in one database, we consider only the \textit{PCM} with the best $IC$ value. 
-If the motifs are marked specifically as a secondary or tertiary binding motif, as in JASPAR, we do not remove them. 
 
-In order to merge the different databases per species, we execute the following merging procedure on the filtered sets of the individual databases:
-\begin{enumerate}
-\item Consider all JASPAR matrices.
-\item Add all HOCOMOCO matrices that are not included in the set of step (1).
-\item Add all Kellis Lab ENCODE Motif database matrices that are not included in the set of step (2).
-\item Add all TRANSFAC matrices that are not included in the set of step (3).
-\end{enumerate}
-This procedure ensures that we generate the largest possible set of open-source \textit{PCMs} from our collection of TF binding motifs. In addition to the unified set,
-we also provide the user with the option to work with all \textit{PCMs} from a single database. 
-\bigskip
-\\As mentioned above, \textit{TRAP} computes TF affinities that are based on a biophysical model of TF binding.
+Additionally, we provide species specific collections of JASPAR matricies:
+\begin{itemize}
+\item 3 PSEMs for Antirrhinum majus
+\item 5 PSEMs for Arabidopsis lyrata
+\item 440 PSEMs for Arabidopsis thaliana
+\item 22 PSEMs for Caenorhabditis elegans
+\item 132 PSEMs for Drosophila melanogaster
+\item 1 PSEMs for Fragaria x ananassa
+\item 7 PSEMs for Gallus gallus
+\item 6 PSEMs for Glycine max
+\item 1 PSEM for Halocynthia roretzi
+\item 459 PSEMs for Homo sapiens
+\item 1 PSEM for Hordeum vulgare
+\item 1 PSEM for Medicago truncatula
+\item 1 PSEM for Meleagris gallopavo
+\item 157 PSEMs for Mus musculus
+\item 1 PSEM for Neurospora crassa
+\item 1 PSEM for Nicotiana
+\item 4 PSEMs for Orcytolagus
+\item 7 PSEMs for Oryza sativa
+\item 1 PSEM for Petunia x hybrida
+\item 1 PSEM for Phaeodactylum tricornutum
+\item 9 PSEMs for Physcomitrella patens
+\item 3 PSEMs for Pisum sativum
+\item 1 PSEM for Populus trichocarpa
+\item 2 PSEMs for Rattus norvegicus
+\item 2 PSEMs for Rattus rattus
+\item 176 PSEMs for Saccaromyces cerevisiae
+\item 2 PSEMs for Solanum lycopersicum
+\item 1 PSEM for Triticum aestivum
+\item 4 PSEMs for Xenopus laevis
+\item 8 PSEMs for Zea mays
+\end{itemize}
+
+All JASPAR matrices can be found in \textit{PWMs/2.1/JASPAR\_PSEMs}
+
+From HOCOMOCO we provide $402$ motifs for homo sapiens and $358$ for mus musculus, available in \textit{PWMs/2.1/HOCOMOCO\_PSEMs}
+
+The Kellis set contains $58$ motifs, stored in \textit{PWMs/2.1/Kellis\_PSEMs}.
+
+Additionally we provide non-redundant collections for homo sapiens and mus musculus considering motifs from all three sources:
+\begin{itemize}
+\item 561 PSEMS for homo sapiens
+\item 380 PSEMs for mus musculus
+\end{itemize}
+
+The matrices are stored in the folder \textit{PWMs/2.1/Merged\_PSEMs}
+
+Furthermore, we used a motif clustering approach (7), to merge similar motifs of the files containing matrices from all three sources. This lead to
+\begin{itemize}
+\item 483 PSEMs for homo sapiens
+\item 306 PSEMs for mus musculus
+\end{itemize}
+The matrices are stored in the folder \textit{PWMs/2.1/Clustered\_PSEMs}
+
+Files holding the length of the PSEMs are provided too.
+
+As mentioned above, \textit{TRAP} computes TF affinities that are based on a biophysical model of TF binding.
 Therefore \textit{PCMs} have to be converted to \textit{Position Specific Energy Matrices (PSEMs)} such that they can be used in \textit{TRAP}.
 Intuitively, \textit{PSEMs} represent the mismatch energy of a given motif. For a detailed explanation and motivation of the energy based score, please check \cite{pmid17098775}.
 A \textit{PCM M} is converted to a \textit{PSEM E} according to:
@@ -114,11 +130,6 @@ where $|M|$ denotes the length of the \textit{PCM} as above.
 \end{itemize}
 In all other cases, a default GC-content of $0.42$ is used.
 
-Table \ref{Matrices} provides an overview on the final counts of the unified set of PCMs.
-The online documentation contains a up-to-date overview on the currently avialble TF-motifs.
-
-\newpage
-\mbox{}
 \newpage
 \subsection*{Computing TF gene scores}
 Currently, we offer the annotation of five different species, including the most common model organisms: 
@@ -362,7 +373,7 @@ We provide an additional script to generate further plots per feature that can h
 density plots, and scatter plots are generated to help elucidating why a particular feature was selected by the model.
 \begin{figure}[h!]
 \centering
-\includesvg[width=\textwidth]{Feature_overview_TEMvsTN_Peak_Counts}
+\includegraphics[width=\textwidth]{Feature_overview_TEMvsTN_Peak_Counts.pdf}
 \caption{Example for a automatically created feature analysis Figure generated on the example data provided in the repository. The density plots show the distribution of TF affinities, the
 scatter plot relat the TF affinities to the observed expression changes. The miniature heatmap shows the regression coefficients determined during the outer cross validation.}
 \label{ExampleAnalysisOfDynamite}

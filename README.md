@@ -3,7 +3,7 @@
 Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data. Learning of key regulatory TFs in  individual cell types or learning of discriminatory TFs that show a difference in regulation between two cell types.
 
 ## News
-21.05.2018: A new collection of TF motifs is included. They are available in the folder [PWMs/2.1] (PWMs/2.1).
+21.05.2018: A new collection of TF motifs is included. They are available in the folder [PWMs/2.1](PWMs/2.1).
 
 03.05.2018: INVOKE now supports computing a F-test to judge the importance of individual features.
 
@@ -55,8 +55,8 @@ To use the script [findBackground](Code/findBackground.py), which is necessary t
 
 ## Position specific energy matrices
 There are three folder containing Position specific energy matrices (PSEMs):
-Our current collection of PSEMs, containing matrices from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis ENCODE Motif database* (6), is stored in the folder [PWMs/2.1] (PWMs/2.1).
-The previously used motifs are provided in the folders [PWMs/2.0] (PWMs/2.0) and [PWMs/1.0] (PWMs/1.0).
+Our current collection of PSEMs, containing matrices from *JASPAR* (4), *HOCOMOCO* (5), and the *Kellis ENCODE Motif database* (6), is stored in the folder [PWMs/2.1](PWMs/2.1).
+The previously used motifs are provided in the folders [PWMs/2.0](PWMs/2.0) and [PWMs/1.0](PWMs/1.0).
 The position weight matrices used in the *TEPIC* manuscript are stored in the file
 	[PWMs/1.0/pwm_vertebrates_jaspar_uniprobe_original.PSEM](PWMs/1.0/pwm_vertebrates_jaspar_uniprobe_original.PSEM).
 
@@ -100,11 +100,11 @@ Additionally, we provide species specific collections of JASPAR matricies:
 * 4 PSEMs for Xenopus laevis
 * 8 PSEMs for Zea mays
 
-All JASPAR matrices can be found in [PWMs/JASPAR_PSEMs](PWMs/JASPAR_PSEMs)
+All JASPAR matrices can be found in [PWMs/2.1/JASPAR_PSEMs](PWMs/2.1/JASPAR_PSEMs)
 
-From HOCOMOCO we provide 402 motifs for homo sapiens and 358 for mus musculus, available in [PWMs/HOCOMOCO_PSEMs](PWMs/HOCOMOCO_PSEMs)
+From HOCOMOCO we provide 402 motifs for homo sapiens and 358 for mus musculus, available in [PWMs/2.1/HOCOMOCO_PSEMs](PWMs/2.1/HOCOMOCO_PSEMs)
 
-The Kellis set contains 58 motifs, stored in  [PWMs/Kellis_PSEMs](PWMs/Kellis_PSEMs).
+The Kellis set contains 58 motifs, stored in  [PWMs/2.1/Kellis_PSEMs](PWMs/2.1/Kellis_PSEMs).
 
 Additionally we provide non-redundant collections for homo sapiens and mus musculus considering motifs from all three sources:
 * 561 PSEMS for homo sapiens

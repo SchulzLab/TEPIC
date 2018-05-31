@@ -117,10 +117,39 @@ The *Prefix_Affinity.txt* files are tab separated files listing the genomic coor
 	chr1:2321-2340		0.4	0.2	...	4.2
 
 
+
 The *Prefix_Affinity_Gene_View.txt* files are tab separated files listing the Ensemble GeneID in the first column, TF gene-scores in the following columns and features on peak-length, peak-count, and peak-signal if computed.
 
 	GENEID		TF1	TF2	...	TFn	peak length	peak count	peak signal
 	ENSG00000044612	0.4	0.2	...	4.2	23		3		19.2
+
+
+
+The *Prefix_Peak_Coverage.txt* files are tab separated files listing the genomic coordinates in the first column and the scaling value in the next column.
+
+	Genomic Position	Factor
+	chr1:2321-2340	0.4
+
+
+The *Prefix_Thresholded_Affinities.txt* files are tab separated files listing the genomic coordinates in the first column and TF affinities in the following columns. Scores below the computed TF-specific threshold are set to zero.
+
+	Genomic Position		TF1	TF2	...	TFn
+	chr1:2321-2340		0	0	...	4.2
+
+
+The *Prefix_Thresholded_Affinity_Gene_View.txt* files are tab separated files listing the Ensemble GeneID in the first column, TF gene-scores in the following columns and features on peak-length, peak-count, and peak-signal if computed.
+Here, thresholded TF affinities are used for the computation.
+
+	GENEID		TF1	TF2	...	TFn	peak length	peak count	peak signal
+	ENSG00000044612	0	0	...	4.2	23		3		19.2
+
+The *Prefix_Thresholded_Sparse_Affinity_Gene_View.txt* files are tab separated files listing the Ensemble GeneID in the first column, and the name of the TF associated to this gene in the second column.
+Here, thresholded TF affinities are used for the computation. The third column of this file is required by DREM and does not carry any specific meaning.
+
+	GENEID		TF Name	Score
+	ENSG00000044612	CTCF	1
+
+
 
 Further details on the output are provided in the [description](docs/Description.pdf).
 

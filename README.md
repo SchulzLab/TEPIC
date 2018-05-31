@@ -71,16 +71,17 @@ To start TEPIC, run the script *TEPIC.sh*
 
     ./TEPIC.sh
 
-The following parameters are required to run TEPIC:
-
+The following parameters are required to compute TF affinities in user defined regions:
 * -g The reference genome in plain (uncompressed) FASTA format with Ensembl-style chromosome names (i.e., without "chr" prefix). If a "chr" prefix is present, use the -j option. 
 * -b Regions the user wants to be annotated; chromosome naming compatible to the reference genome file.
 * -o Prefix of the output files.
 * -p File containing position specific energy matrices (PSEM) (see next section for details).
 
-The optional parameters are:
-
+To additionaly compute TF-gene scores, the argument: 
 * -a Genome annotation file (gtf). All genes contained in this file will be annotated. The file must have the original format provided by gencode, gzipped files are not supported. 
+needs to be specified.
+
+Additional command arguments are:
 * -w Size of the window around the TSS of genes.
 * -d Signal of the open chromatin assay in bg format. Used to compute the average per peak signal within the regions specified in -b.
 * -e Boolean controlling exponential decay (default TRUE).
@@ -101,16 +102,30 @@ The optional parameters are:
 
 ## Output 
 Depending on the used arguments, TEPIC produces files containing:
-* TF affinities for all user specified regions (*Prefix_Affinity.txt*)
-* Scaled TF affinities for all user specified regions (*Prefix_Scaled_Affinity.txt*)
-* A file containing the factors used to scale the original TF affinities (*Prefix_Peak_Coverage.txt*)
-* TF affinities along with features for peak length, peak counts and/or the average signal within a peak (*Prefix_Gene_View.txt*)
-* Thresholded TF affinities (*Prefix_Thresholded_Affinities.txt*)
-* Thresholded TF affinity gene-scores (*Prefix_Thresholded_Affinity_Gene_Scores.txt*)
-* A sparse representation that contains only those TF-gene interactions with affinities above an affinity threshold derived from random genomic sequences (*Prefix_Thresholded_Sparse_Affinity_Gene_View.txt*)
+* TF affinities for all user specified regions (*Prefix_Affinity.txt*). These files are always generated.
+* Scaled TF affinities for all user specified regions (*Prefix_Scaled_Affinity.txt*). This is only generated if the -d or -n option is used together with the -x option.
+* A file containing the factors used to scale the original TF affinities (*Prefix_Peak_Coverage.txt*). This is only generated if the -d or -n option is used together with the -x option.
+* TF affinities along with features for peak length, peak counts and/or the average signal within a peak (*Prefix_Gene_View.txt*). This is only generated if the -a option is specified.
+* Thresholded TF affinities (*Prefix_Thresholded_Affinities.txt*). These scores are computed if the -r or -k option is used.
+* Thresholded TF affinity gene-scores (*Prefix_Thresholded_Affinity_Gene_Scores.txt*). This file is generated if the -r or -k option is used together with the -a option. 
+* A sparse representation that contains only those TF-gene interactions with affinities above an affinity threshold derived from random genomic sequences (*Prefix_Thresholded_Sparse_Affinity_Gene_View.txt*). This file is generated if the -r or -k option is used together with the -a option.
+
+The *Prefix_Affinity.txt* files are tab separated files listing the genomic coordinates of candiate regions in the first column and TF affinities in the following columns:
+
+	Genomic Position	TF1	TF2	...	TFn
+	chr1:2321-2340	0.4	0.2	...	4.2
+
+
+The *Prefix_Affinity_Gene_View.txt* files are tab separated files listing the Ensemble GeneID in the first column, TF gene-scores in the following columns and features on peak-length, peak-count, and peak-signal if computed.
+
+	GENEID	TF1	TF2	...	TFn	peak length	peak count	peak signal
+	ENSG00000044612	0.4	0.2	...	4.2	23	3	19.
+
+Further details on the output are provided in the [description](docs/Description.pdf).
+
 
 Each run of TEPIC generates an *analysis meta datafile (amd)* containing all parameters, files, and outputs associated with the last run of TEPIC.
-Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
+Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide *amd* files in the folder
 *MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
 
 Note that the input files **have to** have unix file endings. Using bed graph files to compute the signal in peaks is currently only supported for homo sapiens, mus musculus, and rattus norvegicus.

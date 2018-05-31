@@ -1,6 +1,10 @@
 # TEPIC (version 2.1)
 -------
-Annotation of genomic regions using Transcription factor (TF) binding sites and epigenetic data. Learning of key regulatory TFs in  individual cell types or learning of discriminatory TFs that show a difference in regulation between two cell types.
+TEPIC offers workflows for the prediction and analysis of Transcription Factor (TF) binding sites including:
+* TF affinity computation in user provided regions
+* Computation of continuous and discrete TF-gene scores
+* Linear regression analysis to infer potential key regulators
+* Logistic regression analysis to suggest regulators related to gene expression differences between samples
 
 ## News
 21.05.2018: A new collection of TF motifs is included. They are available in the folder [PWMs/2.1](PWMs/2.1).
@@ -27,22 +31,32 @@ Further, the repository now includes the code required to learn linear models fr
 For further details, please see the [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/INVOKE) section.
 
 ## Introduction
-*TEPIC* segments the genome into user specified regions and annotates those with TF binding using TRAP (1). 
-These predictions are aggregated to gene scores. 
-Within this aggregation TEPIC offers exponential decay (2) and scaling of TF region scores using the signal of an open chromatin assay.
-While computing gene TF scores, TEPIC can perform normalisation for peak length (optionally correcting for the length of the binding motifs as well)
-and produces separate features for peak length, peak count and/or peak signal. These can be used in downstream applications, e.g. to determine
-the influence of chromatin accessiblity on gene expression, without considering detailed information on TF binding. 
-In case a binary assignment of TF binding is required, TEPIC allows to apply a TF specific affinity threshold derived from random genomic sequences that
-show similar characteristica (GC content, length) then the provided regions. 
+*TEPIC* offers a variety of workflows to compute and analyse TF binding site (TFBS) predictions. 
+The core functionality is the fast and efficient annotation of user provided candidate regionss with TF affinities using TRAP (1). 
+These predictions are aggregated to TF-gene scores using a window-based assignment strategy.
 
-Further details on TEPIC can be found in the provided [description](docs/Description.pdf).
+Within this aggregation TEPIC offers exponential decay (2) and scaling of TF region scores using an epigenetic signal, e.g. the signal of an open chromatin assay.
+While computing gene TF scores, TEPIC can perform normalisation for region length (optionally correcting for the length of the binding motifs as well)
+and produces separate features for peak length, peak count and/or peak signal. These features can be used in downstream applications, e.g. to determine
+the influence of chromatin accessiblity on gene expression, without considering detailed information on TF binding. 
+In addition to the continuous TF-affinities, TEPIC offers a discrete assignment of TFs to genes using a TF-specific affinity threshold derived from random genomic sequences that
+show similar characteristics (GC content, length) as compared to the provided regions. 
+Further details on the gene-score computation are provided in the [description](docs/Description.pdf). 
+
+
+*TEPIC* TF-gene scores can be used in several downstream applications to assess the regulatory role of TFs. Three applications are directly supported:
+* Using a linear regression analysis to highlight potential key TFs by predicting gene expression within a sample of interest [MachineLearningPipelines/INVOKE](INVOKE)
+* Suggesting regulators that might be linked to gene-expression differences between samples using a logistic regression classifier [MachineLearningPipelines/DYNAMITE](DYNAMITE)
+* Generating input for DREM to infer time-point specific transcriptional regulators from temporal epigenetics data [MachineLearningPipelines/EPIC-DREM](EPIC-DREM)
+
+Details on the models are provided in the respective subfolders as well as in the [description](docs/Description.pdf)
+Here, we provide a brief description on the core funtionality of TEPIC, the computation of TF-gene scores. 
 
 ## Installing TEPIC
 To run *TEPIC* the following packages/software must be installed:
 * Python (minimum version 2.7)
 * [bedtools](https://github.com/arq5x/bedtools2)
-* A g++ compiler supporting openmp to use the parallel implementation of TRAP.
+* A C++ compiler supporting openmp to use the parallel implementation of TRAP.
 
 To compile the C++ version of TRAP and to install possibly missing R-packages for downstream processing execute the script
 	[Code/compile_TRAP_install_R_packages.sh](Code/compile_TRAP_install_R_packages.sh).
@@ -51,6 +65,68 @@ To use the script [findBackground](Code/findBackground.py), which is necessary t
 * numpy
 * scipy
 * twobitreader
+
+## Using TEPIC
+To start TEPIC, run the script *TEPIC.sh*
+
+    ./TEPIC.sh
+
+The following parameters are required to run TEPIC:
+
+* -g The reference genome in plain (uncompressed) FASTA format with Ensembl-style chromosome names (i.e., without "chr" prefix). If a "chr" prefix is present, use the -j option. 
+* -b Regions the user wants to be annotated; chromosome naming compatible to the reference genome file.
+* -o Prefix of the output files.
+* -p File containing position specific energy matrices (PSEM) (see next section for details).
+
+The optional parameters are:
+
+* -a Genome annotation file (gtf). All genes contained in this file will be annotated. The file must have the original format provided by gencode, gzipped files are not supported. 
+* -w Size of the window around the TSS of genes.
+* -d Signal of the open chromatin assay in bg format. Used to compute the average per peak signal within the regions specified in -b.
+* -e Boolean controlling exponential decay (default TRUE).
+* -n Indicates that the file in -b contains the average signal in the peaks in the specified column. In this case the -d option is not required to obtain scaled TF affinities.
+* -c Number of cores used within TRAP.
+* -f A gtf file containing genes of interest. Only regions contained in the file specified by the -b option that are within the window specified by the -w option around these genes will be annotated. The file must have the original format provided by gencode, gzipped files are not supported.
+* -y Flag indicating whether the entire gene body should be annotated with TF affinities. A window of half the size of the -w option will be additionaly considered upstream of the genes TSS.
+* -l Flag to be set if affinities should not be normalised by peak length.
+* -u Flag to be set if peak features for peak length and peak counts should not be generated.
+* -x If -d or -n is used together with this flag, the original (Decay-)Scaling formulation of TEPIC is used to compute gene-TF scores.
+* -m Path to a tab delimited file containing the length of the used PSEMs. This is incorporated in normalising peak length.
+* -z Flag indicating that the output of TEPIC should be zipped.
+* -k Path to a file containing background regions provided by the user. This option can not be used together with the -r option. 
+* -r Path to a 2bit representation of the reference genome. This is required to compute a TF specific affinity threshold as well as a binary and sparse TF-gene interaction list. This can not be used together with the -k option. 
+* -v p-value cut off used to determine a cut off to derive a binary score for TF binding (default 0.05).
+* -i minutes that should be spend at most per chromosome to find matching random regions (default 3).
+* -j Flag indicating that the reference genome contains a chr prefix. 
+
+## Output 
+Depending on the used arguments, TEPIC produces files containing:
+* TF affinities for all user specified regions (*Prefix_Affinity.txt*)
+* Scaled TF affinities for all user specified regions (*Prefix_Scaled_Affinity.txt*)
+* A file containing the factors used to scale the original TF affinities (*Prefix_Peak_Coverage.txt*)
+* TF affinities along with features for peak length, peak counts and/or the average signal within a peak (*Prefix_Gene_View.txt*)
+* Thresholded TF affinities (*Prefix_Thresholded_Affinities.txt*)
+* Thresholded TF affinity gene-scores (*Prefix_Thresholded_Affinity_Gene_Scores.txt*)
+* A sparse representation that contains only those TF-gene interactions with affinities above an affinity threshold derived from random genomic sequences (*Prefix_Thresholded_Sparse_Affinity_Gene_View.txt*)
+
+Each run of TEPIC generates an *analysis meta datafile (amd)* containing all parameters, files, and outputs associated with the last run of TEPIC.
+Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
+*MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
+
+Note that the input files **have to** have unix file endings. Using bed graph files to compute the signal in peaks is currently only supported for homo sapiens, mus musculus, and rattus norvegicus.
+
+## Example
+To run a trial case of *TEPIC* to compute TF-gene scores, you can use the data provided in the *Test* folder and use the command
+
+	./TEPIC.sh -g ../Test/example_sequence.fa -b ../Test/example_regions.bed -o TEPIC-Example -p ../PWMs/1.0/pwm_vertebrates_jaspar_uniprobe_original.PSEM -a ../Test/example_annotation.gtf -w 3000 -e FALSE
+
+This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.PSEM*, and without exponential decay. 
+
+Additionally, we provide a script to test several annotation versions of TEPIC. Execute the script
+
+	bash runTestCases.sh
+
+to compute multiple trial cases.
 
 
 ## Position specific energy matrices
@@ -172,70 +248,6 @@ In the PSEM format, a matrix has to be in the following structure:
 	
 	5.11834   4.59839   0         5.11834
 	
-
-## Using TEPIC
-To start TEPIC, run the script *TEPIC.sh*
-
-    ./TEPIC.sh
-
-The following parameters are required to run TEPIC:
-
-* -g The reference genome in plain (uncompressed) FASTA format with Ensembl-style chromosome names (i.e., without "chr" prefix). If a "chr" prefix is present, use the -j option. 
-* -b Regions the user wants to be annotated; chromosome naming compatible to the reference genome file.
-* -o Prefix of the output files.
-* -p File containing position specific energy matrices (PSEM).
-
-The optional parameters are:
-
-* -a Genome annotation file (gtf). All genes contained in this file will be annotated. The file must have the original format provided by gencode, gzipped files are not supported. 
-* -w Size of the window around the TSS of genes.
-* -d Signal of the open chromatin assay in bg format. Used to compute the average per peak coverage within the regions specified in -b.
-* -e Boolean controlling exponential decay (default TRUE).
-* -n Indicates that the file in -b contains the average signal in the peaks in the specified column. In this case the -d option is not required to obtain scaled TF affinities.
-* -c Number of cores used within TRAP.
-* -f A gtf file containing genes of interest. Only regions contained in the file specified by the -b option that are within the window specified by the -w option around these genes will be annotated. The file must have the original format provided by gencode, gzipped files are not supported.
-* -y Flag indicating whether the entire gene body should be annotated with TF affinities. A window of half the size of the -w option will be additionaly considered upstream of the genes TSS.
-* -l Flag to be set if affinities should not be normalised by peak length.
-* -u Flag to be set if peak features for peak length and peak counts should not be generated.
-* -x If -d or -n is used together with this flag, the original (Decay-)Scaling formulation of TEPIC is used to compute gene-TF scores.
-* -m Path to a tab delimited file containing the length of the used PSEMs. This is incorporated in normalising peak length.
-* -z Flag indicating that the output of TEPIC should be zipped.
-* -k Path to a file containing background regions provided by the user. This option can not be used together with the -r option. 
-* -r Path to a 2bit representation of the reference genome. This is required to compute a TF specific affinity threshold as well as a binary and sparse TF-gene interaction list. This can not be used together with the -k option. 
-* -v p-value cut off used to determine a cut off to derive a binary score for TF binding (default 0.05).
-* -i minutes that should be spend at most per chromosome to find matching random regions (default 3).
-* -j Flag indicating that the reference genome contains a chr prefix. 
-
-Depending on the used arguments, TEPIC produces files containing:
-* TF affinities for all user specified regions.
-* Scaled TF affinities for all user specified regions.
-* TF affinities for all genes contained in the annotation file.
-* Scaled TF affinities for all genes contained in the annotation file.
-* A file containing the factors used to scale the original TF affinities.
-* TF affinities along with features for peak length, peak counts and/or the average signal within a peak. 
-* Thresholded TF affinities and TF-gene scores.
-* A sparse representation that contains only those TF-gene interactions with affinities above an affinity threshold derived from random genomic sequences.
-
-Each run of TEPIC generates an *analysis meta datafile (amd)* containing all parameters, files, and outputs associated with the last run of TEPIC.
-Together with the provided process xml file, the executed command lines  can be reconstructed (3). We provide amd files in the folder
-*MetaData*. These correspond to the gene scores of the *50kb* and *50kb-S* annotation introduced in the *TEPIC* manuscript.
-
-Note that the input files **have to** have unix file endings. Using bed graph files to compute the signal in peaks is currently only supported for homo sapiens, mus musculus, and
-rattus norvegicus.
-
-## Example
-To run a test trial of *TEPIC*, you can use the data provided in the *Test* folder. You can run it with the command
-
-	./TEPIC.sh -g ../Test/example_sequence.fa -b ../Test/example_regions.bed -o TEPIC-Example -p ../PWMs/1.0/pwm_vertebrates_jaspar_uniprobe_original.PSEM -a ../Test/example_annotation.gtf -w 3000 -e FALSE
-
-This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.PSEM*, and without 
-exponential decay. 
-
-Additionally, we provide a script to test several annotation versions of TEPIC. Execute the script
-
-	bash runTestCases.sh
-
-to compute multiple trial cases.
 
 ## Acknowledgments
 We thank Helge Roider for providing the C++ implementation of TRAP, which we slightly modified to run it in parallel.

@@ -79,6 +79,7 @@ The following parameters are required to compute TF affinities in user defined r
 
 To additionaly compute TF-gene scores, the argument: 
 * -a Genome annotation file (gtf). All genes contained in this file will be annotated. The file must have the original format provided by gencode, gzipped files are not supported. 
+
 needs to be specified.
 
 Additional command arguments are:

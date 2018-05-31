@@ -113,13 +113,13 @@ Depending on the used arguments, TEPIC produces files containing:
 The *Prefix_Affinity.txt* files are tab separated files listing the genomic coordinates of candiate regions in the first column and TF affinities in the following columns:
 
 	Genomic Position	TF1	TF2	...	TFn
-	chr1:2321-2340	0.4	0.2	...	4.2
+	chr1:2321-2340		0.4	0.2	...	4.2
 
 
 The *Prefix_Affinity_Gene_View.txt* files are tab separated files listing the Ensemble GeneID in the first column, TF gene-scores in the following columns and features on peak-length, peak-count, and peak-signal if computed.
 
-	GENEID	TF1	TF2	...	TFn	peak length	peak count	peak signal
-	ENSG00000044612	0.4	0.2	...	4.2	23	3	19.
+	GENEID		TF1	TF2	...	TFn	peak length	peak count	peak signal
+	ENSG00000044612	0.4	0.2	...	4.2	23		3		19.2
 
 Further details on the output are provided in the [description](docs/Description.pdf).
 

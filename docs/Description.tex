@@ -5,28 +5,53 @@
 \usepackage[table,xcdraw]{xcolor}
 \usepackage{hyperref}
 \usepackage{svg}
+\usepackage{geometry}
+\geometry{a4paper, margin=1.1in}
 
 
+
+\date{}
 \begin{document}
-\section*{Computing transcription factor scores using TEPIC}
-\subsection*{Motivation}
+\title{TEPIC 2 - An extended framework for transcription factor binding prediction and integrative epigenomic analysis}
+\maketitle
+
+TEPIC is a versatile framework for the analysis of transcription factor (TF) binding and offers serveral machine learning approaches for integrative analysis of predicted transcription factor binding sites (TFBS) and gene-expression data.
+Briefly, TEPIC offers:
+\begin{itemize}
+\item Annotation of user defined regions with TF affinities using TRAP and a variety of provided TF-motifs,
+\item Aggregation of TF affinities to TF-gene scores,
+\item Computation of statistical scores such as peak-length, peak-count or peak-signal per gene,
+\item Discretisation of continuous TF affinities using a background distribution into a binary measure for TF-binding,
+\item Linear regression analysis to infer key transcriptional regulators within one sample,
+\item Logistic regression classifier to suggest key transcriptional regulators between samples,
+\item Generate input for DREM to infer important TFs from temporal epigenomic and gene expression data.
+\end{itemize}
+
+This document provides a brief introduction into the functionality of TEPIC and the machine learning approaches. 
+
+\newpage
+\section{Introduction to TEPIC}
+\subsection{Motivation}
+TF are essential players in transcriptional regulation. To understand their function, it is essential to know their binding sites genome-wide. 
+Although TFBS can be inferred from ChIP-seq experiments, several in-silico approaches have been developed as well to overcome the burden and complexity of wet-lab experiments.
+Especially computational methods considering epigenetics data in the prediction have been used succesfully to predict TFBS. 
 The main advantage of considering epigenetics data for the task of TF binding prediction is that the number of false positive predictions can be reduced \cite{pmid21106904}.
 One way of incorporating epigenetics data is to reduce the genomic search space to a few candidate regions of TF binding. 
 As shown before, genome-wide candidate sites for TF binding can be determined by open-chromatin experiments \cite{pmid25294828,pmid25086003,pmid22072382,pmid23424114}, e.g. peaks or footprints in DNase1-seq data, 
 and/or by considering Histone marks \cite{pmid25489339,pmid25086003}, e.g. H3K4me3. 
 
-Here, we compute TF affinities for a species specific set of \textit{Position Specific Energy Matrices (PSEM)} using \textit{TRAP} \cite{pmid17098775} which is based on a biophysical model of TF binding \cite{von1986specificity}. 
+Here, we compute TF affinities for currated sets of \textit{Position Specific Energy Matrices (PSEMs)} using \textit{TRAP} \cite{pmid17098775} which is based on a biophysical model of TF binding \cite{von1986specificity}. 
 A major advantage of affinity based predictions compared to hit-based methods like Fimo \cite{Grant16022011} is that 
 low-affinity binding sites can be included \cite{pmid27899623,pmid17098775}. Using the \textit{TEPIC} method, we compute TF gene scores by aggregating TF predictions calculated for a user defined set of candidate regions.
 The scores, either per peak/region or gene, can be interpreted as a quantitative measurement of TF binding. 
 
-\subsection*{Preprocessing of Position Count Matrices (PCM)}
+\subsection{Collection of TF-motifs}
 We obtained \textit{Position Count Matrices (PCMs)} from JASPAR \cite{pmid26531826}, which is also including data from Uniprobe \cite{pmid25378322}, HOCOMOCO \cite{pmid23175603} and the Kellis Lab ENCODE Motif database \cite{pmid24335146}.
 
 There are three folder containing Position specific energy matrices (PSEMs): Our current collection of PSEMs \textit{PWMs/2.1}. The previously used motifs are provided in the folders \textit{PWMs/2.0} and \textit{PWMs/1.0}. 
-The position weight matrices used in the TEPIC manuscript are stored in the file \\\textit{PWMs/1.0/pwm\_vertebrates\_jaspar\_uniprobe\_original.PSEM}.
+TF motifs used in the original TEPIC manuscript are stored in the file \\\textit{PWMs/1.0/pwm\_vertebrates\_jaspar\_uniprobe\_original.PSEM}.
 
-In detail, the current collection contains from the JASPAR 2018 Core database:
+In detail, the current collection contains from the \textit{JASPAR 2018 Core} database:
 \begin{itemize}
 \item 579 PSEMs for vertebrates
 \item 176 PSEMs for fungi
@@ -93,6 +118,8 @@ The matrices are stored in the folder \textit{PWMs/2.1/Clustered\_PSEMs}
 
 Files holding the length of the PSEMs are provided too.
 
+
+\subsection{Converting position count matrices to position specific energy matrices}
 As mentioned above, \textit{TRAP} computes TF affinities that are based on a biophysical model of TF binding.
 Therefore \textit{PCMs} have to be converted to \textit{Position Specific Energy Matrices (PSEMs)} such that they can be used in \textit{TRAP}.
 Intuitively, \textit{PSEMs} represent the mismatch energy of a given motif. For a detailed explanation and motivation of the energy based score, please check \cite{pmid17098775}.
@@ -130,14 +157,11 @@ where $|M|$ denotes the length of the \textit{PCM} as above.
 \end{itemize}
 In all other cases, a default GC-content of $0.42$ is used.
 
-\newpage
-\subsection*{Computing TF gene scores}
-Currently, we offer the annotation of five different species, including the most common model organisms: 
-\textit{homo sapiens, mus musculus, rattus norvegicus, drosophila melanogaster,} and \textit{caenorhabditis elegans}.
-Using our collections of species specific \textit{PSEMs}, \textit{TRAP} computes TF binding affinities in all user provided regions 
+\subsection{Computing TF gene scores}
+Using our collections of \textit{PSEMs}, \textit{TRAP} computes TF binding affinities in all user provided regions 
 that could be found in the reference genomes of the respective species and 
 overlap with a window of user defined size $w$ that is centered at the most $5'$ TSS of all annotated genes in the considered organism. 
-Then, TF gene scores are computed by incorporating all candidate binding sites within the window centered around the $5'$ TSS of genes in the final score. 
+Then, TF-gene scores are computed by incorporating all candidate binding sites within the window centered around the $5'$ TSS of genes in the final score. 
 The contribution of the individual sites is weighted by their distance to the selected TSS with an exponential decay function \cite{pmid19995984}.
 Formally, the TF gene score $a_{g,i}$ for gene $g$ and TF $i$ is computed as
 \begin{align}
@@ -158,9 +182,18 @@ a_{g,i}^{w}&=\sum_{p \in P_{g,w}} {\frac{a_{p,i}}{|p|-|m|}s_{p}e^{-\frac{d_{p,g}
 where $s_p$ is the per base signal in peak $p$. This computation can be done with and without length normalisation of the affinities. 
 The workflow of TEPIC is depicted in Figure \ref{workflowFig}.
 
-In addition to the TF gene scores, TEPIC can compute features for peak length, peak count, and peak signal following the same scoring formulation as for
-TF affinities. These features can be used for example to assess the influence of chromatin accessiblity on gene expression without considering TF binding
-predictions. 
+In addition to the TF gene scores, TEPIC can compute features for peak length ($pl_g$), peak count ($pc_g$), and peak signal($ps_g$) following the same scoring formulation as for
+TF affinities:
+\begin{align}
+pl_g&=\sum_{p \in P_{g,w}}|p|e^{-\frac{d_{p,g}}{d_0}}, \\
+pc_g&=\sum_{p \in P_{g,w}}e^{-\frac{d_{p,g}}{d_0}}, \\
+ps_g&=\sum_{p \in P_{g,w}}s_{p}e^{-\frac{d_{p,g}}{d_0}},
+\end{align}
+where $|p|$ is the length of $p$. These features can be used for example to assess the influence of chromatin accessiblity on gene expression without considering TF binding predictions. 
+
+Furthermore, TEPIC can compute a TF-specific affinity cut-off derived from either user-defined, or randomly generated sequences, to distinguish likely bound sites from unbound sites. These scores
+can be used to come-up with a binary TF-gene assignment. Further details on this mode are provided in Section \ref{EPIC-DREM}.
+
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=\textwidth]{Workflow.png}
@@ -173,30 +206,30 @@ TF binding predictions in open-chromatin regions based on their distance to a ge
 \label{workflowFig}
 \end{figure}
 
-\newpage
-\subsection*{Required input}
+\subsection{Required input}
 To compute TF gene scores a user needs to specify:
 \begin{itemize}
-\item a reference genome,
-\item a set of \textit{PSEMs},
-\item a set of genomic regions in BED format.
+\item a reference genome (-g option),
+\item a set of \textit{PSEMs} (-p option),
+\item a set of genomic regions in BED format (-b option).
+\item a gtf file containing the genome annotation (-a option).
 \end{itemize}
-Note that the chromosome identifiers in the BED file must match the identifiers used in the reference genomes, neglecting the \textit{chr} prefix. 
-Otherwise they can not be considered. 
+Note that the chromosome identifiers in the BED file must match the identifiers used in the reference genomes. Otherwise they can not be considered. 
 Special care should be taken for \textit{caenorhabditis elegans}, as Roman digits are used for enumeration of chromosomes.
 
-\subsection*{Output}
-This step generates the following output:
+\subsection{Output}
+TEPIC outputs:
 \begin{enumerate}
-\item TF affinities for all selected \textit{PSEMs} in the regions provided by the user that passed the filtering step. 
-\item (Length normalised) TF gene scores for all selected \textit{PSEMs} calculated as described above (optionally including peak features). 
-\item A meta data file listing all used parameters.
-\item Optionally a seperate file containing the signal information in peaks. 
+\item TF affinities for all selected \textit{PSEMs} in the regions provided by the user that passed the filtering step (\textit{\*\_Affinity.txt}). 
+\item (Length normalised) TF gene scores for all selected \textit{PSEMs} calculated as described above (optionally including peak features) (\textit{\*\_Affinity\_Gene\_View.txt}). 
+\item A meta data file listing all used parameters (\textit{amd.tsv}).
+\item Optionally a seperate file containing the signal information in peaks (\textit{\*\_Peak\_Coverage.txt}). 
+\item TF affinities with all values below an inferred threshold set to zero (\textit{\*\_Thresholded\_Affinity.txt})
+\item A sparse representation linking TF to genes (\textit{\*\_Sparse\_Affinity\_Gene\_View.txt})
 \end{enumerate}
 
 \newpage
-
-\section*{Identification of key transcriptional regulators using epigenetics data (INVOKE)}
+\section{Identification of key transcriptional regulators using epigenetics data (INVOKE)}
 Epigenetics data contains a wealth of information on gene regulation. It was shown that especially
 data on open-chromatin is well suited to build predictive models of gene-expression \cite{pmid27899623,pmid22955983,pmid25231769,pmid22954627}.
 Interpreting these models allows the inference of regulators that may play a key role in gene-expression regulation.
@@ -213,8 +246,8 @@ should be seen as suggestions and not as the absolute truth.
 \item Learning a linear regression model to predict gene expression from TF gene scores computed in (1).
 \end{enumerate}
 
-\subsection*{Linear regression to predict gene expression}
-\subsubsection*{Motivation}
+\subsection{Linear regression to predict gene expression}
+\subsubsection{Motivation}
 In order to learn about potentially important regulators, we build a linear, interpretable regression model, 
 comparable to methods proposed in \cite{pmid27899623,pmid22955983,pmid25231769,pmid22954627}.
 Here, we use TF gene scores computed with \textit{TEPIC} as features in a linear regression setup to predict gene expression.
@@ -224,7 +257,7 @@ of a large portion of the genes under consideration. However, the results of thi
 
 Details on the learning setup and on the available regularization methods are provided in the next section.
 
-\subsubsection*{Available regularization methods}
+\subsubsection{Available regularization methods}
 We offer three different regularization techniques:
 \begin{itemize}
 \item Lasso:
@@ -252,9 +285,9 @@ Elastic net regularization was designed to overcome the limitations of both regu
 It resolves the correlation between features by distributing the feature weights among them, and simultaneously leads to sparse and stable models \cite{Zou05regularizationand}. 
 However, learning a model using elastic net penalty is slower than using either only Lasso or Ridge regularization.
 
-\subsubsection*{Details on the learning setup}
+\subsubsection{Details on the learning setup}
 The data matrix $X$, containing TF gene scores, and the response vector $y$, containing gene expression values, are log-transformed, 
-with a pseudo-count of $1$, centered and scaled to fit them as. 
+with a pseudo-count of $1$, centered and scaled. 
 Regression coefficients are computed in a inner cross validation,
 the $\alpha$ parameter of elastic net regularization is optimized with a default step size of $0.1$.
 
@@ -272,13 +305,11 @@ Additionally, a model is learned on the entire data set as described in (1) for 
 \end{enumerate}
 All parameters mentioned in this section can be changed by the user. The learning process is sketched in Figure \ref{learningFig}.
 
-\subsubsection*{Required input}
+\subsubsection{Required input}
 In addition to the input required for the computation of TF gene scores in TEPIC, a file containing gene expression data must be provided.
 This file should be structured such that column $1$ contains the gene identifiers and column $2$ holds expression values.
-Besides, we support the upload of a matrix containing gene expression data for several samples. In that case, the user has to select the column/sample that should
-be used for model construction. 
 
-\subsubsection*{Output and hints for interpretation}
+\subsubsection{Output and hints for interpretation}
 The user is always provided with the following files:
 \begin{itemize}
 \item a list of regression coefficients computed on the entire data set,
@@ -308,22 +339,20 @@ The right hand site illustrates model training on the entire data set, again usi
 \end{figure}
 
 \newpage
-\mbox{}
-\newpage
-\section*{Differential analysis to identify novel transcriptional regulators for differentially expressed genes (DYNAMITE)}
+\section{Differential analysis to identify novel transcriptional regulators for differentially expressed genes (DYNAMITE)}
 Although a variety of methods have been proposed to generate genome-wide TF binding predictions [\cite{pmid27899623,pmid22072382,pmid23424114,pmid25086003}] and to establish \textit{TF to tissue} 
 associations [\cite{pmid22955983,pmid19995984,pmid27899623}], systematic, feasible, and easy to use ways of linking TFs to distinct genes are rare. 
 
 In addition to the \textit{INVOKE} analysis, we propose a method to infer the most likely transcriptional regulators for a set of differentially expressed genes. 
 We use TF scores, computed using \textit{TEPIC}, and logistic regression to identify TFs that have explanatory power to distinguish between up- and down-regulated genes. 
 
-\section*{Input}
+\subsection{Input}
 To run \textit{DYNAMITE}, a user most provide candidate regions of TF binding for two groups of samples, $A$ and $B$, e.g. control and disease. 
 These can be derived, for example, by open chromatin experiments such as DNase-seq. 
 It is essential that the candidate regions reflect the characteristics of chromatin organization in the analysed tissues. 
 In addition, a list of differential expressed genes between two groups as well as log2 fold changes of the expression are needed. 
 
-\section*{Method}
+\subsection{Method}
 Our method consits of two parts: (1) gene-TF score computation, and (2) identification of key TFs. 
 \subsection*{Step 1: Computing Gene-TF Scores}
 Using TEPIC, we compute gene-TF scores $g_{ij}$ for all differentially expressed genes $i$ and distinct TFs $j$ considering the provided candidate regions for all replicates $a$ of group $A$ and for all replicates $b$ of group $B$. 
@@ -344,7 +373,7 @@ The feature computation is sketched in Figure \ref{TF-Gene-Score_Computation}.
 \caption{Computation of differential TF features between two groups.}
 \label{TF-Gene-Score_Computation}
 \end{figure}
-\subsection*{Step 2: Identification of Key Transcription Factors}
+\subsection{Step 2: Identification of Key Transcription Factors}
 To identify those TFs that can explain the differential expression state of as many genes as possible, we build a logistic regression classifier. 
 We use matrix $R_{AB}$ computed in Step $1$ as the feature matrix $X$, and a binary vector of gene expression changes as response $y$. 
 An example is shown in Figure \ref{Log-Reg-Example}.
@@ -361,7 +390,7 @@ Model parameters are learned in an inner cross validation, while the accuracy of
 same learning paradigm that is described for the \textit{INVOKE} analysis (Figure \ref{learningFig}). We use the entire dataset for model training and to interpret the regression coefficients.
 TFs that correspond to features with a non-zero regression coefficient can be seen as being essential to explain the observed expression differences and should be further investigated.
 
-\section*{Output}
+\section{Output}
 Model performance is reported in a \textit{txt} file and visually in a bar plot using mean test and training accuracy as well as the F1 measure.
 A heatmap shows the regression coefficients in the outer cross validation folds. 
 Additionaly, we report confusion matrices for the outer cross validation folds.
@@ -380,10 +409,8 @@ scatter plot relat the TF affinities to the observed expression changes. The min
 \end{figure}
 
 \newpage
-\mbox{}
-\newpage
-
-\subsection*{Determine important transcriptional regulators from time serires data (EPIC-DREM)}
+\section{Determine important transcriptional regulators from time serires data (EPIC-DREM)}
+\label{EPIC-DREM}
 \textit{EPIC-DREM} is a combination of \textit{TEPIC}  and the \textit{Dynamic Regulatory Events Miner (DREM)} \cite{pmid17224918}.
 Instead of using static ChIP-seq data, which is provided in \textit{DREM 2.0}, we suggest to use time-point specific TF binding predictions
 based on time-dependent epigenomic profiles. Thereby, \textit{DREM} can infer regulators that can be linked to expression changes at distinct points in time.
@@ -406,19 +433,19 @@ the sparse matrix (j) can be used as input for DREM (l) to identify potential ke
 \label{epicdrem}
 \end{figure}
 
-\subsubsection*{Thresholded TF affinities}
+\subsection{Thresholded TF affinities}
 In some applications it is required to make a binary decision whether a factor is binding or not. 
 To infer this information from TF affinities, \textit{TEPIC} allows the computation of a TF specific affinity threshold by calculating TF affinities on a randomly selected set of genomic regions. When selected by TEPIC, these regions show similar characteristics compared to the provided regions (GC content and length). 
 Alternatively a set of background regions can be provided by the user.
 By applying a user defined p-value on the distribution of affinities computed on the random regions, a threshold is chosen. 
 Per TF, all affinities that are smaller than the selected threshold, are set to zero, thus a sparse matrix with TF-gene interactions can be generated. 
 
-\subsubsection*{Required input}
+\subsubsection{Required input}
 In addition to the input mentioned above, a reference genome in 2bit format is required. 
 Optionally, the user can provide a bed file containing background regions. 
 These replace the automated generation of background sequences. 
 
-\subsubsection*{Output}
+\subsubsection{Output}
 The following output files are generated in addition:
 \begin{enumerate}
 \item TF affinities for all selected \textit{PSEMs} in the regions provided by the user that passed the filtering step, where all affinities below the TF specific thresholds are set to 0.
@@ -427,7 +454,7 @@ The following output files are generated in addition:
 \end{enumerate}
 
 Either (2) or (3) can be combined with RNA-seq data and used as input for \textit{DREM}.
-
+\newpage
 \bibliographystyle{plain}
 \bibliography{Description}
 \end{document} 

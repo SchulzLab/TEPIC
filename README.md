@@ -189,7 +189,7 @@ In detail, the current collection contains from the JASPAR 2018 Core database:
 * 1 PSEM for urochordates
 * 133 PSEMs for insects
 
-Additionally, we provide species specific collections of JASPAR matricies:
+Additionally, we provide species specific collections of JASPAR matrices:
 * 3 PSEMs for Antirrhinum majus
 * 5 PSEMs for Arabidopsis lyrata
 * 440 PSEMs for Arabidopsis thaliana
@@ -246,7 +246,7 @@ Additional position weight matrices can be transformed to a usable format using
 	[Code/PSCM_to_PSEM.cpp](Code/PSCM_to_PSEM.cpp).
 This program converts matrices in TRANSFAC format to the energy format used by TRAP. 
 Details on the parameters used for conversion can be found in the header of the provided files.
-Note that the the character after the P in Transfac format needs to be a zero.
+Note that the character after the P in Transfac format needs to be a zero.
 
 In TRANSFAC format, a matrix has to have the following structure:
 

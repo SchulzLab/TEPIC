@@ -169,12 +169,12 @@ a_{g,i}^{w}&=\sum_{p \in P_{g,w}} a_{p,i}e^{-\frac{d_{p,g}}{d_0}},
 \end{align}
 where $a_{p,i}$ is the affinity of TF $i$ in peak $p$, the set $P_{g,x}$ contains all open-chromatin peaks
 in a window of size $w$ around gene $g$, $d_{p,g}$ is the distance from the center of peak $p$ to the TSS of gene $g$, and $d_0$ is a constant fixed at $5000$bp \cite{pmid19995984}.
-Additionally, affinities can be normalised by peak(and motif)-length during the computation of gene-TF scores:
+Additionally, affinities can be normalized by peak(and motif)-length during the computation of gene-TF scores:
 \begin{align}
 a_{g,i}^{w}&=\sum_{p \in P_{g,w}} {\frac{a_{p,i}}{|p|-|m|}e^{-\frac{d_{p,g}}{d_0}}},
 \end{align}
 where $|p|$ is the length of peak $p$, $|m_i|$ is
-the length of the motif of TF $i$, with a extra count of $1$.
+the length of the motif of TF $i$, with an extra count of $1$.
 If the signal within a peak should be directly considered in the gene-TF score, we compute:
 \begin{align}
 a_{g,i}^{w}&=\sum_{p \in P_{g,w}} {\frac{a_{p,i}}{|p|-|m|}s_{p}e^{-\frac{d_{p,g}}{d_0}}},
@@ -189,7 +189,7 @@ pl_g&=\sum_{p \in P_{g,w}}|p|e^{-\frac{d_{p,g}}{d_0}}, \\
 pc_g&=\sum_{p \in P_{g,w}}e^{-\frac{d_{p,g}}{d_0}}, \\
 ps_g&=\sum_{p \in P_{g,w}}s_{p}e^{-\frac{d_{p,g}}{d_0}},
 \end{align}
-where $|p|$ is the length of $p$. These features can be used for example to assess the influence of chromatin accessiblity on gene expression without considering TF binding predictions. 
+where $|p|$ is the length of $p$. These features can be used for example to assess the influence of chromatin accessibility on gene expression without considering TF binding predictions. 
 
 Furthermore, TEPIC can compute a TF-specific affinity cut-off derived from either user-defined, or randomly generated sequences, to distinguish likely bound sites from unbound sites. These scores
 can be used to come-up with a binary TF-gene assignment. Further details on this mode are provided in Section \ref{EPIC-DREM}.
@@ -221,7 +221,7 @@ Special care should be taken for \textit{caenorhabditis elegans}, as Roman digit
 TEPIC outputs:
 \begin{enumerate}
 \item TF affinities for all selected \textit{PSEMs} in the regions provided by the user that passed the filtering step (\textit{\*\_Affinity.txt}). 
-\item (Length normalised) TF gene scores for all selected \textit{PSEMs} calculated as described above (optionally including peak features) (\textit{\*\_Affinity\_Gene\_View.txt}). 
+\item (Length normalized) TF gene scores for all selected \textit{PSEMs} calculated as described above (optionally including peak features) (\textit{\*\_Affinity\_Gene\_View.txt}). 
 \item A meta data file listing all used parameters (\textit{amd.tsv}).
 \item Optionally a seperate file containing the signal information in peaks (\textit{\*\_Peak\_Coverage.txt}). 
 \item TF affinities with all values below an inferred threshold set to zero (\textit{\*\_Thresholded\_Affinity.txt})
@@ -449,7 +449,7 @@ These replace the automated generation of background sequences.
 The following output files are generated in addition:
 \begin{enumerate}
 \item TF affinities for all selected \textit{PSEMs} in the regions provided by the user that passed the filtering step, where all affinities below the TF specific thresholds are set to 0.
-\item (Length normalised) TF gene scores for all selected \textit{PSEMs} calculated as described above (optionally including peak features) using the thresholded affinities.
+\item (Length normalized) TF gene scores for all selected \textit{PSEMs} calculated as described above (optionally including peak features) using the thresholded affinities.
 \item A sparse representation of TF gene interactions.
 \end{enumerate}
 

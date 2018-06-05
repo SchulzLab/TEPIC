@@ -6,7 +6,7 @@ TEPIC offers workflows for the prediction and analysis of Transcription Factor (
 * Linear regression analysis to infer potential key regulators
 * Logistic regression analysis to suggest regulators related to gene expression differences between samples
 
-A graphical overview on the workflows of TEPIC is shown below. Gray font indicates input, black italic font indicates output.
+A graphical overview on the workflows of TEPIC is shown below. Blue font indicates input, black italic font indicates output.
 ![](docs/TEPIC_Workflow.png)
 
 ## News

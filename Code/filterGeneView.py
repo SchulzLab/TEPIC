@@ -3,10 +3,10 @@ import sys
 #Removes genes for which no score good be computed
 
 def isValidAffinity(lineSplit):
-	for i in xrange(1,len(lineSplit)):
+	for i in range(1,len(lineSplit)):
 		if ("ENSG" in lineSplit[i]):
 			return False
-	for i in xrange(1,len(lineSplit)):
+	for i in range(1,len(lineSplit)):
 		if (float(lineSplit[i]) != 0.0):
 			return True	
 	return False

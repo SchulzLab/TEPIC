@@ -326,7 +326,7 @@ def createAffinityFileAffintiesOnly(affinities,tfNames,filename,tss):
 				line+='\t'+str(entry)
 		else:
 			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
-			for i in xrange(0,len(tfNames)):
+			for i in range(0,len(tfNames)):
 				line+='\t'+str(0.0)
 		output.write(line+'\n')
 	output.close()
@@ -347,7 +347,7 @@ def createAffinityFileAffinitiesPeakCountsLength(affinities,peakCounts,peakLengt
 				line+='\t'+str(entry)
 		else:
 			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
-			for i in xrange(0,len(tfNames)):
+			for i in range(0,len(tfNames)):
 				line+='\t'+str(0.0)
 		if (Gene in peakCounts):
 			line+='\t'+str(peakCounts[Gene])
@@ -376,7 +376,7 @@ def createAffinityFileAffinitiesPeakCountsLengthSignal(affinities,peakCounts,pea
 				line+='\t'+str(entry)
 		else:
 			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
-			for i in xrange(0,len(tfNames)):
+			for i in range(0,len(tfNames)):
 				line+='\t'+str(0.0)
 		if (Gene in peakCounts):
 			line+='\t'+str(peakCounts[Gene])
@@ -409,7 +409,7 @@ def createAffinityFileAffinitiesSignal(affinities,peakSignal,tfNames,filename,ts
 				line+='\t'+str(entry)
 		else:
 			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
-			for i in xrange(0,len(tfNames)):
+			for i in range(0,len(tfNames)):
 				line+='\t'+str(0.0)
 		if (Gene in peakSignal):
 			line+='\t'+str(peakSignal[Gene])
@@ -467,7 +467,7 @@ def createSparseFile(affinities,tfNames,filename,tss):
 		if (Gene in  affinities):
 			geneID=str(Gene.replace("\"","").replace(";","").split(".")[0])
 			temp=affinities[Gene]
-			for i in xrange(0,len(tfNames)):
+			for i in range(0,len(tfNames)):
 				if (float(temp[i]) > 0):
 					output.write(str(geneID)+"\t"+str(tfNames[i])+"\t1\n")
 	output.close()
@@ -475,7 +475,7 @@ def createSparseFile(affinities,tfNames,filename,tss):
 
 def makeTupels(values,names):
 	l=[]
-	for i in xrange(0,len(values)-1):
+	for i in range(0,len(values)-1):
 		l+=[(names[i],values[i])]
 	return l
 

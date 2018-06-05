@@ -6,13 +6,13 @@ import sys
 #argv4 Filtered pValue Score file
 
 def isValidAffinity(lineSplit):
-	for i in xrange(1,len(lineSplit)):
+	for i in range(1,len(lineSplit)):
 		if (float(lineSplit[i]) != 0):
 			return True	
 	return False
 
 def isValidpValue(lineSplit):
-	for i in xrange(1,len(lineSplit)):
+	for i in range(1,len(lineSplit)):
 		if (float(lineSplit[i]) != 1):
 			return True	
 	return False

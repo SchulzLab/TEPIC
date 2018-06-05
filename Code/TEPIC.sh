@@ -246,7 +246,7 @@ then
 fi
 if [ -n "$randomGenome" ];
 then
-	echo "minutes	"$minutes >> $metadatafile
+  echo "minutes	"$minutes >> $metadatafile
 	echo "p-value	"$pvalue >> $metadatafile
 	echo "sparse_affinity_gene_view	"${prefix}${decayout}"_Sparse_Affinity_Gene_View_Filtered.txt" >> $metadatafile
 fi

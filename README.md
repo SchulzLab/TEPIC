@@ -6,6 +6,9 @@ TEPIC offers workflows for the prediction and analysis of Transcription Factor (
 * Linear regression analysis to infer potential key regulators
 * Logistic regression analysis to suggest regulators related to gene expression differences between samples
 
+A graphical overview on the workflows of TEPIC is shown below. Gray font indicates input, black italic font indicates output.
+![](docs/TEPIC_Workflow.png)
+
 ## News
 21.05.2018: A new collection of TF motifs is included. They are available in the folder [PWMs/2.1](PWMs/2.1).
 
@@ -29,6 +32,7 @@ peak signal and TF affinities or by generating a separate signal feature.
 
 Further, the repository now includes the code required to learn linear models from TF gene scores to predict gene expression.
 For further details, please see the [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/INVOKE) section.
+
 
 ## Introduction
 *TEPIC* offers a variety of workflows to compute and analyse TF binding site (TFBS) predictions. 

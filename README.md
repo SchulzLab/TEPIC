@@ -236,14 +236,14 @@ Additionally we provide non-redundant collections for homo sapiens and mus muscu
 * 561 PSEMS for homo sapiens
 * 380 PSEMs for mus musculus
 
-The matrices are stored in the folder [PWMs/2.1/Merged_PSEMs](PWMs/2.1/Merged_PSEMs)
+The matrices are stored in the folder [PWMs/2.1/Merged_PSEMs](PWMs/2.1/Merged_PSEMs).
 
 
-Furthermore, we used a motif clustering approach (7), to merge similar motifs of the files containing matrices from all three sources. This lead to
+Furthermore, we used a motif clustering approach (7), to merge similar motifs of the files containing matrices from all three sources. This led to
 * 483 PSEMs for homo sapiens
 * 306 PSEMs for mus musculus
 
-The matrices are stored in the folder [PWMs/2.1/Clustered_PSEMs](PWMs/2.1/Clustered_PSEMs)
+The matrices are stored in the folder [PWMs/2.1/Clustered_PSEMs](PWMs/2.1/Clustered_PSEMs).
 
 Files holding the length of the PSEMs are provided too. 
 
@@ -300,7 +300,7 @@ In the PSEM format, a matrix has to be in the following structure:
 	
 
 ## Acknowledgments
-We thank Helge Roider for providing the C++ implementation of TRAP, which we slightly modified to run it in parallel.
+We thank Helge Roider for providing the C++ implementation of TRAP, which we slightly modified for running in parallel.
 
 ## Citation
 If you are using TEPIC and/or [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/INVOKE) please cite:

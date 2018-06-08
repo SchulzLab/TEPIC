@@ -357,7 +357,7 @@ if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 then
 echo "Discretising TF affinities"
 Rscript ${working_dir}/IdentifyCut-Offs.R ${affinity}_Random ${affinity}_temp ${prefix}_Filtered_Affinities_temp.txt ${pvalue}
-rm ${affinity}_Random
+#rm ${affinity}_Random
 fi
 
 #Computing DNase Coverage in Peak regions

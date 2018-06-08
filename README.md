@@ -40,26 +40,27 @@ The core functionality is the fast and efficient annotation of user provided can
 These predictions are aggregated to TF-gene scores using a window-based assignment strategy.
 
 Within this aggregation TEPIC offers exponential decay (2) and scaling of TF region scores using an epigenetic signal, e.g. the signal of an open chromatin assay.
-While computing gene TF scores, TEPIC can perform normalisation for region length (optionally correcting for the length of the binding motifs as well)
+While computing TF-gene scores, TEPIC can perform normalisation for region length (optionally correcting for the length of the binding motifs as well)
 and produces separate features for peak length, peak count and/or peak signal. These features can be used in downstream applications, e.g. to determine
 the influence of chromatin accessiblity on gene expression, without considering detailed information on TF binding. 
 In addition to the continuous TF-affinities, TEPIC offers a discrete assignment of TFs to genes using a TF-specific affinity threshold derived from random genomic sequences that
 show similar characteristics (GC content, length) as compared to the provided regions. 
-Further details on the gene-score computation are provided in the [description](docs/Description.pdf). 
+Further details on the score computation are provided in the [description](docs/Description.pdf). 
 
 
 *TEPIC* TF-gene scores can be used in several downstream applications to assess the regulatory role of TFs. Three applications are directly supported:
-* Using a linear regression analysis to highlight potential key TFs by predicting gene expression within a sample of interest [MachineLearningPipelines/INVOKE](INVOKE)
-* Suggesting regulators that might be linked to gene-expression differences between samples using a logistic regression classifier [MachineLearningPipelines/DYNAMITE](DYNAMITE)
-* Generating input for DREM to infer time-point specific transcriptional regulators from temporal epigenetics data [MachineLearningPipelines/EPIC-DREM](EPIC-DREM)
+* Using a linear regression analysis to highlight potential key TFs by predicting gene expression within a sample of interest [MachineLearningPipelines/INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/INVOKE)
+* Suggesting regulators that might be linked to gene-expression differences between samples using a logistic regression classifier [MachineLearningPipelines/DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/DYNAMITE)
+* Generating input for DREM to infer time-point specific transcriptional regulators from temporal epigenetics data [MachineLearningPipelines/EPIC-DREM](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/EPIC-DREM)
 
-Details on the models are provided in the respective subfolders as well as in the [description](docs/Description.pdf)
+Details on the models are provided in the respective subfolders as well as in the [description](docs/Description.pdf).
 Here, we provide a brief description on the core funtionality of TEPIC, the computation of TF-gene scores. 
 
 ## Installing TEPIC
 To run *TEPIC* the following packages/software must be installed:
 * Python (minimum version 2.7)
-* [bedtools](https://github.com/arq5x/bedtools2)
+* [bedtools](https://github.com/arq5x/bedtools2): Installation instructions for bedtools can be found [here](http://bedtools.readthedocs.io/en/latest/content/installation.html). Please make sure to add
+the bedtools installation to your path.
 * A C++ compiler supporting openmp to use the parallel implementation of TRAP.
 
 To compile the C++ version of TRAP and to install possibly missing R-packages for downstream processing execute the script
@@ -71,7 +72,7 @@ To use the script [findBackground](Code/findBackground.py), which is necessary t
 * twobitreader
 
 ## Using TEPIC
-To start TEPIC, run the script *TEPIC.sh*
+To start TEPIC, run the script *TEPIC.sh*, located in the folder *Code*.
 
     ./TEPIC.sh
 
@@ -169,13 +170,13 @@ To run a trial case of *TEPIC* to compute TF-gene scores, you can use the data p
 
 	./TEPIC.sh -g ../Test/example_sequence.fa -b ../Test/example_regions.bed -o TEPIC-Example -p ../PWMs/1.0/pwm_vertebrates_jaspar_uniprobe_original.PSEM -a ../Test/example_annotation.gtf -w 3000 -e FALSE
 
-This will generate gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.PSEM*, and without exponential decay. 
+This will generate TF-gene scores for the genes contained in *example_annotation.gtf*, using a window of size 3000bp, all pwms contained in *pwm_vertebrates_jaspar_uniprobe_converted.PSEM*, and without exponential decay. 
 
 Additionally, we provide a script to test several annotation versions of TEPIC. Execute the script
 
 	bash runTestCases.sh
 
-to compute multiple trial cases.
+to compute multiple trial cases. The script can be found in the folder *Test*.
 
 
 ## Position specific energy matrices
@@ -250,7 +251,7 @@ Additional position weight matrices can be transformed to a usable format using
 	[Code/PSCM_to_PSEM.cpp](Code/PSCM_to_PSEM.cpp).
 This program converts matrices in TRANSFAC format to the energy format used by TRAP. 
 Details on the parameters used for conversion can be found in the header of the provided files.
-Note that the character after the P in Transfac format needs to be a zero.
+Note that the character after the P in TRANSFAC format needs to be a zero.
 
 In TRANSFAC format, a matrix has to have the following structure:
 

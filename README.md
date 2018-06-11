@@ -2,9 +2,9 @@
 -------
 TEPIC offers workflows for the prediction and analysis of Transcription Factor (TF) binding sites including:
 * TF affinity computation in user provided regions
-* Computation of continuous and discrete TF-gene scores
-* Linear regression analysis to infer potential key regulators
-* Logistic regression analysis to suggest regulators related to gene expression differences between samples
+* Computation of continuous and discrete TF-gene scores 
+* Linear regression analysis to infer potential key regulators (INVOKE)
+* Logistic regression analysis to suggest regulators related to gene expression differences between samples (DYNAMITE)
 
 A graphical overview on the workflows of TEPIC is shown below. Blue font indicates input, black italic font indicates output.
 ![](docs/TEPIC_Workflow.png)

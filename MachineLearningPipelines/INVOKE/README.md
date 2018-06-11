@@ -11,6 +11,7 @@ Identification of key transcriptional regulators using epigenetics data
 potentially important transcriptional regulators by predicting gene expression from *TEPIC* TF-gene scores. 
 
 Further details on INVOKE can be found in the provided [description](/docs/Description.pdf).
+INVOKE is available at [TEPIC/tree/master/MachineLearningPipelines/INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/INVOKE).
 
 ## Installing TEPIC
 To run *INVOKE* the following packages/software must be installed additionally to TEPIC:
@@ -28,7 +29,7 @@ by TEPIC with gene expression data to generate the correct input [integrateData.
 
 The gene expression data file is a two column, tab delimited file, including a header, with EnsembleGeneIDs in the the first column and
 gene expression values in the second column. An example gene expression file is provided as well: 
-[ExampleData/S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1.bed](S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1.bed).
+[ExampleData/S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1.bed](https://github.com/SchulzLab/TEPIC/blob/master/MachineLearningPipelines/INVOKE/ExampleData/S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1.bed).
 
 ## Using INVOKE
 INVOKE can be used in two different ways:

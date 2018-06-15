@@ -111,7 +111,7 @@ Depending on the used arguments, TEPIC produces files containing:
 * TF affinities for all user specified regions (*Prefix_Affinity.txt*). These files are always generated.
 * Scaled TF affinities for all user specified regions (*Prefix_Scaled_Affinity.txt*). This is only generated if the -d or -n option is used together with the -x option.
 * A file containing the factors used to scale the original TF affinities (*Prefix_Peak_Coverage.txt*). This is only generated if the -d or -n option is used together with the -x option.
-* TF affinities along with features for peak length, peak counts and/or the average signal within a peak (*Prefix_Gene_View.txt*). This is only generated if the -a option is specified.
+* TF affinities along with features for peak length, peak counts and/or the average signal within a peak (*Prefix_Affinity_Gene_View.txt*). This is only generated if the -a option is specified.
 * Thresholded TF affinities (*Prefix_Thresholded_Affinities.txt*). These scores are computed if the -r or -k option is used.
 * Thresholded TF affinity gene-scores (*Prefix_Thresholded_Affinity_Gene_Scores.txt*). This file is generated if the -r or -k option is used together with the -a option. 
 * A sparse representation that contains only those TF-gene interactions with affinities above an affinity threshold derived from random genomic sequences (*Prefix_Thresholded_Sparse_Affinity_Gene_View.txt*). This file is generated if the -r or -k option is used together with the -a option.

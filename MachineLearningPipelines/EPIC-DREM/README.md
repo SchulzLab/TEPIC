@@ -12,7 +12,7 @@ Using epigenetics data in the dynamic regulatory events miner
 identify TFs that can be associated to gene-expression changes occuring over time.
 
 Further details on EPIC-DREM can be found in the provided [description](/docs/Description.pdf) as well as
-in the manuscripts (0,8).
+in the manuscripts (1,2).
 
 ## Installing TEPIC
 To run *EPIC-DREM* the following packages/software must be installed additionally to TEPIC:
@@ -68,20 +68,17 @@ the *DREM* software can be used to obtain:
 * gene tables per path indicating coexpressed/coregulated genes,
 * the network of splits itself.
 
-Further details can be found in (8).
+Further details can be found in (2).
 
 ## Citation
 If you are using EPIC-DREM please cite:
 
-(0) **Temporal epigenomic profiling identifies AHR as dynamic super-enhancer controlled regulator of mesenchymal multipotency**,
+(1) **Temporal epigenomic profiling identifies AHR as dynamic super-enhancer controlled regulator of mesenchymal multipotency**,
 Deborah Gerard, Florian Schmidt, Aurelien Ginolhac, Martine Schmitz, Rashi Halder, Peter Ebert, Marcel H. Schulz, Thomas Sauter, Lasse Sinkkonen; bioRxiv; 2017
 [full text](https://www.biorxiv.org/content/early/2017/11/17/183988) 
 
-Other works that have influenced ours:
-> (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.
-> (2) ChIP-Seq of transcription factors predicts absolute and differential gene expression in embryonic stem cells, Ouyang Z, et al.,  PNAS, 2009.
-> (3) A general concept for consistent documentation of computational analyses, Ebert P, et al.,  Database, 2015.
-> (4) JASPAR: an open-access database for eukaryotic transcription factor binding profiles, Sandelin A., et al., Nucleic Acids Research, 2004.
-> (5) HOCOMOCO: a comprehensive collection of human transcription factor binding sites models , Kulakovskiy Ivan V., et al., Nucleic Acids Research, 2013.
-> (6) Systematic discovery and characterization of regulatory motifs in ENCODE TF binding experiments, Kheradpour P, and Kellis M, Nucleic Acids Research, 2013.
-> (7) Reconstructing Dynamic Regulatory Maps, Ernst J, et al., Nature-EMBO Molecular Systems Biology, 3:74, 2007.
+(2) **DREM 2.0: Improved reconstruction of dynamic regulatory networks from time-series expression data **,
+Marcel H. Schulz, William E Devanny, Anthony Gitter, Shan Zhong, Jason Ernst, Ziv Bar-Joseph; BMC Systems Biology, 2012,
+[full text](https://bmcsystbiol.biomedcentral.com/track/pdf/10.1186/1752-0509-6-104)
+
+

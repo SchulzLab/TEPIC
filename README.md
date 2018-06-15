@@ -36,7 +36,7 @@ For further details, please see the [INVOKE](https://github.com/SchulzLab/TEPIC/
 
 ## Introduction
 *TEPIC* offers a variety of workflows to compute and analyse TF binding site (TFBS) predictions. 
-The core functionality is the fast and efficient annotation of user provided candidate regionss with TF affinities using TRAP (1). 
+The core functionality is the fast and efficient annotation of user provided candidate regions with TF affinities using TRAP (1). 
 These predictions are aggregated to TF-gene scores using a window-based assignment strategy.
 
 Within this aggregation TEPIC offers exponential decay (2) and scaling of TF region scores using an epigenetic signal, e.g. the signal of an open chromatin assay.
@@ -82,7 +82,7 @@ The following parameters are required to compute TF affinities in user defined r
 * -o Prefix of the output files.
 * -p File containing position specific energy matrices (PSEM) (see next section for details).
 
-To additionaly compute TF-gene scores, the argument: 
+To additionally compute TF-gene scores, the argument: 
 * -a Genome annotation file (gtf). All genes contained in this file will be annotated. The file must have the original format provided by gencode, gzipped files are not supported. 
 
 needs to be specified.

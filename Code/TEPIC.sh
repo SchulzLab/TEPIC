@@ -279,7 +279,7 @@ fi
 if [ -n "$filter" ];
 then
 echo "Filter total peak set"
-python ${working_dir}/generateIntersectionWindows.py ${filter} ${window} ${geneBody} > ${prefix}_gene_windows.temp.bed 
+python ${working_dir}/generateIntersectionWindows.py ${filter} ${window} ${geneBody} ${transcripts} > ${prefix}_gene_windows.temp.bed 
 bedtools intersect -b ${prefix}_gene_windows.temp.bed -a ${filteredRegions}_sorted.bed -u > ${filteredRegions}_temp.bed
 mv ${filteredRegions}_temp.bed ${filteredRegions}_sorted.bed
 rm ${prefix}_gene_windows.temp.bed 

@@ -2,13 +2,16 @@ import sys
 
 def main():
 	infile=open(sys.argv[1],"r")
-	identifier="start_codon"
-	for l in infile:
-		if ("#" not in l):
-			s=l.split()
-			if (s[2]=="gene"):
-				identifier="gene"
-				break
+	if (sys.argv[4]=="TRUE"):
+		identifier="transcript"
+	else:
+		identifier="start_codon"
+		for l in infile:
+			if ("#" not in l):
+				s=l.split()
+				if (s[2]=="gene"):
+					identifier="gene"
+					break
 	infile.close()
 	genebody=sys.argv[3]
 

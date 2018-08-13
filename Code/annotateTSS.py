@@ -10,16 +10,21 @@ from SortedCollection import SortedCollection
 
 #Computing per gene TF affinities
 #Reads a gtf file and generates a dictionary (key:gene, item:(#chromosom,TSS))
-def readGTF(filename):
+def readGTF(filename,tA):
 	gtf=open(sys.argv[1],"r")
 	open(filename,"r")
 	identifier="start_codon"
-	for l in gtf:
-		s=l.split()
-		if (len(s) >=9):
-			if (s[2]=="gene"):
-				identifier="gene"
-				break
+	idIndex=9
+	if (tA==True):
+		identifier="transcript"
+		idIndex=11
+	else:
+		for l in gtf:
+			s=l.split()
+			if (len(s) >=9):
+				if (s[2]=="gene"):
+					identifier="gene"
+					break
 	gtf.close()
 	gtf=open(filename,"r")
 	tss={}
@@ -28,17 +33,17 @@ def readGTF(filename):
 		if (len(s) >=9):
 			if (s[2]==identifier):
 				if (s[6]=="+"):
-					if (s[9] in tss):
-						if (int(s[3]) < tss[s[9]][1]):
-							tss[s[9]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
+					if (s[idIndex] in tss):
+						if (int(s[3]) < tss[s[idIndex]][1]):
+							tss[s[idIndex]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
 					else:
-						tss[s[9]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
+						tss[s[idIndex]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
 				else:
-					if (s[9] in tss):
-						if (int(s[4]) > tss[s[9]][1]):
-							tss[s[9]]=(s[0].replace("chr",""),(int(s[4]),int(s[3])))
+					if (s[idIndex] in tss):
+						if (int(s[4]) > tss[s[idIndex]][1]):
+							tss[s[idIndex]]=(s[0].replace("chr",""),(int(s[4]),int(s[3])))
 					else:
-						tss[s[9]]=(s[0].replace("chr",""),(int(s[4]),int(s[3])))
+						tss[s[idIndex]]=(s[0].replace("chr",""),(int(s[4]),int(s[3])))
 	gtf.close()
 	return tss,identifier
 
@@ -514,6 +519,7 @@ def main():
 	parser.add_argument("--normaliseLength",nargs="?",help="Normalises the TF affinities with the total peak length. Default is False.",default="False")
 	parser.add_argument("--motifLength",nargs="?",help="File containing the length of the used motifs. Used to adapt the length normalisation such that long motifs are not downweighted compared to short ones",default=None)
 	parser.add_argument("--onlyPeakFeatures",nargs="?",help="Generates an additional output file that contains only peak based features per gene. Default is False.",default="False")
+	parser.add_argument("--transcript",nargs="?",help="Extract the position of transcripts from the gtf file and generate a transcript based annotation instead of a gene centric one. Default is False.",default="False")
 	args=parser.parse_args() 
 
 	prefixs=args.affinity[0].split(".")
@@ -549,7 +555,7 @@ def main():
 		normaliseLength=True
 		addPeakFT=True
 	
-	if (args.sparseRep.upper()=="FALSE") or (args.sparseRep=="0") or (args.sparseRep.upper()=="F"):
+	if (args.sparseRep.upper()=="FALSE") or (args.sparseRep.upper()=="0") or (args.sparseRep.upper()=="F"):
 		sparseRep=False
 	else:
 		sparseRep=True
@@ -558,10 +564,15 @@ def main():
 		onlyPeakFeatures=False
 	else:
 		onlyPeakFeatures=True
+
+	if (args.transcript.upper()=="FALSE") or (args.transcript.upper()=="0") or (args.transcript.upper()=="F"):
+		transcriptAnnotation=False
+	else:
+		transcriptAnnotation=True
 	
 	#Check arguments
 	#Extract TSS of GTF files
-	tss,identifier=readGTF(args.gtf[0])                                                                                                                                   
+	tss,identifier=readGTF(args.gtf[0],transcriptAnnotation)   
 	if (identifier=="start_codon"):
 		geneBody=False
 		print("Gene Body parameter forced to be false, due to incompatible gene annotation")

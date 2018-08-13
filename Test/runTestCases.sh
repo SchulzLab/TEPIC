@@ -67,4 +67,7 @@ echo ""
 echo TestV23: Windows 3kb - Annotation - No Decay - Length Normalised - Peak Features - Signal Feature - File with only peak features
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V23 -p ../PWMs/2.0/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e FALSE -n 4 -q TRUE
 echo ""
+echo TestV24: Windows 3kb - Annotation - No Decay - Length Normalised - Peak Features - transcript based annotation
+bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V24 -p ../PWMs/2.0/human_jaspar_hoc_kellis.PSEM  -a example_annotation.gtf  -w 3000 -e FALSE -n 4 -t
+echo ""
 

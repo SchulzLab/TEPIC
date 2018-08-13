@@ -10,6 +10,8 @@ A graphical overview on the workflows of TEPIC is shown below. Blue font indicat
 ![](docs/TEPIC_Workflow.png)
 
 ## News
+13.08.2018: In addition to the gene-centric annotation, the functionality for transcript based annotation has been added.
+
 21.05.2018: A new collection of TF motifs is included. They are available in the folder [PWMs/2.1](PWMs/2.1).
 
 03.05.2018: INVOKE now supports computing a F-test to judge the importance of individual features.
@@ -97,6 +99,7 @@ Additional command arguments are:
 * -y Flag indicating whether the entire gene body should be annotated with TF affinities. A window of half the size of the -w option will be additionaly considered upstream of the genes TSS.
 * -l Flag to be set if affinities should not be normalised by peak length.
 * -u Flag to be set if peak features for peak length and peak counts should not be generated.
+* -q Parameter to be set if only peak features should be generated (default FALSE).
 * -x If -d or -n is used together with this flag, the original (Decay-)Scaling formulation of TEPIC is used to compute gene-TF scores.
 * -m Path to a tab delimited file containing the length of the used PSEMs. This is incorporated in normalising peak length.
 * -z Flag indicating that the output of TEPIC should be zipped.
@@ -105,6 +108,7 @@ Additional command arguments are:
 * -v p-value cut off used to determine a cut off to derive a binary score for TF binding (default 0.05).
 * -i minutes that should be spend at most per chromosome to find matching random regions (default 3).
 * -j Flag indicating that the reference genome contains a chr prefix. 
+* -t Flag indicating that the annotation should be based on transcripts, not on genes.
 
 ## Output 
 Depending on the used arguments, TEPIC produces files containing:

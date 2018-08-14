@@ -435,7 +435,7 @@ then
 		fi
 	else
 		python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--geneBody" $geneBody "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures} "--transcript" ${transcripts}
-	fi
+	fi 
 	if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 	then
 		if [ -n "$dnase" ] ||  [ -n "$column" ] ;

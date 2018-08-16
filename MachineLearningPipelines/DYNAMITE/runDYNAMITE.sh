@@ -217,27 +217,27 @@ then
 	if [ -z "$coverage_Files_Group1" ] && [ -z "$coverage_Column_Group1" ] && [ -z "$coverage_Files_Group2" ] && [ -z "$coverage_Column_Group2" ] ; 
 	then
 		echo python ${scriptPath}/computeMeanRatioTFAffinities.py $outputDirectory/Affinities/group1/ $outputDirectory/Affinities/group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt"  "False" $peakFeatures
-		python3.4 ${scriptPath}/computeMeanRatioTFAffinities.py $outputDirectory/Affinities/group1/ $outputDirectory/Affinities/group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "False" $peakFeatures
+		python ${scriptPath}/computeMeanRatioTFAffinities.py $outputDirectory/Affinities/group1/ $outputDirectory/Affinities/group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "False" $peakFeatures
 	else
 		echo python ${scriptPath}/computeMeanRatioTFAffinities.py $outputDirectory/Affinities/group1/ $outputDirectory/Affinities/group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "True" $peakFeatures
-		python3.4 ${scriptPath}/computeMeanRatioTFAffinities.py $outputDirectory/Affinities/group1/ $outputDirectory/Affinities/group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "True" $peakFeatures
+		python ${scriptPath}/computeMeanRatioTFAffinities.py $outputDirectory/Affinities/group1/ $outputDirectory/Affinities/group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "True" $peakFeatures
 	fi
 	else
 
 	if [ -z "$coverage_Files_Group1" ] && [ -z "$coverage_Column_Group1" ] && [ -z "$coverage_Files_Group2" ] && [ -z "$coverage_Column_Group2" ] ;
 	then
 		echo python ${scriptPath}/computeMeanRatioTFAffinities.py $existing_TEPIC_Results_Group1/ $existing_TEPIC_Results_Group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "False" $peakFeatures
-		python3.4 ${scriptPath}/computeMeanRatioTFAffinities.py $existing_TEPIC_Results_Group1/ $existing_TEPIC_Results_Group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "False" $peakFeatures
+		python ${scriptPath}/computeMeanRatioTFAffinities.py $existing_TEPIC_Results_Group1/ $existing_TEPIC_Results_Group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "False" $peakFeatures
 	else
 		echo python ${scriptPath}/computeMeanRatioTFAffinities.py $existing_TEPIC_Results_Group1/ $existing_TEPIC_Results_Group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "True" $peakFeatures
-		python3.4 ${scriptPath}/computeMeanRatioTFAffinities.py $existing_TEPIC_Results_Group1/ $existing_TEPIC_Results_Group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "True" $peakFeatures
+		python ${scriptPath}/computeMeanRatioTFAffinities.py $existing_TEPIC_Results_Group1/ $existing_TEPIC_Results_Group2/ $outputDirectory"/Affinities/Mean/Mean_Affinities_group1.txt" $outputDirectory"/Affinities/Mean/Mean_Affinities_group2.txt" $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" "True" $peakFeatures
 	fi
 fi
 
 echo "Combining TF affinities with differential gene expression data"
 mkdir -p $outputDirectory"/IntegratedData/Log2"
 echo python ${scriptPath}/integrateData.py $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" $differential_Gene_Expression_Data $outputDirectory"/IntegratedData/Log2/Integrated_Data_Log2_Quotient.txt"
-python3.4 ${scriptPath}/integrateData.py $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" $differential_Gene_Expression_Data $outputDirectory"/IntegratedData/Log2/Integrated_Data_Log2_Quotient.txt"
+python ${scriptPath}/integrateData.py $outputDirectory"/Affinities/Ratio/Ratio_Affinities_group1_vs_group2.txt" $differential_Gene_Expression_Data $outputDirectory"/IntegratedData/Log2/Integrated_Data_Log2_Quotient.txt"
 
 mkdir -p $outputDirectory"/IntegratedData/Binary"
 echo Rscript ${scriptPath}/prepareForClassificiation.R  $outputDirectory"/IntegratedData/Log2/Integrated_Data_Log2_Quotient.txt" $outputDirectory"/IntegratedData/Binary/Integrated_Data_For_Classification.txt"

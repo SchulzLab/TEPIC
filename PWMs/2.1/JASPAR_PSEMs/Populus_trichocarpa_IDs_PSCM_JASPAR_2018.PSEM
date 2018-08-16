@@ -1,5 +1,5 @@
 #/Lambda=0.7	/Regression_slope=0.584	/Regression_intercept=-5.66	/GC_content=0.36	/Pseudocount=maximal_row_counts/counts_in_row
->P0PTR_0002s00440g		lnR0: -1.572
+>PSEM1	P0PTR_0002s00440g	lnR0: -1.572
 1.50571	0.285212	0	1.45022
 7.33499	4.94359	0	7.65376
 6.55157	5.31865	2.2897	0

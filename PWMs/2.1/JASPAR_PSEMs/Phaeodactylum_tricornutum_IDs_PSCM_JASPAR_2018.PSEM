@@ -1,5 +1,5 @@
 #/Lambda=0.7	/Regression_slope=0.584	/Regression_intercept=-5.66	/GC_content=0.36	/Pseudocount=maximal_row_counts/counts_in_row
->bZIP14		lnR0: 0.18
+>PSEM1	bZIP14	lnR0: 0.18
 0	2.85243	-0.296252	0.525696
 0	-0.136112	-0.136112	4.33892
 5.74667	4.92472	4.92472	0

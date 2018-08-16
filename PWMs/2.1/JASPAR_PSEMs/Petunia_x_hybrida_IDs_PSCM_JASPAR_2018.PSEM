@@ -1,5 +1,5 @@
 #/Lambda=0.7	/Regression_slope=0.584	/Regression_intercept=-5.66	/GC_content=0.36	/Pseudocount=maximal_row_counts/counts_in_row
->myb.Ph3		lnR0: -0.404
+>PSEM1	myb.Ph3	lnR0: -0.404
 1.22059	2.69784	3.10882	0
 0	4.15125	3.57202	3.98299
 0	5.11931	3.54987	3.38161

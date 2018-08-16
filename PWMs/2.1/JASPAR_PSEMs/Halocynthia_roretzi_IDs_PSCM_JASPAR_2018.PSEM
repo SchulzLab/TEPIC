@@ -1,5 +1,5 @@
 #/Lambda=0.7	/Regression_slope=0.584	/Regression_intercept=-5.66	/GC_content=0.36	/Pseudocount=maximal_row_counts/counts_in_row
->Macho-1		lnR0: -0.404
+>PSEM1	Macho-1	lnR0: -0.404
 1.48779	-0.735342	0.445627	0
 2.07262	2.97063	0	2.22313
 6.19509	5.37314	0	6.19509

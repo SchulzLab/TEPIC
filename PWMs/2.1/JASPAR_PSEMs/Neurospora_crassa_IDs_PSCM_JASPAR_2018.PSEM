@@ -1,5 +1,5 @@
 #/Lambda=0.7	/Regression_slope=0.584	/Regression_intercept=-5.66	/GC_content=0.36	/Pseudocount=maximal_row_counts/counts_in_row
->NCU00019		lnR0: 1.348
+>PSEM1	NCU00019	lnR0: 1.348
 0	-0.294199	-0.294199	0.52775
 0.52775	-0.294199	-0.294199	0
 0.0132891	0.504784	-0.338626	0

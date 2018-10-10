@@ -10,6 +10,8 @@ A graphical overview on the workflows of TEPIC is shown below. Blue font indicat
 ![](docs/TEPIC_Workflow.png)
 
 ## News
+10.10.2018: TEPIC 2.0 is now published in [Bioinformatics](https://doi.org/10.1093/bioinformatics/bty856).
+
 13.08.2018: In addition to the gene-centric annotation, the functionality for transcript based annotation has been added.
 
 21.05.2018: A new collection of TF motifs is included. They are available in the folder [PWMs/2.1](PWMs/2.1).
@@ -317,6 +319,10 @@ If you are using [DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/Machi
 **Epigenomic Profiling of Human CD4+ T Cells Supports a Linear Differentiation Model and Highlights Molecular Regulators of Memory Development**
 Durek et al. Cell Immunity, Volume 45, Issue 5, 15 November 2016, [full text](http://www.cell.com/immunity/fulltext/S1074-7613(16)30433-2)
 
+You may also consider to cite our latest publication describing the TEPIC 2.0 release:
+
+**TEPIC 2 - An extended framework for transcription factor binding prediction and integrative epigenomic analysis**
+Schmidt et al., Bioinformatics 2018; doi: 10.1093/bioinformatics/bty856 [full text](https://doi.org/10.1093/bioinformatics/bty856)
 
 Other works that have influenced ours:
 > (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.

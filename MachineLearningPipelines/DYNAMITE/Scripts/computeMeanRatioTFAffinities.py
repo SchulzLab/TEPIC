@@ -16,7 +16,7 @@ def readFile(filename,geneSet,affinityDict):
 	for l1 in infile:
 		s1=l1.split()
 		if (s1[0] in affinityDict):
-			for i in xrange(1,len(s1)):
+			for i in range(1,len(s1)):
 				affinityDict[s1[0]][i-1]=float(affinityDict[s1[0]][i-1])+float(s1[i])
 		else:		
 			affinityDict[s1[0]]=s1[1:]
@@ -31,13 +31,13 @@ def readFile(filename,geneSet,affinityDict):
 def computeMeanAffinities(affinityDict,gene,counter):
 	temp=gene
 	s=affinityDict[gene]
-	for i in xrange(0,len(s)):
+	for i in range(0,len(s)):
 		temp+="\t"+str(float(s[i])/counter)
 	return temp+"\n"
 
 #Ensures that there are no repeatitive elements in the header
 def checkHeader(headers):
-	for i in xrange(0,len(headers)-2):
+	for i in range(0,len(headers)-2):
 		if (headers[i]!=headers[i+1]):
 			return False
 	return True
@@ -138,7 +138,7 @@ def main():
 		s1=s1dict[key]
 		s2=s2dict[key]
 		temp=str(key)
-		for i in xrange(0,len(s1)):
+		for i in range(0,len(s1)):
 			temp+="\t"+str(((float(s1[i])+pc)/(float(s2[i])+pc)))
 		outfile3.write(temp+"\n")
 	outfile3.close()

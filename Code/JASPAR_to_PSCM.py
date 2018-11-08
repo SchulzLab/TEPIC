@@ -14,9 +14,9 @@ def createHeader(outfile,name,database):
 
 def storePreviousFactor(outfile,scores):
 	motivelength=len(scores)/4
-	for i in xrange(0,motivelength):
+	for i in range(0,motivelength):
 		temp=str(i+1)
-		for j in xrange(0,4):
+		for j in range(0,4):
 			temp+="\t"+scores[motivelength*j+i]
 		outfile.write(temp+"\n")
 	outfile.write("XX\n")

@@ -1,5 +1,5 @@
 #/Lambda=0.7	/Regression_slope=0.584	/Regression_intercept=-5.66	/GC_content=0.36	/Pseudocount=maximal_row_counts/counts_in_row
->NFATC1		lnR0: 0.18
+>PSEM1	NFATC1	lnR0: 0.18
 0	0.671434	0.359021	0.273915
 0.784085	0.186553	0.216316	0
 2.0355	2.58217	1.58029	0

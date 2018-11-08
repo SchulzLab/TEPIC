@@ -11,6 +11,7 @@ Identification of key transcriptional regulators using epigenetics data
 potentially important transcriptional regulators by predicting gene expression from *TEPIC* TF-gene scores. 
 
 Further details on INVOKE can be found in the provided [description](/docs/Description.pdf).
+INVOKE is available at [TEPIC/tree/master/MachineLearningPipelines/INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/INVOKE).
 
 ## Installing TEPIC
 To run *INVOKE* the following packages/software must be installed additionally to TEPIC:
@@ -28,7 +29,7 @@ by TEPIC with gene expression data to generate the correct input [integrateData.
 
 The gene expression data file is a two column, tab delimited file, including a header, with EnsembleGeneIDs in the the first column and
 gene expression values in the second column. An example gene expression file is provided as well: 
-[ExampleData/S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1.bed](S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1.bed).
+[ExampleData/S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1.bed](https://github.com/SchulzLab/TEPIC/blob/master/MachineLearningPipelines/INVOKE/ExampleData/S001S745_ERX616976_GRCh38_hotspot_peaks_20150709_chr1.bed).
 
 ## Using INVOKE
 INVOKE can be used in two different ways:
@@ -129,11 +130,3 @@ If you are using INVOKE please cite:
 
 **Combining transcription factor binding affinities with open-chromatin data for accurate gene expression prediction**
 Schmidt et al., Nucleic Acids Research 2016; doi: 10.1093/nar/gkw1061 [full text](http://nar.oxfordjournals.org/content/early/2016/11/29/nar.gkw1061.full) 
-
-Other works that have influenced ours:
-> (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.
-> (2) ChIP-Seq of transcription factors predicts absolute and differential gene expression in embryonic stem cells, Ouyang Z, et al.,  PNAS, 2009.
-> (3) A general concept for consistent documentation of computational analyses, Ebert P, et al.,  Database, 2015.
-> (4) JASPAR: an open-access database for eukaryotic transcription factor binding profiles, Sandelin A., et al., Nucleic Acids Research, 2004.
-> (5) HOCOMOCO: a comprehensive collection of human transcription factor binding sites models , Kulakovskiy Ivan V., et al., Nucleic Acids Research, 2013.
-> (6) Systematic discovery and characterization of regulatory motifs in ENCODE TF binding experiments, Kheradpour P, and Kellis M, Nucleic Acids Research, 2013.

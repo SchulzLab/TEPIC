@@ -1,5 +1,5 @@
 #/Lambda=0.7	/Regression_slope=0.584	/Regression_intercept=-5.66	/GC_content=0.36	/Pseudocount=maximal_row_counts/counts_in_row
->TGA1A		lnR0: -1.572
+>PSEM1	TGA1A	lnR0: -1.572
 0.671434	-0.150515	2.14868	0
 0	2.94813	1.95792	2.77987
 4.69059	0	3.86864	3.70038

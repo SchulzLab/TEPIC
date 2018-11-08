@@ -1,5 +1,5 @@
 #/Lambda=0.7	/Regression_slope=0.584	/Regression_intercept=-5.66	/GC_content=0.36	/Pseudocount=maximal_row_counts/counts_in_row
->FaEOBII		lnR0: 0.18
+>PSEM1	FaEOBII	lnR0: 0.18
 0	1.84765	-0.0908967	1.08849
 2.60723	6.14933	0	4.83624
 6.2355	6.81093	2.29412	0

@@ -1,5 +1,5 @@
 #/Lambda=0.7	/Regression_slope=0.584	/Regression_intercept=-5.66	/GC_content=0.36	/Pseudocount=maximal_row_counts/counts_in_row
->Gam1		lnR0: 0.18
+>PSEM1	Gam1	lnR0: 0.18
 2.07262	0.769995	0	2.07262
 0	0.0439595	-0.367015	1.44514
 2.61161	0	3.77008	1.30262

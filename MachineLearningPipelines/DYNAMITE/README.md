@@ -9,7 +9,7 @@ Differential analysis to identify novel transcriptional regulators for different
 *DYNAMITE* offers logistic regression with elastic net regularisation to infer
 potentially important transcriptional regulators by predicting up/down-regulation for differentially expressed genes from *TEPIC* TF-gene score ratios. 
 
-Further details on DYNAMITE can be found in the provided [description](/docs/Description.pdf).
+Further details on DYNAMITE can be found in the provided [description](/docs/Description.pdf). DYNAMITE itself is available at [TEPIC/tree/master/MachineLearningPipelines/DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/DYNAMITE).
 
 ## Installing TEPIC
 To run *DYNAMITE* the following packages/software must be installed additionally to TEPIC:

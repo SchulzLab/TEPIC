@@ -219,7 +219,7 @@ In order to learn about potentially important regulators, we build a linear, int
 comparable to methods proposed in \cite{pmid27899623,pmid22955983,pmid25231769,pmid22954627}.
 Here, we use TF gene scores computed with \textit{TEPIC} as features in a linear regression setup to predict gene expression.
 In such a \textit{per sample} approach, we stick to the simplifying assumption that all genes are regulated similarly. 
-Features with a high regression coefficient can be suggested to be key regulators in the analysed sample, as they seem to effect the expression
+Features with a high regression coefficient can be suggested to be key regulators in the analysed sample, as they seem to affect the expression
 of a large portion of the genes under consideration. However, the results of this method should be seen as suggestions for possible regulators and not as the absolute truth. 
 
 Details on the learning setup and on the available regularization methods are provided in the next section.
@@ -244,9 +244,9 @@ where, $\beta$ represents the regression coefficient vector, $\hat{\beta}$ repre
 the parameter $\alpha$ controls the distribution between Ridge and Lasso penalty in the elastic net.
 \bigskip
 \\Using Lasso regularization, models are sparse and can be learned very fast. 
-But, Lasso can not properly deal with correlated features, e.g. instead of distributing the coefficients among them, only one is selected. Also, Lasso solutions are not stable and therefore should be interpreted with caution. Nevertheless, Lasso regularization is good to get a first impression of model performance. 
+But, Lasso cannot properly deal with correlated features, e.g. instead of distributing the coefficients among them, only one is selected. Also, Lasso solutions are not stable and therefore should be interpreted with caution. Nevertheless, Lasso regularization is good to get a first impression of model performance. 
 
-The disadvantage of Ridge regression is that it can not produce sparse models (many coefficients being exactly 0), which may hinder interpretability. 
+The disadvantage of Ridge regression is that it cannot produce sparse models (many coefficients being exactly 0), which may hinder interpretability. 
 
 Elastic net regularization was designed to overcome the limitations of both regularization techniques mentioned above.
 It resolves the correlation between features by distributing the feature weights among them, and simultaneously leads to sparse and stable models \cite{Zou05regularizationand}. 
@@ -255,7 +255,7 @@ However, learning a model using elastic net penalty is slower than using either 
 \subsubsection*{Details on the learning setup}
 The data matrix $X$, containing TF gene scores, and the response vector $y$, containing gene expression values, are log-transformed, 
 with a pseudo-count of $1$, centered and scaled to fit them as. 
-Regression coefficients are computed in a inner cross validation,
+Regression coefficients are computed in an inner cross validation,
 the $\alpha$ parameter of elastic net regularization is optimized with a default step size of $0.1$.
 
 We offer two ways to use our learning pipeline:
@@ -291,7 +291,7 @@ If model performance was assessed, the following is available in addition:
 \begin{itemize}
 \item a summary on model performance containing the aforementioned measures (pearson correlation, spearman correlation, mean squared error),
 \item a list of regression coefficients determined in the outer cross validation,
-\item a heatmap visualizing the regression coefficients determined in the outer cross validation for at most the top $10$ positive and negative features, sorted according to their mean.
+\item a heatmap visualizing the regression coefficients determined in the outer cross validation for at most the top $10$ positive and negative features, sorted according to their median.
 \item an image showing a box plot for pearson and spearman correlation respectively.
 \item scatter plots showing the predicted vs the measured gene expression for each outer cross validation fold.
 \end{itemize}
@@ -324,10 +324,10 @@ It is essential that the candidate regions reflect the characteristics of chroma
 In addition, a list of differential expressed genes between two groups as well as log2 fold changes of the expression are needed. 
 
 \section*{Method}
-Our method consits of two parts: (1) gene-TF score computation, and (2) identification of key TFs. 
+Our method consists of two parts: (1) gene-TF score computation, and (2) identification of key TFs. 
 \subsection*{Step 1: Computing Gene-TF Scores}
 Using TEPIC, we compute gene-TF scores $g_{ij}$ for all differentially expressed genes $i$ and distinct TFs $j$ considering the provided candidate regions for all replicates $a$ of group $A$ and for all replicates $b$ of group $B$. 
-As a result, gene-TF matrices $M_k$ for all replicates of both groups are obtained. To account for biological variation among the replicates, we compute two matrices $M_A$, $M_B$ holding the the mean gene-TF scores among all replicates of a group, where
+As a result, gene-TF matrices $M_k$ for all replicates of both groups are obtained. To account for biological variation among the replicates, we compute two matrices $M_A$, $M_B$ holding the mean gene-TF scores among all replicates of a group, where
 \begin{align}
  M_{A_{ij}}= \frac{\sum_{a \in A}{M_{a_{ij}}}}{|A|},
  \\M_{B_{ij}}= \frac{\sum_{b \in B}{M_{b_{ij}}}}{|B|}.
@@ -351,7 +351,7 @@ An example is shown in Figure \ref{Log-Reg-Example}.
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.5\textwidth]{Example_Matrix.png}
-\caption{Example for an matrix used as input to the logistic regression. The column \textit{Expression Changes} is used as response, while the affinity ratios \textit{TFx} are used as features.}
+\caption{Example for a matrix used as input to the logistic regression. The column \textit{Expression Changes} is used as response, while the affinity ratios \textit{TFx} are used as features.}
 \label{Log-Reg-Example}
 \end{figure}
 We perform logistic regression with elastic net regularisation (11).
@@ -364,9 +364,9 @@ TFs that correspond to features with a non-zero regression coefficient can be se
 \section*{Output}
 Model performance is reported in a \textit{txt} file and visually in a bar plot using mean test and training accuracy as well as the F1 measure.
 A heatmap shows the regression coefficients in the outer cross validation folds. 
-Additionaly, we report confusion matrices for the outer cross validation folds.
+Additionally, we report confusion matrices for the outer cross validation folds.
 We generate a bar-plot with the regression coefficients of all TFs selected in the final model.
-A positive coeffcient is used by the model to predict genes as upregulated, a negative coefficient is related to genes that are predicted as downregulated. The interpretation
+A positive coefficient is used by the model to predict genes as upregulated, a negative coefficient is related to genes that are predicted as downregulated. The interpretation
 of the model can be simplified if the user makes sure that both TF ratios and gene expression fold changes are computed in the same order. 
 
 We provide an additional script to generate further plots per feature that can help to understand the model. As shown in Figure \ref{ExampleAnalysisOfDynamite},
@@ -374,8 +374,8 @@ density plots, and scatter plots are generated to help elucidating why a particu
 \begin{figure}[h!]
 \centering
 \includegraphics[width=\textwidth]{Feature_overview_TEMvsTN_Peak_Counts.pdf}
-\caption{Example for a automatically created feature analysis Figure generated on the example data provided in the repository. The density plots show the distribution of TF affinities, the
-scatter plot relat the TF affinities to the observed expression changes. The miniature heatmap shows the regression coefficients determined during the outer cross validation.}
+\caption{Example for an automatically created feature analysis Figure generated on the example data provided in the repository. The density plots show the distribution of TF affinities, the
+scatter plot relates the TF affinities to the observed expression changes. The miniature heatmap shows the regression coefficients determined during the outer cross validation.}
 \label{ExampleAnalysisOfDynamite}
 \end{figure}
 
@@ -392,16 +392,16 @@ We have shown that using the predicted, dynamic TF binding events is superior to
 In order generate a sparse input matrix for \textit{DREM}, we devised a strategy to threshold TF affinities based on a set of background sequences.
 These can be either chosen automatically or be provided by the user. Please check the README file for detailed options. 
 
-In Figure \ref{epicdrem}, we illustrate how TF affinities can be discretised and illustrate their usage in \textit{DREM}. Note that \textit{DREM}
+In Figure \ref{epicdrem}, we illustrate how TF affinities can be discretized and illustrate their usage in \textit{DREM}. Note that \textit{DREM}
 is not included in the \textit{TEPIC} repository. It is available \href{http://www.sb.cs.cmu.edu/drem/}{online}.
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=\textwidth]{epicdrem.pdf}
 \end{center}
-\caption{Overview on the EPIC-DREM approach: Note that in this Figure, different time points are indicated by different colours. First, epigenetic data, e.g. DNase1 experiments, are conducted for different points (a).
+\caption{Overview on the EPIC-DREM approach: Note that in this Figure, different time points are indicated by different colors. First, epigenetic data, e.g. DNase1 experiments, are conducted for different points (a).
 Next, putative TF binding sites are identified by peak and/or footprint calling (b,c) and annotated with TF affinities (d). 
 From the putative binding sites, a random set of genomic regions is chosen (e) and annotated with TF affinities as well (f). By applying a p-value cut-off on the distribution of TF affinities calculated on the random regions (g),
-a suitable, TF specific affinitiy threshold is choosen to discretise the original TF affinities (h). Using the default TEPIC TF-gene score formulation (i), a TF-gene interaction matrix (j) is computed. Together with gene expression data (k),
+a suitable, TF specific affinity threshold is chosen to discretize the original TF affinities (h). Using the default TEPIC TF-gene score formulation (i), a TF-gene interaction matrix (j) is computed. Together with gene expression data (k),
 the sparse matrix (j) can be used as input for DREM (l) to identify potential key regulators of expression changes in time series data.}
 \label{epicdrem}
 \end{figure}
@@ -409,7 +409,7 @@ the sparse matrix (j) can be used as input for DREM (l) to identify potential ke
 \subsubsection*{Thresholded TF affinities}
 In some applications it is required to make a binary decision whether a factor is binding or not. 
 To infer this information from TF affinities, \textit{TEPIC} allows the computation of a TF specific affinity threshold by calculating TF affinities on a randomly selected set of genomic regions. When selected by TEPIC, these regions show similar characteristics compared to the provided regions (GC content and length). 
-Alternatively a set of background regions can be provided by the user.
+Alternatively, a set of background regions can be provided by the user.
 By applying a user defined p-value on the distribution of affinities computed on the random regions, a threshold is chosen. 
 Per TF, all affinities that are smaller than the selected threshold, are set to zero, thus a sparse matrix with TF-gene interactions can be generated. 
 

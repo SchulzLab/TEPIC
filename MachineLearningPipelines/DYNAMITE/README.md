@@ -95,7 +95,7 @@ It can be used with the command
 	
 (4) Run the actual model using the script [Scripts/DYNAMITE.R](Scripts/DYNAMITE.R). The basic command is
 
-	Rscript Scripts/DYNAMITE.R --dataDir=<Data Path> --outDir=<Output Path> --response=Expression --regularisation=<E,L,R> --performance=<TRUE,FALSE>
+	Rscript Scripts/DYNAMITE.R --dataDir=<Data Path> --outDir=<Output Path> --out_var=Expression --regularisation=<E,L,R> --performance=<TRUE,FALSE>
 
 ## Outputs
 *DYNAMITE* always produces the following output:

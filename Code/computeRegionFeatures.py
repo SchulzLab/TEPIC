@@ -279,14 +279,6 @@ def get_intersecting_regions(a_regions, b_collection):
     return intersection_a, intersection_b
 
 
-def intersect_regions(a_regions, b_regions_collections):
-    intersecting_regions_a = {}
-    intersecting_regions_b = {}
-    for chromosome, regions in a_regions.iteritems():
-        (intersecting_regions_a[chromosome], intersecting_regions_b[chromosome]) = get_intersecting_regions(regions, b_regions_collections[chromosome])
-    return intersecting_regions_a, intersecting_regions_b
-
-
 def merge_gene_regions(gene_regions, add_gene_regions):
     for annotation, regions in add_gene_regions.iteritems():
         if annotation not in gene_regions:
@@ -308,15 +300,6 @@ def remove_gene_regions(gene_regions, subs_gene_regions):
                 except ValueError:
                     pass
     return gene_regions
-
-
-def get_complement_gene_loop_regions(gene_loops):
-    complement_gene_loops = {}
-    for annotation, regions in gene_loops.iteritems:
-        complement_gene_loops[annotation] = SortedCollection(key=itemgetter(SORTING_KEY))
-        for region in regions:
-            complement_gene_loops[annotation].insert_right(region[0], region[3], region[4], region[1], region[2])
-    return complement_gene_loops
 
 
 def computeRegionFeatures(gene_regions, peakcoverage_collection, gene_to_chromosome, decay):
@@ -446,7 +429,7 @@ def main():
         print "Total number of assigned regions: " + str(count)
 
     elif args.hi_c_regions is not None:
-        print "Running into Hi-c mode.."
+        print "Running into Hi-c mode..."
         print "Using loop-window size: " + str(args.loopwindows)
         # read hi-c file and keep loops with desired resolution
         resolution = None

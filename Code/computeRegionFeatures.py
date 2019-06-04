@@ -6,6 +6,7 @@ from SortedCollection import SortedCollection
 
 # DEFINE IMPORTANT VARIABLES
 SORTING_KEY = 1
+SORTING_KEY_PAIRED = 3
 WEIGHT_DECAY = 5000.0
 
 
@@ -240,7 +241,7 @@ def getRegionsInWindow(annotations, regions_collection, window_size):
     return gene_regions
 
 
-def filterGeneRegions(regions_collection, gene_functions, gene_to_chromosome=None):
+def filterGeneRegions(regions_collection, gene_functions, gene_to_chromosome=None, paired_functions=False):
     filtered_gene_regions = {}
     filtered_gene_functions = {}
     for annotation, functional_regions in gene_functions.iteritems():
@@ -248,34 +249,58 @@ def filterGeneRegions(regions_collection, gene_functions, gene_to_chromosome=Non
             regions = regions_collection[annotation]
         else:
             regions = regions_collection[gene_to_chromosome[annotation[0]]]
-        (filtered_gene_functions[annotation], filtered_gene_regions[annotation]) = get_intersecting_regions(functional_regions, regions)
+        (filtered_gene_functions[annotation], filtered_gene_regions[annotation]) = get_intersecting_regions(functional_regions, regions, paired_a=paired_functions)
     return filtered_gene_regions, filtered_gene_functions
 
 
-def get_intersecting_regions(a_regions, b_collection):
+def get_intersecting_regions(a_regions, b_collection, paired_a=False):
     intersection_a = SortedCollection(key=itemgetter(SORTING_KEY))
     intersection_b = SortedCollection(key=itemgetter(SORTING_KEY))
     for a_region in a_regions:
         try:
-            left_boundary = b_collection.find_lt_index(a_region[1])
+            left_boundary = b_collection.find_lt_index(a_region[SORTING_KEY])
         except ValueError:
             try:
-                left_boundary = b_collection.find_ge_index(a_region[1])
+                left_boundary = b_collection.find_ge_index(a_region[SORTING_KEY])
             except ValueError:
                 left_boundary = len(b_collection)
         else:
-            if b_collection[left_boundary][2] < a_region[1]:
+            if b_collection[left_boundary][SORTING_KEY+1] < a_region[SORTING_KEY]:
                 left_boundary += 1
 
         curr_index = left_boundary
-        if curr_index < len(b_collection) and b_collection[curr_index][1] <= a_region[2]:
+        if curr_index < len(b_collection) and b_collection[curr_index][SORTING_KEY] <= a_region[SORTING_KEY+1]:
             intersection_a.insert_right(a_region)
-            while curr_index < len(b_collection) and b_collection[curr_index][1] <= a_region[2]:
+            while curr_index < len(b_collection) and b_collection[curr_index][SORTING_KEY] <= a_region[SORTING_KEY+1]:
                 try:
                     intersection_b.find(b_collection[curr_index][SORTING_KEY])
                 except ValueError:
                     intersection_b.insert_right(b_collection[curr_index])
                 curr_index += 1
+
+    if paired_a:
+        for a_region in a_regions:
+            try:
+                left_boundary = b_collection.find_lt_index(a_region[SORTING_KEY_PAIRED])
+            except ValueError:
+                try:
+                    left_boundary = b_collection.find_ge_index(a_region[SORTING_KEY_PAIRED])
+                except ValueError:
+                    left_boundary = len(b_collection)
+            else:
+                if b_collection[left_boundary][SORTING_KEY+1] < a_region[SORTING_KEY_PAIRED]:
+                    left_boundary += 1
+
+            curr_index = left_boundary
+            if curr_index < len(b_collection) and b_collection[curr_index][SORTING_KEY] <= a_region[SORTING_KEY_PAIRED+1]:
+                intersection_a.insert_right(a_region)
+                while curr_index < len(b_collection) and b_collection[curr_index][SORTING_KEY] <= a_region[SORTING_KEY_PAIRED+1]:
+                    try:
+                        intersection_b.find(b_collection[curr_index][SORTING_KEY])
+                    except ValueError:
+                        intersection_b.insert_right(b_collection[curr_index])
+                    curr_index += 1
+
     return intersection_a, intersection_b
 
 
@@ -443,8 +468,8 @@ def main():
         gene_loops_left = getRegionsInWindow(annotations, regions_left_collection, args.loopwindows/2)
         gene_loops_right = getRegionsInWindow(annotations, regions_right_collection, args.loopwindows/2)
         # filter regions that are in these gene-wise hi-c regions
-        (gene_regions_left, _) = filterGeneRegions(regions_collection, gene_loops_left, gene_to_chromosome)
-        (gene_regions_right, _) = filterGeneRegions(regions_collection, gene_loops_right, gene_to_chromosome)
+        (gene_regions_left, _) = filterGeneRegions(regions_collection, gene_loops_left, gene_to_chromosome, paired_functions=True)
+        (gene_regions_right, _) = filterGeneRegions(regions_collection, gene_loops_right, gene_to_chromosome, paired_functions=True)
         if args.functional_regions is not None:
             print "Using also enhancer regions..."
             # !use regions in tss window + intersect functional regions with hi-c regions and intersect those again with regions!

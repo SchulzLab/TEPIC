@@ -430,6 +430,7 @@ def main():
     print "Using window size: " + str(args.window_size)
     print "Decay set to: " + str(args.decay)
     print "Hi-C Decay set to: " + str(args.hic_decay)
+    print "Double feature space set to: " + str(args.double_features)
 
     if args.window_size is not None:
         gene_regions = getRegionsInWindow(annotations, regions_collection, args.window_size/2)
@@ -517,5 +518,6 @@ def main():
     writeGeneFeatureMatrix(output_filename + ".txt", gene_feature_matrix, second_matrix=gene_hic_feature_matrix)
 
     print "Finished annotation!"
+
 
 main()

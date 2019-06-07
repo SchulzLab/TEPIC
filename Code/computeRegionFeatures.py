@@ -361,9 +361,11 @@ def mergeGeneFeatureMatrices(matrix_a, matrix_b):
             matrix_a[annotation] = matrix_b[annotation]
 
 
-def writeGeneFeatureMatrix(filename, feature_matrix):
+def writeGeneFeatureMatrix(filename, feature_matrix, second_matrix=None):
     with open(filename, "w") as outputfile:
         outputfile.write("geneID\tregion_count\ttotal_length\ttotal_signal")
+        if second_matrix is not None:
+            outputfile.write("\tregion_count_loop\ttotal_length_loop\ttotal_signal_loop")
         outputfile.write('\n')
         for annotation, features in feature_matrix.iteritems():
             gene_id = annotation[0].split(".")[0].replace('"', '')
@@ -371,6 +373,10 @@ def writeGeneFeatureMatrix(filename, feature_matrix):
             for feature in features:
                 outputfile.write('\t')
                 outputfile.write(str(feature))
+            if second_matrix is not None:
+                for feature in second_matrix[annotation]:
+                    outputfile.write('\t')
+                    outputfile.write(str(feature))
             outputfile.write('\n')
 
 
@@ -393,6 +399,10 @@ def main():
     hic_decay_parser.add_argument('--hi_c-decay', dest='hic_decay', action='store_true', help="Flag option. If set an exponential decay function is used to weight the Hi-C features. Default behavior is False.")
     hic_decay_parser.add_argument('--no_hi_c-decay', dest='hic_decay', action='store_false')
     parser.set_defaults(hic_decay=False)
+    double_feature_parser = parser.add_mutually_exclusive_group(required=False)
+    double_feature_parser.add_argument('--double_features', dest='double_features', action='store_true', help="Flag option. If set separate gene-wise features are computed for promoter and loop regions instead of aggregating all scores.")
+    double_feature_parser.add_argument('--no_double_features', dest='double_features', action='store_false')
+    parser.set_defaults(double_features=False)
     args = parser.parse_args()
 
     print "Loading files ..."
@@ -493,8 +503,9 @@ def main():
         gene_hic_feature_matrix = computeRegionFeatures(gene_hic_regions, peakcoverage_collection, gene_to_chromosome, args.hic_decay)
 
     gene_feature_matrix = computeRegionFeatures(gene_regions, peakcoverage_collection, gene_to_chromosome, args.decay)
-    if gene_hic_feature_matrix is not None:
+    if gene_hic_feature_matrix is not None and not args.double_features:
         mergeGeneFeatureMatrices(gene_feature_matrix, gene_hic_feature_matrix)
+        gene_hic_feature_matrix = None
 
     output_filename = "RegionFeatures"
     if args.outputprefix:
@@ -503,7 +514,7 @@ def main():
         if len(output_split) > 1 and not output_split[1]:
             output_filename = args.outputprefix + "RegionFeatures"
 
-    writeGeneFeatureMatrix(output_filename + ".txt", gene_feature_matrix)
+    writeGeneFeatureMatrix(output_filename + ".txt", gene_feature_matrix, second_matrix=gene_hic_feature_matrix)
 
     print "Finished annotation!"
 

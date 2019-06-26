@@ -1,6 +1,6 @@
 #!/bin/bash   
 echo "Loading parameters from config file " $1
-source invokeAnalysis.cfg $1
+source $1
 
 
 #This part runs the necessary scripts to perform a differential analysis using TEPIC affinity ratios

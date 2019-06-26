@@ -309,6 +309,7 @@ In the PSEM format, a matrix has to be in the following structure:
 
 ## Acknowledgments
 We thank Helge Roider for providing the C++ implementation of TRAP, which we slightly modified for running in parallel.
+TEPIC 2.0 has been funded by the Bundesministerium für Bildung und Forschung (BMBF) with project number 01DP17005 under the acronym EPIREG.
 
 ## Citation
 If you are using TEPIC and/or [INVOKE](https://github.com/SchulzLab/TEPIC/tree/master/MachineLearningPipelines/INVOKE) please cite:

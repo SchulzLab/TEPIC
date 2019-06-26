@@ -111,6 +111,8 @@ Additional command arguments are:
 * -i minutes that should be spend at most per chromosome to find matching random regions (default 3).
 * -j Flag indicating that the reference genome contains a chr prefix. 
 * -t Flag indicating that the annotation should be based on transcripts, not on genes.
+* -h Loop file containing chromatin contacts. Only intrachromosomal contacts are supported.
+* -s Loop window used to link a gene to a chromatin loop (default 5000).
 
 ## Output 
 Depending on the used arguments, TEPIC produces files containing:

@@ -7,6 +7,7 @@ import argparse
 import random
 from decimal import Decimal
 from SortedCollection import SortedCollection
+from pprint import pprint
 
 #Computing per gene TF affinities
 #Reads a gtf file and generates a dictionary (key:gene, item:(#chromosom,TSS))
@@ -67,6 +68,9 @@ def readOC_Region(filename):
 	tfpa.close()
 	return oC
 
+
+		
+#Extract the TF affinities and compute peak length and count features from the TF affinity file
 def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,openChromatin,expDecay,geneBody,peakFeatures,lengthNormalisation,motifLength):
 	geneAffinities={}
 	numberOfPeaks={}
@@ -398,6 +402,159 @@ def createAffinityFileAffinitiesPeakCountsLengthSignal(affinities,peakCounts,pea
 		output.write(line+'\n')
 	output.close()
 
+
+def createConformationDataOutputPeaks(peakCounts,peakLength,peakSignal,peakCountsLR,peakLengthLR,peakSignalLR,fNames,filename,tss):
+	output=open(filename,"w")
+	header="geneID"
+	header+="\tPeak_Counts\tPeak_Length\tPeak_Signal\tPeak_CountsLR\tPeak_LengthLR\tPeak_SignalLR"
+	output.write(header+'\n')
+	for Gene in tss.keys():
+		line=str(Gene.replace("\"","").replace(";","").split(".")[0])
+		if (Gene in peakCounts):
+			line+='\t'+str(peakCounts[Gene])
+		else:
+			line+='\t0'
+		if (Gene in peakLength):
+			line+='\t'+str(peakLength[Gene])
+		else:
+			line+='\t0'
+		if (Gene in peakSignal):
+			line+='\t'+str(peakSignal[Gene])
+		else:
+			line+='\t0'
+		if (Gene in peakCountsLR):
+			line+='\t'+str(peakCountsLR[Gene])
+		else:
+			line+='\t0'
+		if (Gene in peakLengthLR):
+			line+='\t'+str(peakLengthLR[Gene])
+		else:
+			line+='\t0'
+		if (Gene in peakSignalLR):
+			line+='\t'+str(peakSignalLR[Gene])
+		else:
+			line+='\t0'
+		output.write(line+'\n')
+	output.close()
+
+def createConformationDataOutputPeaksCombined(peakCounts,peakLength,peakSignal,peakCountsLR,peakLengthLR,peakSignalLR,fNames,filename,tss):
+	output=open(filename,"w")
+	header="geneID"
+	header+="\tPeak_Counts\tPeak_Length\tPeak_Signal"
+	output.write(header+'\n')
+	for Gene in tss.keys():
+		line=str(Gene.replace("\"","").replace(";","").split(".")[0])
+		counts=0.0
+		if (Gene in peakCounts):
+			counts=float(peakCounts[Gene])
+		if (Gene in peakCountsLR):
+			counts+=float(peakCountsLR[Gene])
+		line+='\t'+str(counts)
+
+		length=0.0
+		if (Gene in peakLength):
+			length=float(peakLength[Gene])
+		if (Gene in peakLengthLR):
+			length+=float(peakLengthLR[Gene])
+		line+='\t'+str(length)
+
+		signal=0.0
+		if (Gene in peakSignal):
+			signal=float(peakSignal[Gene])
+		if (Gene in peakSignalLR):
+			signal+=float(peakSignalLR[Gene])
+		line+='\t'+str(signal)
+
+		output.write(line+'\n')
+	output.close()
+
+
+def createConformationDataOutputAffinitiesPeaks(affinities,affinitiesLR,peakCounts,peakLength,peakSignal,peakCountsLR,peakLengthLR,peakSignalLR,tfNames,filename,tss):
+	output=open(filename,"w")
+	header="geneID"
+	for element in tfNames:
+		header+='\t'+str(element)
+	for element in tfNames:
+		header+='\t'+"LR_"+str(element)
+	header+="\tPeak_Counts\tPeak_Length\tPeak_Signal\tPeak_CountsLR\tPeak_LengthLR\tPeak_SignalLR"
+	output.write(header+'\n')
+	for Gene in tss.keys():
+		line=""
+		if (Gene in affinities):
+			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
+			for entry in affinities[Gene]:
+				line+='\t'+str(entry)
+		else:
+			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
+			for i in range(0,len(tfNames)):
+				line+='\t'+str(0.0)
+
+		if (Gene in affinitiesLR):
+			for entry in affinitiesLR[Gene]:
+				line+='\t'+str(entry)
+		else:
+			for i in range(0,len(tfNames)):
+				line+='\t'+str(0.0)
+
+		if (Gene in peakCounts):
+			line+='\t'+str(peakCounts[Gene])
+		else:
+			line+='\t0'
+		if (Gene in peakLength):
+			line+='\t'+str(peakLength[Gene])
+		else:
+			line+='\t0'
+		if (Gene in peakSignal):
+			line+='\t'+str(peakSignal[Gene])
+		else:
+			line+='\t0'
+
+		if (Gene in peakCountsLR):
+			line+='\t'+str(peakCountsLR[Gene])
+		else:
+			line+='\t0'
+		if (Gene in peakLengthLR):
+			line+='\t'+str(peakLengthLR[Gene])
+		else:
+			line+='\t0'
+		if (Gene in peakSignalLR):
+			line+='\t'+str(peakSignalLR[Gene])
+		else:
+			line+='\t0'
+		output.write(line+'\n')
+	output.close()
+
+
+def createConformationDataOutputAffinities(affinities,affinitiesLR,tfNames,filename,tss):
+	output=open(filename,"w")
+	header="geneID"
+	for element in tfNames:
+		header+='\t'+str(element)
+	for element in tfNames:
+		header+='\t'+"LR_"+str(element)
+	output.write(header+'\n')
+	for Gene in tss.keys():
+		line=""
+		if (Gene in affinities):
+			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
+			for entry in affinities[Gene]:
+				line+='\t'+str(entry)
+		else:
+			line=str(Gene.replace("\"","").replace(";","").split(".")[0])
+			for i in range(0,len(tfNames)):
+				line+='\t'+str(0.0)
+
+		if (Gene in affinitiesLR):
+			for entry in affinitiesLR[Gene]:
+				line+='\t'+str(entry)
+		else:
+			for i in range(0,len(tfNames)):
+				line+='\t'+str(0.0)
+		output.write(line+'\n')
+	output.close()
+
+
+
 #Creates an affinity file that contains affinities, and peak signal information
 def createAffinityFileAffinitiesSignal(affinities,peakSignal,tfNames,filename,tss):
 	output=open(filename,"w")
@@ -503,6 +660,158 @@ def generate_Motif_Length(affinityFile,motifFile):
 			motifList+=[0]
 	return motifList
 
+
+#Reads the DNA contact file
+#Returns two sorted collections as dictionaries(key: #chromsom, item(l1s,l1e,l2s,l2e) and #chromsom, item(l2s,l2e,l1s,l1e).
+def read_Intra_Loop_Regions_Collection(filename):
+	left_region_collection = {}
+	right_region_collection = {}
+	with open(filename) as hi_c_file:
+		loopID=0
+		for line in hi_c_file:
+			line = line.split()
+			if (line[0] == line[3]):
+				loopID += 1
+				chromosome = line[0].replace("chr","")
+				if chromosome not in left_region_collection:
+					left_region_collection[chromosome] = SortedCollection(key=itemgetter(1))
+				if chromosome not in right_region_collection:
+					right_region_collection[chromosome] = SortedCollection(key=itemgetter(1))	
+				left_region_collection[chromosome].insert_right((loopID, int(line[1]), int(line[2]), int(line[4]), int(line[5])))
+				right_region_collection[chromosome].insert_right((loopID, int(line[4]), int(line[5]), int(line[1]), int(line[2])))
+	return left_region_collection, right_region_collection
+
+
+#Intersect peaks with Loops
+def getGenesInLongRangeWindows(annotations,regions_collection,shift):
+	gene_regions = {}
+	for geneID in annotations.keys():
+		gene_regions[geneID]=SortedCollection(key=itemgetter(1))
+		left_Border=annotations[geneID][1][0]-shift
+		right_Border=annotations[geneID][1][0]+shift
+		chromosome=annotations[geneID][0]
+		if (chromosome in regions_collection):
+			selectedLoops = regions_collection[chromosome]
+			try:                                                                                                     
+				left_item = selectedLoops.find_lt(left_Border)
+			except ValueError:
+				try:
+					left_item = selectedLoops.find_ge(left_Border)
+				except ValueError:
+					left_item = None
+			else:
+				if left_item[2] < left_Border:
+					try:
+						left_item = selectedLoops.find_ge(left_Border)
+					except ValueError:
+						left_item = None
+			try:
+				right_item = selectedLoops.find_le(right_Border)
+			except ValueError:
+				right_item = None
+	           # Check if target interval is valid
+			if left_item is not None and right_item is not None:
+				left_index = selectedLoops.index(left_item)
+				right_index = selectedLoops.index(right_item)
+				if left_index <= right_index:
+	          # Copy regions in target interval
+					for i in xrange(left_index, right_index + 1):
+						gene_regions[geneID].insert_right(selectedLoops[i])
+	return gene_regions	
+		
+
+def retrieveOverlappingOpenSites(dhs_collection, loops, annotation):
+	filtered_dhs = {}
+	for geneID in loops.keys():
+		chromosome=annotation[geneID][0]
+		if (chromosome in dhs_collection):	
+			regions = dhs_collection[chromosome]
+			filtered_dhs[geneID] = get_intersecting_regions(regions,loops[geneID])
+	return filtered_dhs
+
+
+def get_intersecting_regions(a_regions, b_collection):
+	intersection_a = SortedCollection(key=itemgetter(1))
+	for a_region in a_regions:
+		try:
+			left_boundary = b_collection.find_lt_index(a_region[1])
+		except ValueError:
+			try:
+				left_boundary = b_collection.find_ge_index(a_region[1])
+			except ValueError:
+				left_boundary = len(b_collection)
+		else:
+			if b_collection[left_boundary][2] < a_region[1]:
+				left_boundary += 1
+
+		curr_index = left_boundary
+		if curr_index < len(b_collection) and b_collection[curr_index][1] <= a_region[2]:
+			intersection_a.insert_right(a_region)
+			curr_index += 1
+
+	b_collection.key=itemgetter(3)
+	for a_region in a_regions:
+		try:
+			left_boundary = b_collection.find_lt_index(a_region[1])
+		except ValueError:
+			try:
+				left_boundary = b_collection.find_ge_index(a_region[1])
+			except ValueError:
+				left_boundary = len(b_collection)
+		else:
+			if b_collection[left_boundary][4] < a_region[1]:
+				left_boundary += 1
+
+		curr_index = left_boundary
+		if curr_index < len(b_collection) and b_collection[curr_index][3] <= a_region[2]:
+			intersection_a.insert_right(a_region)
+			curr_index += 1
+	b_collection.key=itemgetter(1)
+	return intersection_a
+
+
+def merge_gene_regions(gene_regions, add_gene_regions,annotation):
+	for geneID in annotation.keys():
+		if geneID not in gene_regions.keys():
+			gene_regions[geneID] = SortedCollection(key=itemgetter(1))
+		if geneID in add_gene_regions.keys():
+			for region in add_gene_regions[geneID]:
+				try:
+					gene_regions[geneID].find(region[1])
+				except ValueError:
+					gene_regions[geneID].insert_right(region)
+	return gene_regions
+
+def remove_gene_regions(gene_regions, promoterDHSlist,annotation):
+	for geneID in gene_regions.keys():
+		loopDHS=gene_regions[geneID]
+		for region in list(loopDHS):
+			identifier=str(annotation[geneID][0])+":"+str(region[1])+"-"+str(region[2])
+			if (identifier in promoterDHSlist):
+				if (geneID in promoterDHSlist[identifier]):
+					try:
+						gene_regions[geneID].remove(region)
+					except ValueError:
+						pass
+	return gene_regions
+
+
+#convert it to a set of all used DHS (chr:start-end) and to a dict of geneIDs-> [DHS as chr:start-end]
+def convert_Conformation_Data(filteredConformation_DHSs, annotation):
+	usedLongRangeDHS=set()
+	usedLongRangeGeneIDs={}
+	for geneID in filteredConformation_DHSs.keys():
+		if (geneID in filteredConformation_DHSs):
+			chrom=annotation[geneID][0]
+			temp=list(filteredConformation_DHSs[geneID])
+			for element in temp:
+				identifier=str(chrom)+":"+str(element[1])+"-"+str(element[2])
+				if identifier not in usedLongRangeGeneIDs:
+					usedLongRangeGeneIDs[identifier]=[]
+				usedLongRangeGeneIDs[identifier]+=[geneID]
+				usedLongRangeDHS.add(identifier)
+	return usedLongRangeDHS,usedLongRangeGeneIDs
+
 def main():
 	parser=argparse.ArgumentParser(prog="annotateTSS.py")
 	parser.add_argument("gtf",nargs=1,help="Genome annotation file")
@@ -520,6 +829,8 @@ def main():
 	parser.add_argument("--motifLength",nargs="?",help="File containing the length of the used motifs. Used to adapt the length normalisation such that long motifs are not downweighted compared to short ones",default=None)
 	parser.add_argument("--onlyPeakFeatures",nargs="?",help="Generates an additional output file that contains only peak based features per gene. Default is False.",default="False")
 	parser.add_argument("--transcript",nargs="?",help="Extract the position of transcripts from the gtf file and generate a transcript based annotation instead of a gene centric one. Default is False.",default="False")
+	parser.add_argument("--lwindows",nargs="?",help="Size of the considered loop window around the TSS. Default is 5000.",default=5000,type=int)
+	parser.add_argument("--conformationData",nargs="?",help="File holding chromatin contact information",default=None)
 	args=parser.parse_args() 
 
 	prefixs=args.affinity[0].split(".")
@@ -586,6 +897,8 @@ def main():
 	#Create a TF name index
 	tfNames=tfIndex(args.affinity[0])
 	shift=int(args.windows/2)
+
+	###Generate promoter only features###
 	#Determine gene windows in open chromatin regions
 	genesInOpenChromatin={}
 	usedRegions=set()
@@ -638,6 +951,26 @@ def main():
 	#Generate Peak based features
 	if (args.peakCoverage != None):
 		perBaseCoverage=generate_Peak_Coverage_Features(usedRegions,genesInOpenChromatin,args.peakCoverage,tss,oC,decay,geneBody)
+
+
+	###Generate 3D based features###
+	if (args.conformationData != None):
+		(regions_left_collection, regions_right_collection) = read_Intra_Loop_Regions_Collection(args.conformationData)
+
+		leftGenes=getGenesInLongRangeWindows(tss,regions_left_collection,float(args.lwindows)/2.0)
+		rightGenes=getGenesInLongRangeWindows(tss,regions_right_collection,float(args.lwindows)/2.0)
+
+		leftOverlap=retrieveOverlappingOpenSites(oC, leftGenes, tss)
+		rightOverlap=retrieveOverlappingOpenSites(oC, rightGenes, tss)
+		totalConformation_list=merge_gene_regions(leftOverlap, rightOverlap,tss)
+		filteredConformation_DHSs=remove_gene_regions(totalConformation_list, genesInOpenChromatin,tss)
+		#convert it to a set of all used DHS (chr:start-end) and to a dict of geneIDs-> [DHS as chr:start-end]
+		usedRegionsLongRange,genesInLongRange=convert_Conformation_Data(filteredConformation_DHSs,tss)
+	
+		affinitiesLR,numberOfPeaksLR,peakLengthLR=extractTF_Affinity(usedRegionsLongRange,genesInLongRange,args.affinity[0],tss,oC,False,False,addPeakFT,normaliseLength,motifLengths)
+		if (args.peakCoverage != None):
+			perBaseCoverageLR=generate_Peak_Coverage_Features(usedRegionsLongRange,genesInLongRange,args.peakCoverage,tss,oC,False,geneBody)
+	
 
 	#Generate Output
 	if (decay):
@@ -696,5 +1029,23 @@ def main():
 					createPeakScoreFileIncludingSignal(affinities,numberOfPeaks,peakLength,perBaseCoverage,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Three_Peak_Based_Features_Only_Gene_View.txt"),tss)
 			else:
 				createAffinityFileAffinitiesSignal(affinities,perBaseCoverage,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Signal_Feature_Affinity_Gene_View.txt"),tss)
+
+	if (args.conformationData != None):
+		if (addPeakF):
+			if (args.peakCoverage != None):
+				if (onlyPeakFeatures):
+					createConformationDataOutputPeaks(numberOfPeaks,peakLength,perBaseCoverage,numberOfPeaksLR,peakLengthLR,perBaseCoverageLR,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Conformation_Data_Three_Peak_Based_Features_Double_Gene_View.txt"),tss)
+				else:
+					createConformationDataOutputPeaks(numberOfPeaks,peakLength,perBaseCoverage,numberOfPeaksLR,peakLengthLR,perBaseCoverageLR,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Conformation_Data_Three_Peak_Based_Features_Double_Gene_View.txt"),tss)
+					createConformationDataOutputAffinitiesPeaks(affinities,affinitiesLR,numberOfPeaks,peakLength,perBaseCoverage,numberOfPeaksLR,peakLengthLR,perBaseCoverageLR,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Conformation_Data_Affinity_Three_Peak_Based_Features_Gene_View.txt"),tss)
+			elif (args.signalScale != None):
+				affinitiesLRS,numberOfPeaksLRS,peakLengthLRS=extractTF_Affinity(usedRegionsLongRange,genesInLongRange,args.signalScale,tss,oC,False,False,addPeakFT,normaliseLength,motifLengths)
+				if (onlyPeakFeatures):
+					createConformationDataOutputPeaks(numberOfPeaks,peakLength,perBaseCoverage,numberOfPeaksLRS,peakLengthLRS,perBaseCoverageLRS,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Conformation_Data_Three_Peak_Based_Features_Double_Gene_View.txt"),tss)
+				else:
+					createConformationDataOutputPeaks(numberOfPeaks,peakLength,perBaseCoverage,numberOfPeaksLRS,peakLengthLRS,perBaseCoverageLRS,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Conformation_Data_Three_Peak_Based_Features_Double_Gene_View.txt"),tss)
+					createConformationDataOutputAffinitiesPeaks(affinities,affinitiesLRS,numberOfPeaks,peakLength,perBaseCoverage,numberOfPeaksLRS,peakLengthLRS,perBaseCoverageLRS,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Conformation_Data_Affinity_Three_Peak_Based_Features_Gene_View.txt"),tss)
+		else:
+			createConformationDataOutputAffinities(affinities,affinitiesLR,tfNames,args.geneViewAffinity.replace("_Affinity_Gene_View.txt","_Decay_Conformation_Data_Affinity_Gene_View.txt"),tss)
 
 main()

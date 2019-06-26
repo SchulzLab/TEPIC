@@ -73,4 +73,6 @@ echo ""
 echo TestV25: Windows 3kb - Annotation - No Decay - Length Normalised - Peak Features - transcript based annotation - reduced annotation
 bash ../Code/TEPIC.sh -g example_sequence.fa -b example_regions.bed  -o Test_V25 -p ../PWMs/2.0/human_jaspar_hoc_kellis.PSEM -f example_annotation.gtf  -a example_annotation.gtf  -w 3000 -e FALSE -n 4 -t
 echo ""
-
+echo TestV26: Windows 3kb - Annotation - Decay - Length Normalised - Peak Features only - Chromatin conformation capture data 
+bash ../Code/TEPIC.sh -g example_sequence.fa -b Toy_regions.bed  -o Test_V26 -p ../PWMs/2.0/human_jaspar_hoc_kellis.PSEM -a Toy_Annotation.gtf  -w 400 -h Toy_Loops.csv -s 500 -n 4
+echo ""

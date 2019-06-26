@@ -22,6 +22,8 @@ Optional parameters:\n
 [-i minutes that should be spend at most per chromosome to find matching random regions (default 3)]\n
 [-j flag indicating that the reference genome contains a chr prefix]\n
 [-t flag indicating that the annotation should be transcript and not gene based]\n
+[-h a loop list file containing chromatin contacts]\n
+[-s size of the loop window used around a genes promoter to link chromatin loops to genes (default 5000)]\n
 [-q parameter to be set if only peak features should be computed (default FALSE)]\n"
 
 #Initialising parameters
@@ -50,8 +52,10 @@ chrPrefix="FALSE"
 backgroundRegions=""
 onlyPeakFeatures="FALSE"
 transcripts="FALSE"
+loopWindow=5000
+loopList=""
 #Parsing command line
-while getopts "g:b:o:c:p:d:n:a:w:f:m:e:r:v:k:i:q:yluhxzjt" o;
+while getopts "g:b:o:c:p:d:n:a:w:f:m:e:r:v:k:i:q:h:s:yluhxzjt" o;
 do
 case $o in
 	g)	genome=$OPTARG;;
@@ -78,10 +82,8 @@ case $o in
 	t)	transcripts="TRUE";;
 	k)	backgroundRegions=$OPTARG;;
 	q)	onlyPeakFeatures=$OPTARG;;
-	h)	echo -e $help
-	exit 1;;
-	[?])	echo -e $help
-	exit 1;;
+	h)	loopList=$OPTARG;;
+	s)	loopWindow=$OPTARG;;
 esac
 done
 
@@ -247,6 +249,11 @@ then
 	if [ -n "$motifLength" ];
 	then
 		echo "motif_length	"$motifLength >> $metadatafile
+	fi
+	if [ -n "$loopList" ];
+	then
+		echo "loop_list	"$loopList >> $metadatafile
+		echo "loop_window	"$loopWindow >> $metadatafile
 	fi
 fi
 if [ -n "$randomGenome" ];
@@ -425,17 +432,33 @@ fi
 if [ -n "$annotation" ]; 
 then
 	echo "Generating gene scores"
-	if [ -n "$dnase" ] ||  [ -n "$column" ] ;
+	if [ -n $loopList ]
 	then
-		if [ "$originalScaling" == "FALSE" ] ;
+		if [ -n "$dnase" ] ||  [ -n "$column" ] ;
 		then
-			python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--peakCoverage" ${prefix}_Peak_Coverage.txt "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures} "--transcript" ${transcripts}
+			if [ "$originalScaling" == "FALSE" ] ;
+			then
+				python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--peakCoverage" ${prefix}_Peak_Coverage.txt "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures} "--transcript" ${transcripts} "--lwindows" ${loopWindow} "--conformationData" ${loopList}
+			else
+				python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay  "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--signalScale" ${prefix}_Scaled_Affinity.txt "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures} "--transcript" ${transcripts} "--lwindows" ${loopWindow} "--conformationData" ${loopList}
+			fi
 		else
-			python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay  "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--signalScale" ${prefix}_Scaled_Affinity.txt "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures} "--transcript" ${transcripts}
-		fi
+			python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--geneBody" $geneBody "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures} "--transcript" ${transcripts} "--lwindows" ${loopWindow} "--conformationData" ${loopList}
+		fi 
 	else
-		python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--geneBody" $geneBody "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures} "--transcript" ${transcripts}
+		if [ -n "$dnase" ] ||  [ -n "$column" ] ;
+		then
+			if [ "$originalScaling" == "FALSE" ] ;
+			then
+				python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--peakCoverage" ${prefix}_Peak_Coverage.txt "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures} "--transcript" ${transcripts}
+			else
+				python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay  "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--signalScale" ${prefix}_Scaled_Affinity.txt "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures} "--transcript" ${transcripts}
+			fi
+		else
+			python ${working_dir}/annotateTSS.py ${annotation} ${affinity} "--geneViewAffinity" ${prefix}_Affinity_Gene_View.txt "--windows" $window "--decay" $decay "--geneBody" $geneBody "--geneBody" ${geneBody} "--normaliseLength" ${lengthNorm} "--motifLength" ${motifLength} "--additionalPeakFeatures" ${peakFeatures}  "--onlyPeakFeatures" ${onlyPeakFeatures} "--transcript" ${transcripts}
+		fi
 	fi 
+
 	if [ -n "$randomGenome" ] || [ -n "$backgroundRegions" ];
 	then
 		if [ -n "$dnase" ] ||  [ -n "$column" ] ;

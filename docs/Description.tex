@@ -21,6 +21,7 @@ Briefly, TEPIC offers:
 \item Annotation of user defined regions with TF affinities using TRAP and a variety of provided TF-motifs,
 \item Aggregation of TF affinities to TF-gene scores,
 \item Computation of statistical scores such as peak-length, peak-count or peak-signal per gene,
+\item Inclusion of long range chromatin contacts,
 \item Discretization of continuous TF affinities using a background distribution into a binary measure for TF-binding,
 \item Linear regression analysis to infer key transcriptional regulators within one sample,
 \item Logistic regression classifier to suggest key transcriptional regulators between samples,
@@ -198,7 +199,6 @@ where $|p|$ is the length of $p$. These features can be used for example to asse
 
 Furthermore, TEPIC can compute a TF-specific affinity cut-off derived from either user-defined, or randomly generated sequences, to distinguish likely bound sites from unbound sites. These scores
 can be used to come-up with a binary TF-gene assignment. Further details on this mode are provided in Section \ref{EPIC-DREM}.
-
 \begin{figure}[h!]
 \begin{center}
 \includegraphics[width=\textwidth]{Workflow.png}
@@ -211,8 +211,18 @@ TF binding predictions in open-chromatin regions based on their distance to a ge
 \label{workflowFig}
 \end{figure}
 
+With version $2.2$ of TEPIC, we introduced support for the inclusion of long range chromatin conformation capture data. In addition to the promoter centric windows used before, we
+calculate TF affinities $a_{g,i}*$ and peak scores $pl_g*, pc_g*, ps_g*$ for all DHSs residing  in genomic loci looping into the promoter region of a gene, summarizied in $P_{g,V_g}$, where $V_g$ is the set of all regions looped into the promoter region of gene $g$:
+\begin{align}
+a_{g,i}&=\sum_{p \in P_{g,V_g}} a_{p,i},\\
+pl_g*&=\sum_{p \in P_{g,V_g}}|p|, \\
+pc_g*&=\sum_{p \in P_{g,V_g}}, \\
+ps_g*&=\sum_{p \in P_{g,V_g}}s_{p}.
+\end{align}
+Note that scores computed for $p \in P_{g,V_g}g$ are never considering the exponential decay as a direct interaction of the respective sites with the promoter region of gene $g$ has been determined by chromatin conformation capture experiments.
+
 \subsection{Required input}
-To compute TF gene scores a user needs to specify:
+To compute TF gene scores, a user needs to specify:
 \begin{itemize}
 \item a reference genome (-g option),
 \item a set of \textit{PSEMs} (-p option),

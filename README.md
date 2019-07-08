@@ -1,4 +1,4 @@
-# TEPIC (version 2.1)
+#TEPIC (version 2.2)
 -------
 TEPIC offers workflows for the prediction and analysis of Transcription Factor (TF) binding sites including:
 * TF affinity computation in user provided regions
@@ -10,6 +10,8 @@ A graphical overview on the workflows of TEPIC is shown below. Blue font indicat
 ![](docs/TEPIC_Workflow.png)
 
 ## News
+08.10.2019: We present a novel feature to include TFBS in regulatory sites determined by chromatin conformation capture data. Using an extended feature space representation, the INVOKE model can investigate the regulatory influence of TFs bound to promoters and enhancers separately.
+
 10.10.2018: TEPIC 2.0 is now published in [Bioinformatics](https://doi.org/10.1093/bioinformatics/bty856).
 
 13.08.2018: In addition to the gene-centric annotation, the functionality for transcript based annotation has been added.
@@ -155,6 +157,11 @@ Here, thresholded TF affinities are used for the computation.
 
 	GENEID		TF1	TF2	...	TFn	peak length	peak count	peak signal
 	ENSG00000044612	0	0	...	4.2	23		3		19.2
+
+The *Prefix_Conformation_Data_Affinity_Three_Peak_Based_Features_Gene_View.txt* files are based on the previous structure but extend it by including the same features, that is TF gene-scores and peak features determined for DHS residing in chromatin loops:
+
+	GENEID		TF1	TF2	...	TFn	peak length	peak count	peak signal	LR_TF1	...	LR_TFn	LR_peak length	LR_peak count	LR_peak signal
+	ENSG00000044612	0	0	...	4.2	23		3		19.2		3.4	...	0.9	14	4	63.3
 
 The *Prefix_Thresholded_Sparse_Affinity_Gene_View.txt* files are tab separated files listing the Ensemble GeneID in the first column, and the name of the TF associated to this gene in the second column.
 Here, thresholded TF affinities are used for the computation. The third column of this file is required by DREM and does not carry any specific meaning.

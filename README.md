@@ -1,4 +1,4 @@
-#TEPIC (version 2.2)
+# TEPIC (version 2.2)
 -------
 TEPIC offers workflows for the prediction and analysis of Transcription Factor (TF) binding sites including:
 * TF affinity computation in user provided regions
@@ -10,7 +10,7 @@ A graphical overview on the workflows of TEPIC is shown below. Blue font indicat
 ![](docs/TEPIC_Workflow.png)
 
 ## News
-08.10.2019: We present a novel feature to include TFBS in regulatory sites determined by chromatin conformation capture data. Using an extended feature space representation, the INVOKE model can investigate the regulatory influence of TFs bound to promoters and enhancers separately.
+08.07.2019: We present a novel feature to include TFBS in regulatory sites determined by chromatin conformation capture data. Using an extended feature space representation, the INVOKE model can investigate the regulatory influence of TFs bound to promoters and enhancers separately.
 
 10.10.2018: TEPIC 2.0 is now published in [Bioinformatics](https://doi.org/10.1093/bioinformatics/bty856).
 

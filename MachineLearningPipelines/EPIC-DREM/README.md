@@ -33,7 +33,7 @@ on a random sequence set and a user defined p-value cut-off (*-v* option). Detai
 These sequences can either be provided by the user (*-k* option), or be generated automatically by *TEPIC* (*-r* option).
 
 Using the *-r* option, TEPIC will compute a set of background regions that matches length and GC content of the provided candidate binding sites. 
-The options specifies the refererence genome in 2bit format. The *-j* option can be used to set the maximum time spent per chromosome, measured in minutes, to find matching background sequences.
+The options specifies the refererence genome in 2bit format. The *-i* option can be used to set the maximum time spent per chromosome, measured in minutes, to find matching background sequences.
 Using the *-k* option, a set of user defined background sequences can be specified in bed format. The options *-k* and *-r* are mutually exclusive.
 
 To run *EPIC-DREM* gene expression data must be available for each time-point as well.

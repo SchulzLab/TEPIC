@@ -94,15 +94,15 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 							factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
 							if (geneID in geneAffinities):
 								if (lengthNormalisation):	
-									geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.truediv,map(lambda x: factor*float(x),s[1:]),map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
+									geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(lambda x: factor*float(x),s[1:])),list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 								else:
-									geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(lambda x: factor*float(x),s[1:]))
+									geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: factor*float(x),s[1:]))))
 								totalPeakLength[geneID]+=length*factor
 								numberOfPeaks[geneID]+=factor
 							else:
-								numbers=map(lambda x: float(x)*float(factor),s[1:])
+								numbers=list(map(lambda x: float(x)*float(factor),s[1:]))
 								if (lengthNormalisation):
-									geneAffinities[geneID]=map(operator.truediv,numbers,map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))
+									geneAffinities[geneID]=list(map(operator.truediv,numbers,list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))
 								else:
 									geneAffinities[geneID]=numbers
 								totalPeakLength[geneID]=length*factor
@@ -112,16 +112,16 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 								numberOfPeaks[geneID]+=1.0
 								totalPeakLength[geneID]+=length
 								if (lengthNormalisation):
-									geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.truediv,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
+									geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(float,s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 								else:
-									geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(lambda x: float(x),s[1:]))
+									geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: float(x),s[1:]))))
 							else:
 								numberOfPeaks[geneID]=1.0
 								totalPeakLength[geneID]=length
 								if (lengthNormalisation):
-									geneAffinities[geneID]=map(operator.truediv,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))
+									geneAffinities[geneID]=list(map(operator.truediv,list(map(float,s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))
 								else:
-									geneAffinities[geneID]=map(lambda x: float(x),s[1:])
+									geneAffinities[geneID]=list(map(lambda x: float(x),s[1:]))
 	else:
 		for l in tfpa:
 			s=l.split()
@@ -143,15 +143,15 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 									factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
 									if (geneID in geneAffinities):
 										if (lengthNormalisation):
-											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.truediv,map(lambda x: factor*float(x),s[1:]),map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
+											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(lambda x: factor*float(x),s[1:])),list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 										else:
-											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(lambda x: factor*float(x),s[1:]))
+											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: factor*float(x),s[1:]))))
 										numberOfPeaks[geneID]+=factor
 										totalPeakLength[geneID]+=(factor*length)
 									else:
-										numbers=map(lambda x:float(factor)*float(x),s[1:])
+										numbers=list(map(lambda x:float(factor)*float(x),s[1:]))
 										if (lengthNormalisation):
-											geneAffinities[geneID]=map(operator.truediv,numbers,map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))
+											geneAffinities[geneID]=list(map(operator.truediv,numbers,list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))
 										else:
 											geneAffinities[geneID]=numbers				
 										numberOfPeaks[geneID]=factor
@@ -159,31 +159,31 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 								else:
 									if (geneID in geneAffinities):
 										if (lengthNormalisation):
-											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.truediv,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
+											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(float,s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 										else:
-											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(lambda x: float(x),s[1:]))
+											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: float(x),s[1:]))))
 										numberOfPeaks[geneID]+=1.0
 										totalPeakLength[geneID]+=length
 									else:
 										if (lengthNormalisation):
-											geneAffinities[geneID]=map(operator.truediv,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))
+											geneAffinities[geneID]=list(map(operator.truediv,list(map(float,s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))
 										else:
-											geneAffinities[geneID]=map(lambda x: float(x),s[1:])
+											geneAffinities[geneID]=list(map(lambda x: float(x),s[1:]))
 										numberOfPeaks[geneID]=1.0
 										totalPeakLength[geneID]=length
 							else:
 								if (geneID in geneAffinities):
 									if (lengthNormalisation):
-										geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.truediv,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
+										geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(float,s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 									else:
-										geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(lambda x: float(x), s[1:]))
+										geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: float(x), s[1:]))))
 									totalPeakLength[geneID]+=length
 									numberOfPeaks[geneID]+=1.0
 								else:
 									if (lengthNormalisation):
-										geneAffinities[geneID]=map(operator.truediv,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))
+										geneAffinities[geneID]=list(map(operator.truediv,list(map(float,s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))
 									else:
-										geneAffinities[geneID]=map(lambda x: float(x),s[1:])
+										geneAffinities[geneID]=list(map(lambda x: float(x),s[1:]))
 									totalPeakLength[geneID]=length
 									numberOfPeaks[geneID]=1.0
 						else:
@@ -192,15 +192,15 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 									factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
 									if (geneID in geneAffinities):
 										if (lengthNormalisation):
-											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.truediv,map(lambda x: factor*float(x),s[1:]),map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
+											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(lambda x: factor*float(x),s[1:])),list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 										else:
-											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(lambda x: factor*float(x),s[1:]))
+											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: factor*float(x),s[1:]))))
 										numberOfPeaks[geneID]+=factor
 										totalPeakLength[geneID]+=(factor*length)
 									else:
-										numbers=map(lambda x: float(x)*float(factor),s[1:])
+										numbers=list(map(lambda x: float(x)*float(factor),s[1:]))
 										if (lengthNormalisation):
-											geneAffinities[geneID]=map(operator.truediv,numbers,map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))
+											geneAffinities[geneID]=list(map(operator.truediv,numbers,list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))
 										else:
 											geneAffinities[geneID]=numbers				
 										numberOfPeaks[geneID]=factor
@@ -208,31 +208,31 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 								else:
 									if (geneID in geneAffinities):
 										if (lengthNormalisation):
-											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.truediv,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
+											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(float,s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 										else:
-											geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(lambda x: float(x),s[1:]))
+											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: float(x),s[1:]))))
 										numberOfPeaks[geneID]+=1.0
 										totalPeakLength[geneID]+=length
 									else:
 										if (lengthNormalisation):
-											geneAffinities[geneID]=map(operator.truediv,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))
+											geneAffinities[geneID]=list(map(operator.truediv,list(map(float,s[1:])),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength)))
 										else:
-											geneAffinities[geneID]=map(lambda x: float(x), s[1:])
+											geneAffinities[geneID]=list(map(lambda x: float(x), s[1:]))
 										numberOfPeaks[geneID]=1.0
 										totalPeakLength[geneID]=length
 							else:
 								if (geneID in geneAffinities):
 									if (lengthNormalisation):
-										geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(operator.truediv,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))) 
+										geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(float,s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 									else:
-										geneAffinities[geneID]=map(operator.add,geneAffinities[geneID],map(lambda x: float(x),s[1:]))
+										geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: float(x),s[1:]))))
 									numberOfPeaks[geneID]+=1.0
 									totalPeakLength[geneID]+=length
 								else:
 									if (lengthNormalisation):
-										geneAffinities[geneID]=map(operator.truediv,map(float,s[1:]),map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))
+										geneAffinities[geneID]=list(map(operator.truediv,list(map(float,s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))
 									else:
-											geneAffinities[geneID]=map(lambda x: float(x), s[1:])
+											geneAffinities[geneID]=list(map(lambda x: float(x), s[1:]))
 									numberOfPeaks[geneID]=1.0
 									totalPeakLength[geneID]=length
 	tfpa.close()
@@ -715,7 +715,7 @@ def getGenesInLongRangeWindows(annotations,regions_collection,shift):
 				right_index = selectedLoops.index(right_item)
 				if left_index <= right_index:
 	          # Copy regions in target interval
-					for i in xrange(left_index, right_index + 1):
+					for i in range(left_index, right_index + 1):
 						gene_regions[geneID].insert_right(selectedLoops[i])
 	return gene_regions	
 		

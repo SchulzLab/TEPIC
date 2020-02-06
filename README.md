@@ -10,6 +10,8 @@ A graphical overview on the workflows of TEPIC is shown below. Blue font indicat
 ![](docs/TEPIC_Workflow.png)
 
 ## News
+06.02.2020: Our recently introduced TEPIC-extension supporting regulatory sites from chromatin capture experiments to estimate the influence of enhancers on genome-wide gene expression is now published in [BMC Epigenetics and Chromatin](https://doi.org/10.1186/s13072-020-0327-0).
+
 08.07.2019: We present a novel feature to include TFBS in regulatory sites determined by chromatin conformation capture data. Using an extended feature space representation, the INVOKE model can investigate the regulatory influence of TFs bound to promoters and enhancers separately.
 
 10.10.2018: TEPIC 2.0 is now published in [Bioinformatics](https://doi.org/10.1093/bioinformatics/bty856).

@@ -84,7 +84,7 @@ argsL$randomise <- FALSE
 }
 
 #Creating output directory if necessary
-dir.create(argsL$outDir,showWarning=FALSE)
+dir.create(argsL$outDir,showWarning=FALSE,recursive=TRUE)
 
 permute<-function(x){
 s<-sample(length(x))

@@ -144,7 +144,7 @@ c(x[s],x[resPos])
 }
 
 #Check output directory, create it if necessary
-dir.create(argsL$outDir,showWarning=FALSE)
+dir.create(argsL$outDir,showWarning=FALSE,recursive=TRUE)
 
 #Initilaise lists for storage of intermediate results
 FileList<-list.files(path=Data_Directory)

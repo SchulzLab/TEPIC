@@ -35,13 +35,13 @@ def readGTF(filename,tA):
 			if (s[2]==identifier):
 				if (s[6]=="+"):
 					if (s[idIndex] in tss):
-						if (int(s[3]) < tss[s[idIndex]][1]):
+						if (int(s[3]) < tss[s[idIndex]][1][0]):
 							tss[s[idIndex]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
 					else:
 						tss[s[idIndex]]=(s[0].replace("chr",""),(int(s[3]),int(s[4])))
 				else:
 					if (s[idIndex] in tss):
-						if (int(s[4]) > tss[s[idIndex]][1]):
+						if (int(s[4]) > tss[s[idIndex]][1][0]):
 							tss[s[idIndex]]=(s[0].replace("chr",""),(int(s[4]),int(s[3])))
 					else:
 						tss[s[idIndex]]=(s[0].replace("chr",""),(int(s[4]),int(s[3])))

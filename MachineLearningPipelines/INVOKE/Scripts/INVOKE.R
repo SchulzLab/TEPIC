@@ -163,7 +163,7 @@ validSamples<-vector("logical",numFiles)
 print(paste("Total number of samples:",as.character(length(FileList)),sep=" "))
 if (length(FileList)==0){
 	print("No samples available! Aborting")
-	exit()
+	q()
 }
 counter<-0
 for(Sample in FileList){

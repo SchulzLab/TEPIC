@@ -119,7 +119,7 @@ do
 	((counter++))
 	if [ -z "$coverageFile" ] && [ -z $coverageColumn ] ;
 	then
-		if [ "$peakFeatures" == "TRUE"] ;
+		if [ "$peakFeature" == "TRUE" ];
 		then
 			echo python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*Peak_Features_Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
 			python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*Peak_Features_Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
@@ -128,7 +128,7 @@ do
 			python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
 		fi
 	else
- 		if [ "$peakFeatures" == "TRUE"] ;
+ 		if [ "$peakFeature" == "TRUE" ] ;
 		then
 			echo python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*Three_Peak_Based_Features_*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
 			python ${scriptPath}/integrateData.py ${outputDirectory}/Affinities/${prefix}*_Three_Peak_Based_Features_*Affinity_Gene_View_Filtered.txt ${exp} ${outputDirectory}/IntegratedData/${prefix}_Integrated.txt
@@ -161,5 +161,3 @@ then
 	echo Rscript ${scriptPath}/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/Learning_Results_Random --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance} --randomise=${randomise} --ftest=${fTest}
 	Rscript ${scriptPath}/INVOKE.R --dataDir=${outputDirectory}/IntegratedData/ --outDir=${outputDirectory}/Learning_Results_Random --response=Expression --cores=$cores_R --alphas=${alpha_Step_Size} --regularisation=${regularisation} --testsize=${testsize} --innerCV=${innerCV} --outerCV=${outerCV} --performance=${performance} --randomise=${randomise} --ftest=${fTest}
 fi
-
-

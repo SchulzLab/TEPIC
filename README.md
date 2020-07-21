@@ -331,10 +331,15 @@ If you are using [DYNAMITE](https://github.com/SchulzLab/TEPIC/tree/master/Machi
 **Epigenomic Profiling of Human CD4+ T Cells Supports a Linear Differentiation Model and Highlights Molecular Regulators of Memory Development**
 Durek et al. Cell Immunity, Volume 45, Issue 5, 15 November 2016, [full text](http://www.cell.com/immunity/fulltext/S1074-7613(16)30433-2)
 
-You may also consider to cite our latest publication describing the TEPIC 2.0 release:
+You may also consider to cite our latest publication describing the TEPIC 2.0 release ... :
 
 **TEPIC 2 - An extended framework for transcription factor binding prediction and integrative epigenomic analysis**
 Schmidt et al., Bioinformatics 2018; doi: 10.1093/bioinformatics/bty856 [full text](https://doi.org/10.1093/bioinformatics/bty856)
+
+... and its extensions:
+
+**Integrative prediction of gene expression with chromatin accessibility and conformation data**
+Schmidt et al., Epigenetics & Chromatin 2020; doi: 10.1186/s13072-020-0327-0 [full text](https://doi.org/10.1186/s13072-020-0327-0)
 
 Other works that have influenced ours:
 > (1) Predicting transcription factor affinities to DNA from a biophysical model, Roider HG, et al., Bioinformatics, 2007.

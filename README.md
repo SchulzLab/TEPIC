@@ -65,6 +65,18 @@ Details on the models are provided in the respective subfolders as well as in th
 Here, we provide a brief description on the core funtionality of TEPIC, the computation of TF-gene scores. 
 
 ## Installing TEPIC
+
+### Using conda
+
+If you use conda, create the required environment by running
+
+    conda env create tepic -f conda.yaml
+
+Then, in the Code/ directory, compile TRAPmulti.cpp
+
+    g++ TRAPmulti.cpp -O3 -fopenmp -o TRAPmulti
+
+### Manual installation
 To run *TEPIC* the following packages/software must be installed:
 * Python (minimum version 2.7)
 * [bedtools](https://github.com/arq5x/bedtools2): Installation instructions for bedtools can be found [here](http://bedtools.readthedocs.io/en/latest/content/installation.html). Please make sure to add

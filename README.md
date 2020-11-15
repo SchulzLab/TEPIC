@@ -71,10 +71,16 @@ Here, we provide a brief description on the core funtionality of TEPIC, the comp
 If you use conda, create the required environment by running
 
     conda env create tepic -f conda.yaml
+    
+Activate the environment using
+
+    conda activate tepic
 
 Then, in the Code/ directory, compile TRAPmulti.cpp
 
     g++ TRAPmulti.cpp -O3 -fopenmp -o TRAPmulti
+    
+You can now use TEPIC.sh
 
 ### Manual installation
 To run *TEPIC* the following packages/software must be installed:

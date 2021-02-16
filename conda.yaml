@@ -15,4 +15,4 @@ dependencies:
   - r-domc
   - r-reshape2
   - r-gridextra
-
+  - r-data.table

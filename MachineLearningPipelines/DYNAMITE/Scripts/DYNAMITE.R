@@ -112,12 +112,12 @@ SampleOverview<-c("Name","Mean Test Accuracy","Var Test Accuracy","Mean F1_1","V
 #Declare elastic net functions
 elaBinomial<-function(a,x,y,i){
 	print(paste0("Learning model for alpha = ",a))
-	elasticnet<-cv.glmnet(x, y, alpha=a,family="binomial",type.measure="class",parallel=TRUE,nfolds=i)
+	elasticnet<-cv.glmnet(data.matrix(x), y, alpha=a,family="binomial",type.measure="class",parallel=TRUE,nfolds=i)
 	min(elasticnet$cvm)
 	}
 elaMultinomial<-function(a,x,y,i){
 	print(paste0("Learning model for alpha = ",a))
-	elasticnet<-cv.glmnet(x, y, alpha=a,family="multinomial",type.measure="class",parallel=TRUE,nfolds=i)
+	elasticnet<-cv.glmnet(data.matrix(x), y, alpha=a,family="multinomial",type.measure="class",parallel=TRUE,nfolds=i)
 	min(elasticnet$cvm)
 	}
 
@@ -195,11 +195,11 @@ for(Sample in FileList){
 		}
 
 		#Split the features from response
-		x_train<-as.matrix(Train_Data[,-Response_Variable_location])
-		x_test<-as.matrix(Test_Data[,-Response_Variable_location])
+		x_train<-data.matrix(Train_Data[,-Response_Variable_location])
+		x_test<-data.matrix(Test_Data[,-Response_Variable_location])
 		y_train<-as.vector(unlist(Train_Data[,Response_Variable_location,drop=FALSE]))
 		y_test<-as.vector(unlist(Test_Data[,Response_Variable_location]))
-
+		write.table(x_train,paste0(argsL$outDir,"/tmp1.txt"),sep="\t",quote=F)
 		#Training model parameters in the inner cross validation
 		print(argsL$Ifolds)
 		if (length(unique(M[,Response_Variable_location]))==2){

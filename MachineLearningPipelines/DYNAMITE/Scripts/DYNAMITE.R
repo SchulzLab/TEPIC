@@ -199,7 +199,6 @@ for(Sample in FileList){
 		x_test<-data.matrix(Test_Data[,-Response_Variable_location])
 		y_train<-as.vector(unlist(Train_Data[,Response_Variable_location,drop=FALSE]))
 		y_test<-as.vector(unlist(Test_Data[,Response_Variable_location]))
-		write.table(x_train,paste0(argsL$outDir,"/tmp1.txt"),sep="\t",quote=F)
 		#Training model parameters in the inner cross validation
 		print(argsL$Ifolds)
 		if (length(unique(M[,Response_Variable_location]))==2){

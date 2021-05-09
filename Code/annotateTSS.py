@@ -94,7 +94,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 							factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
 							if (geneID in geneAffinities):
 								if (lengthNormalisation):	
-									geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(lambda x: factor*float(x),s[1:])),list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
+									geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(lambda x: factor*float(x),s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 								else:
 									geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: factor*float(x),s[1:]))))
 								totalPeakLength[geneID]+=length*factor
@@ -102,7 +102,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 							else:
 								numbers=list(map(lambda x: float(x)*float(factor),s[1:]))
 								if (lengthNormalisation):
-									geneAffinities[geneID]=list(map(operator.truediv,numbers,list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))
+									geneAffinities[geneID]=list(map(operator.truediv,numbers,list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))
 								else:
 									geneAffinities[geneID]=numbers
 								totalPeakLength[geneID]=length*factor
@@ -143,7 +143,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 									factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
 									if (geneID in geneAffinities):
 										if (lengthNormalisation):
-											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(lambda x: factor*float(x),s[1:])),list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
+											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(lambda x: factor*float(x),s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 										else:
 											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: factor*float(x),s[1:]))))
 										numberOfPeaks[geneID]+=factor
@@ -151,7 +151,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 									else:
 										numbers=list(map(lambda x:float(factor)*float(x),s[1:]))
 										if (lengthNormalisation):
-											geneAffinities[geneID]=list(map(operator.truediv,numbers,list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))
+											geneAffinities[geneID]=list(map(operator.truediv,numbers,list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))
 										else:
 											geneAffinities[geneID]=numbers				
 										numberOfPeaks[geneID]=factor
@@ -159,7 +159,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 								else:
 									if (geneID in geneAffinities):
 										if (lengthNormalisation):
-											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(float,s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
+                                                                                        geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(float,s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 										else:
 											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: float(x),s[1:]))))
 										numberOfPeaks[geneID]+=1.0
@@ -192,7 +192,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 									factor=math.exp(-(float(float(abs(tss-middle))/5000.0)))
 									if (geneID in geneAffinities):
 										if (lengthNormalisation):
-											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(lambda x: factor*float(x),s[1:])),list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
+											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(operator.truediv,list(map(lambda x: factor*float(x),s[1:])),list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))))
 										else:
 											geneAffinities[geneID]=list(map(operator.add,geneAffinities[geneID],list(map(lambda x: factor*float(x),s[1:]))))
 										numberOfPeaks[geneID]+=factor
@@ -200,7 +200,7 @@ def extractTF_Affinity(openRegions,genesInOpenChromatin,filename,genePositions,o
 									else:
 										numbers=list(map(lambda x: float(x)*float(factor),s[1:]))
 										if (lengthNormalisation):
-											geneAffinities[geneID]=list(map(operator.truediv,numbers,list(map(lambda x: factor*(length-x+1) if (length-x+1 > 0) else 1, motifLength))))
+											geneAffinities[geneID]=list(map(operator.truediv,numbers,list(map(lambda x: (length-x+1) if (length-x+1 > 0) else 1, motifLength))))
 										else:
 											geneAffinities[geneID]=numbers				
 										numberOfPeaks[geneID]=factor
